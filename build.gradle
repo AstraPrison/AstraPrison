@@ -1,0 +1,63 @@
+buildscript {
+    repositories { mavenCentral() }
+}
+
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'io.papermc.paperweight.userdev' version '1.5.11'
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'io.papermc.paperweight.userdev'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testImplementation platform('org.junit:junit-bom:5.9.1')
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        paperweight.paperDevBundle(paperDevBundleVersion)
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
+
+group = 'dev.paracausal'
+
+version = pluginVersion
+if (snapshot) {
+    version += "-SNAPSHOT"
+}
+
+subprojects {
+    group = rootProject.group
+    version = rootProject.version
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
