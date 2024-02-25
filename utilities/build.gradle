@@ -4,6 +4,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly project(':api')
     compileOnly 'me.clip:placeholderapi:2.11.5'
     compileOnly 'com.arcaniax:HeadDatabase-API:1.3.1'
 }

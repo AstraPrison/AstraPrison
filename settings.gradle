@@ -1,4 +1,5 @@
 rootProject.name = 'AstraPrison'
+include 'api'
 include 'utilities'
 include 'menus'
 
