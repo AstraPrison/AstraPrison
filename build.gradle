@@ -43,6 +43,7 @@ subprojects {
 dependencies {
     implementation project(':api')
     implementation project(':utilities')
+    implementation project(':menus')
 }
 
 processResources {
