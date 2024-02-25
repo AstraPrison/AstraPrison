@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PapiUtils {
+public final class PapiUtils {
 
     public static @NotNull String parse(@Nullable final OfflinePlayer player, @NotNull String input) {
         if (player == null) {
