@@ -13,7 +13,7 @@ public class AstraMenuBuilder {
         DEFAULT_SIZE = 54;
     }
 
-    public static AstraMenuBuilder fromConfig(@NotNull final YamlConfig config) {
+    public static @NotNull AstraMenuBuilder fromConfig(@NotNull final YamlConfig config) {
         return new AstraMenuBuilder()
                 .setTitle(config.options().getString("title", DEFAULT_TITLE))
                 .setSize(config.options().getInt("size", DEFAULT_SIZE));

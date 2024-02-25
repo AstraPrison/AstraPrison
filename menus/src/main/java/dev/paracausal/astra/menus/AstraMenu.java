@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class AstraMenu implements InventoryHolder {
 
-    public static AstraMenuBuilder builder() {
+    public static @NotNull AstraMenuBuilder builder() {
         return new AstraMenuBuilder();
     }
 
