@@ -1,5 +1,6 @@
 package dev.paracausal.astra;
 
+import dev.paracausal.astra.api.AstraAPI;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,6 +18,10 @@ public final class Astra {
 
     public static JavaPlugin getPlugin() {
         return (JavaPlugin) utility;
+    }
+
+    public static AstraAPI getAPI() {
+        return (AstraAPI) getPlugin();
     }
 
 }

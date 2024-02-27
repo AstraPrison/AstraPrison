@@ -34,11 +34,6 @@ public class AstraPlugin extends JavaPlugin implements AstraUtility, AstraAPI {
     }
 
     @Override
-    public AstraAPI getAPI() {
-        return this;
-    }
-
-    @Override
     public ActionManager getActionManager() {
         return actionManager;
     }
