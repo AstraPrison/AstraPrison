@@ -4,6 +4,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class RequirementOptions {
 
     private @NotNull final FileConfiguration config;
@@ -12,6 +16,10 @@ public class RequirementOptions {
     public RequirementOptions(@NotNull final FileConfiguration config, @NotNull final String basePath) {
         this.config = config;
         this.basePath = basePath.endsWith(".") ? basePath : basePath + ".";
+    }
+
+    public boolean contains(@NotNull final String path) {
+        return config.contains(basePath + path);
     }
 
     public @Nullable Object get(@NotNull final String path, @NotNull final Object def) {
@@ -28,6 +36,28 @@ public class RequirementOptions {
 
     public @Nullable String getString(@NotNull final String path) {
         return config.getString(basePath + path);
+    }
+
+    public @Nullable List<String> getStringList(@NotNull final String path) {
+        final Object object = config.get(basePath + path);
+        if (object == null) {
+            return null;
+        }
+
+        if (object instanceof List<?>) {
+            return config.getStringList(basePath + path);
+        }
+
+        return new ArrayList<>(Collections.singleton(object.toString()));
+    }
+
+    public @NotNull List<String> getStringList(@NotNull final String path, @NotNull final List<String> def) {
+        final List<String> list = getStringList(path);
+        if (list == null) {
+            return def;
+        }
+
+        return list;
     }
 
     public int getInt(@NotNull final String path, final int def) {

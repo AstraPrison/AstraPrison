@@ -20,7 +20,14 @@ public class StringEqualsRequirement extends Requirement {
             return false;
         }
 
+        final boolean inverted = options.getBoolean("inverted", false);
         final boolean ignoreCase = options.getBoolean("ignore-case", false);
+
+        if (inverted) {
+            return ignoreCase
+                    ? !input.equalsIgnoreCase(output)
+                    : !input.equals(output);
+        }
 
         return ignoreCase
                 ? input.equalsIgnoreCase(output)
