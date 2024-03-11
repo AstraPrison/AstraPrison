@@ -1,0 +1,25 @@
+#    #####################################
+#
+#     ###    #####   #####   #####    ###
+#    #   #   #         #     #   #   #   #
+#    #####   #####     #     #####   #####
+#    #   #       #     #     #  #    #   #
+#    #   #   #####     #     #   #   #   #
+#
+#    #####################################
+#    Developed by Mantice
+#
+
+
+#
+#  Console Log Settings
+#
+logging:
+
+  # Allow color in console messages?
+  #
+  formatting: true
+
+  # Send debug messages to console?
+  #
+  debug-mode: false

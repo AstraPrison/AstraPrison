@@ -6,12 +6,17 @@ import dev.paracausal.astra.api.actions.ActionManagerImpl;
 import dev.paracausal.astra.api.requirements.RequirementManager;
 import dev.paracausal.astra.api.requirements.RequirementManagerImpl;
 import dev.paracausal.astra.listeners.MenuListener;
+import dev.paracausal.astra.logger.AstraLog;
+import dev.paracausal.astra.logger.AstraLogLevel;
+import dev.paracausal.astra.utilities.configuration.YamlConfig;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
 public class AstraPlugin extends JavaPlugin implements AstraUtility, AstraAPI {
 
+    private YamlConfig configYml;
     private ActionManagerImpl actionManager;
     private RequirementManagerImpl requirementManager;
 
@@ -19,6 +24,8 @@ public class AstraPlugin extends JavaPlugin implements AstraUtility, AstraAPI {
 
     @Override
     public void onLoad() {
+        configYml = new YamlConfig("config");
+        AstraLog.onLoad();
         Astra.onLoad(this);
 
         actionManager = new ActionManagerImpl();
@@ -35,11 +42,19 @@ public class AstraPlugin extends JavaPlugin implements AstraUtility, AstraAPI {
     @Override
     public void onEnable() {
         listeners.forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
+
+        AstraLog.divider();
+        AstraLog.log(AstraLogLevel.SUCCESS, "AstraPrison enabled!");
+        AstraLog.log(
+                "Version: " + getDescription().getVersion(),
+                "Developed by Mantice"
+        );
+        AstraLog.divider();
     }
 
     @Override
     public void onDisable() {
-
+        AstraLog.log(AstraLogLevel.SUCCESS, "AstraPrison disabled!");
     }
 
     @Override
@@ -50,6 +65,11 @@ public class AstraPlugin extends JavaPlugin implements AstraUtility, AstraAPI {
     @Override
     public RequirementManager getRequirementManager() {
         return requirementManager;
+    }
+
+    @Override
+    public YamlConfig getConfigYml() {
+        return configYml;
     }
 
 }
