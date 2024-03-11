@@ -5,6 +5,7 @@ import dev.paracausal.astra.api.actions.ActionManager;
 import dev.paracausal.astra.api.actions.ActionManagerImpl;
 import dev.paracausal.astra.api.requirements.RequirementManager;
 import dev.paracausal.astra.api.requirements.RequirementManagerImpl;
+import dev.paracausal.astra.commands.AdminCommand;
 import dev.paracausal.astra.commands.CommandRegistry;
 import dev.paracausal.astra.exceptions.InvalidCommandException;
 import dev.paracausal.astra.listeners.MenuListener;
@@ -47,6 +48,14 @@ public class AstraPlugin extends JavaPlugin implements AstraUtility, AstraAPI {
     @Override
     public void onEnable() {
         listeners.forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
+
+        try {
+            commandRegistry.register(new AdminCommand());
+        }
+
+        catch (InvalidCommandException e) {
+            AstraLog.debug(AstraLogLevel.ERROR, e.getMessage());
+        }
 
         commandRegistry.onEnable();
 
