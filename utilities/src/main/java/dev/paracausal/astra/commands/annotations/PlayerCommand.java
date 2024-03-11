@@ -1,0 +1,15 @@
+package dev.paracausal.astra.commands.annotations;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface PlayerCommand {
+
+    String value() default "";
+    String message() default "";
+
+}

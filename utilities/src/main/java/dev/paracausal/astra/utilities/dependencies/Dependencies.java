@@ -1,6 +1,9 @@
 package dev.paracausal.astra.utilities.dependencies;
 
+import dev.paracausal.astra.Astra;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
+import me.lucko.commodore.Commodore;
+import me.lucko.commodore.CommodoreProvider;
 import org.bukkit.Bukkit;
 
 public final class Dependencies {
@@ -19,6 +22,16 @@ public final class Dependencies {
         else {
             HEAD_DATABASE_API = null;
         }
+    }
+
+    private static Commodore commodore;
+
+    public static void onEnable() {
+        commodore = CommodoreProvider.getCommodore(Astra.getPlugin());
+    }
+
+    public static Commodore getCommodore() {
+        return commodore;
     }
 
 }

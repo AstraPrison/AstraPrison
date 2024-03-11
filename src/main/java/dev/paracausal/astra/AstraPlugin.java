@@ -5,6 +5,8 @@ import dev.paracausal.astra.api.actions.ActionManager;
 import dev.paracausal.astra.api.actions.ActionManagerImpl;
 import dev.paracausal.astra.api.requirements.RequirementManager;
 import dev.paracausal.astra.api.requirements.RequirementManagerImpl;
+import dev.paracausal.astra.commands.CommandRegistry;
+import dev.paracausal.astra.exceptions.InvalidCommandException;
 import dev.paracausal.astra.listeners.MenuListener;
 import dev.paracausal.astra.logger.AstraLog;
 import dev.paracausal.astra.logger.AstraLogLevel;
@@ -21,6 +23,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtility, AstraAPI {
     private RequirementManagerImpl requirementManager;
 
     private List<Listener> listeners;
+    private CommandRegistry commandRegistry;
 
     @Override
     public void onLoad() {
@@ -37,11 +40,15 @@ public class AstraPlugin extends JavaPlugin implements AstraUtility, AstraAPI {
         listeners = List.of(
                 new MenuListener()
         );
+
+        commandRegistry = new CommandRegistry();
     }
 
     @Override
     public void onEnable() {
         listeners.forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
+
+        commandRegistry.onEnable();
 
         AstraLog.divider();
         AstraLog.log(AstraLogLevel.SUCCESS, "AstraPrison enabled!");
@@ -70,6 +77,11 @@ public class AstraPlugin extends JavaPlugin implements AstraUtility, AstraAPI {
     @Override
     public YamlConfig getConfigYml() {
         return configYml;
+    }
+
+    @Override
+    public CommandRegistry getCommandRegistry() {
+        return commandRegistry;
     }
 
 }
