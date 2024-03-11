@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class AstraCommand extends BukkitCommand {
 
@@ -183,7 +184,9 @@ public abstract class AstraCommand extends BukkitCommand {
             return new ArrayList<>();
         }
 
-        return tabComplete(player, args);
+        return tabComplete(player, args).stream()
+                .filter(string -> string.toLowerCase().startsWith(args[args.length - 1].toLowerCase()))
+                .collect(Collectors.toList());
     }
 
 }
