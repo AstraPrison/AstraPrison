@@ -1,12 +1,17 @@
 package dev.paracausal.astra.menus.items;
 
 import dev.paracausal.astra.Astra;
+import dev.paracausal.astra.api.actions.ActionManager;
 import dev.paracausal.astra.api.requirements.Requirement;
 import dev.paracausal.astra.api.requirements.RequirementManager;
+import dev.paracausal.astra.api.requirements.RequirementOptions;
 import dev.paracausal.astra.utilities.ListUtils;
 import dev.paracausal.astra.utilities.configuration.YamlConfig;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +57,7 @@ public class MenuRequirements {
             }
 
             final List<String> commandLines = ListUtils.fromConfig(config, p + "actions");
-            requirements.put(id, new MenuRequirement(id, requirement, commandLines));
+            requirements.put(id, new MenuRequirement(id, requirement, new RequirementOptions(config.options(), p), commandLines));
         });
     }
 
@@ -66,6 +71,31 @@ public class MenuRequirements {
 
     public @NotNull Map<String, MenuRequirement> getRequirements() {
         return new HashMap<>(requirements);
+    }
+
+    public boolean check(@Nullable final OfflinePlayer player) {
+        if (player == null) {
+            return true;
+        }
+
+        final Player target = player.getPlayer();
+        if (player.isOnline() || target == null) {
+            return true;
+        }
+
+        final ActionManager actionManager = Astra.getAPI().getActionManager();
+        if (actionManager == null) {
+            return true;
+        }
+
+        for (final MenuRequirement requirement : requirements.values()) {
+            if (!requirement.requirement().check(target, requirement.options())) {
+                actionManager.runCommandLine(player, requirement.commandLines());
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }

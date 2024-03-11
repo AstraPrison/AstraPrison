@@ -1,7 +1,10 @@
 package dev.paracausal.astra.api.actions;
 
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public interface ActionManager {
 
@@ -44,5 +47,8 @@ public interface ActionManager {
      * @return commandLine without the [actionID] at the start!
      */
     @NotNull String replaceCommandLine(@NotNull String commandLine);
+
+    void runCommandLine(@NotNull final OfflinePlayer player, @NotNull String commandLine);
+    void runCommandLine(@NotNull final OfflinePlayer player, @NotNull final List<String> commandLines);
 
 }

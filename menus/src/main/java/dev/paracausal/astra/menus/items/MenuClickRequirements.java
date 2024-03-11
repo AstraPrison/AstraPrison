@@ -20,7 +20,7 @@ public class MenuClickRequirements extends MenuRequirements {
             @NotNull final YamlConfig config,
             @NotNull String path
     ) {
-        super(config, (path.endsWith(".") ? path : path + ".") + clickType.getConfigPath());
+        super(config, (path.endsWith(".") ? path : path + ".") + clickType.getConfigPath() + "-click-requirements");
         this.clickType = clickType;
     }
 

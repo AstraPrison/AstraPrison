@@ -1,9 +1,11 @@
 package dev.paracausal.astra.menus.items;
 
 import dev.paracausal.astra.Astra;
-import dev.paracausal.astra.utilities.MenuSlotUtils;
+import dev.paracausal.astra.utilities.ListUtils;
 import dev.paracausal.astra.utilities.configuration.YamlConfig;
 import dev.paracausal.astra.utilities.items.ItemBuilder;
+import dev.paracausal.astra.utilities.items.MaterialBox;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -12,10 +14,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public final class MenuItem extends ItemBuilder {
 
@@ -27,9 +26,56 @@ public final class MenuItem extends ItemBuilder {
 
 
 
+    public MenuItem(@NotNull final YamlConfig config, @NotNull String path) {
+        super(config, path);
+
+        if (!path.endsWith(".")) path += ".";
+        viewRequirements = new MenuRequirements(config, path + "view-requirements");
+
+        clickRequirements = new HashMap<>();
+        clickActions = new HashMap<>();
+
+        for (final MenuClickType clickType : MenuClickType.values()) {
+            final String p = path + clickType.getConfigPath();
+
+            if (config.options().contains(p + "-click-requirements")) {
+                clickRequirements.put(clickType, new MenuClickRequirements(clickType, config, path));
+            }
+
+            if (!config.options().contains(p + "-click-actions")) {
+                return;
+            }
+
+            clickActions.put(clickType,
+                    new MenuClickActions(clickType, ListUtils.fromConfig(config, p + "-click-actions"))
+            );
+        }
+
+    }
+
+    public MenuItem() {}
+
+    public MenuItem(@NotNull final MaterialBox materialBox) {
+        super(materialBox);
+    }
+
+    public MenuItem(@NotNull final Material material) {
+        super(material);
+    }
+
+    public MenuItem(@NotNull final String material) {
+        super(material);
+    }
+
+
+
     public MenuItem setID(@NotNull final String id) {
         this.id = id;
         return this;
+    }
+
+    public @NotNull String getID() {
+        return id;
     }
 
 
@@ -46,15 +92,6 @@ public final class MenuItem extends ItemBuilder {
         return this;
     }
 
-    public @NotNull MenuItem setSlots(@NotNull final YamlConfig config, @NotNull String path) {
-        if (!path.endsWith(".slots")) {
-            path += ".slots";
-        }
-
-        slots = MenuSlotUtils.fromConfig(config, path);
-        return this;
-    }
-
     public @NotNull List<Integer> getSlots() {
         if (slots == null) {
             return new ArrayList<>();
@@ -65,20 +102,49 @@ public final class MenuItem extends ItemBuilder {
 
 
 
-    /*
-
-            TODO
-
-            Setters for View Requirements
-            Setters for Click Requirements
-            Setters for Click Actions
-
-     */
-
-
-
-    public MenuItem setViewRequirements() {
+    public MenuItem setViewRequirements(@Nullable final MenuRequirements viewRequirements) {
+        this.viewRequirements = viewRequirements;
         return this;
+    }
+
+    public @Nullable MenuRequirements getViewRequirements() {
+        return viewRequirements;
+    }
+
+
+
+    public MenuItem setClickRequirements(@Nullable final Map<MenuClickType, MenuClickRequirements> clickRequirements) {
+        if (clickRequirements == null) {
+            this.clickRequirements = null;
+        }
+
+        else {
+            this.clickRequirements = new HashMap<>(clickRequirements);
+        }
+
+        return this;
+    }
+
+    public @Nullable MenuClickRequirements getClickRequirements(@NotNull final MenuClickType clickType) {
+        return clickRequirements.getOrDefault(clickType, null);
+    }
+
+
+
+    public MenuItem setClickActions(@Nullable final Map<MenuClickType, MenuClickActions> clickActions) {
+        if (clickActions == null) {
+            this.clickActions = null;
+        }
+
+        else {
+            this.clickActions = new HashMap<>(clickActions);
+        }
+
+        return this;
+    }
+
+    public @Nullable MenuClickActions getClickActions(@NotNull final MenuClickType clickType) {
+        return clickActions.getOrDefault(clickType, null);
     }
 
 

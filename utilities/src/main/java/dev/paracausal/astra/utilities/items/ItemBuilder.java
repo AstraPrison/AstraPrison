@@ -30,6 +30,17 @@ public class ItemBuilder {
         DEFAULT_MATERIAL = new MaterialBox(Material.STONE);
     }
 
+    private MaterialBox materialBox;
+    private int customModelData;
+    private String displayName;
+    private List<String> lore;
+    private Map<Enchantment, Integer> enchantments;
+    private List<ItemFlag> itemFlags;
+    private int amount;
+    private List<ItemPDC<?>> pdc;
+
+
+
     /*
             Config Format
             path would be "item" or "item."
@@ -43,37 +54,39 @@ public class ItemBuilder {
               item-flags: ''                   String or String List
               amount: 1                        Integer
      */
-    public static ItemBuilder fromConfig(@NotNull final YamlConfig config, @NotNull String path) {
+    public ItemBuilder(@NotNull final YamlConfig config, @NotNull String path) {
         if (!path.endsWith(".")) path += ".";
-        final ItemBuilder builder = new ItemBuilder();
-
         MaterialBox matBox;
         try { matBox = new MaterialBox(config.options().getString(path + "material", "STONE")); }
         catch (InvalidMaterialException e) {
             matBox = new MaterialBox(DEFAULT_MATERIAL);
         }
 
-        builder.materialBox = matBox;
-        builder.customModelData = config.options().getInt(path + "custom-model-data", 0);
-        builder.displayName = config.options().getString(path + "display-name", null);
-        builder.lore = ListUtils.fromConfig(config, path + "lore", null);
-        builder.enchantments = EnchantUtils.parse(ListUtils.fromConfig(config, path + "lore", null));
-        builder.itemFlags = ItemFlagUtils.parse(ListUtils.fromConfig(config, path + "item-flags", null));
-        builder.setAmount(config.options().getInt(path + "amount", 1));
-
-        return builder;
+        materialBox = matBox;
+        customModelData = config.options().getInt(path + "custom-model-data", 0);
+        displayName = config.options().getString(path + "display-name", null);
+        lore = ListUtils.fromConfig(config, path + "lore", null);
+        enchantments = EnchantUtils.parse(ListUtils.fromConfig(config, path + "lore", null));
+        itemFlags = ItemFlagUtils.parse(ListUtils.fromConfig(config, path + "item-flags", null));
+        setAmount(config.options().getInt(path + "amount", 1));
     }
 
+    public ItemBuilder() {}
 
+    public ItemBuilder(@NotNull final MaterialBox materialBox) {
+        this.materialBox = materialBox;
+    }
 
-    private MaterialBox materialBox;
-    private int customModelData;
-    private String displayName;
-    private List<String> lore;
-    private Map<Enchantment, Integer> enchantments;
-    private List<ItemFlag> itemFlags;
-    private int amount;
-    private List<ItemPDC<?>> pdc;
+    public ItemBuilder(@NotNull final Material material) {
+        materialBox = new MaterialBox(material);
+    }
+
+    public ItemBuilder(@NotNull final String material) {
+        try { materialBox = new MaterialBox(material); }
+        catch (InvalidMaterialException e) {
+            materialBox = DEFAULT_MATERIAL;
+        }
+    }
 
 
 

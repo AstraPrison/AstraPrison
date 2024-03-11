@@ -3,10 +3,12 @@ package dev.paracausal.astra.api.actions;
 import dev.paracausal.astra.api.actions.impl.ConsoleCommandAction;
 import dev.paracausal.astra.api.actions.impl.MessageAction;
 import dev.paracausal.astra.api.actions.impl.PlayerCommandAction;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,6 +75,22 @@ public class ActionManagerImpl implements ActionManager {
         }
 
         return commandLine;
+    }
+
+    @Override
+    public void runCommandLine(@NotNull final OfflinePlayer player, @NotNull String commandLine) {
+        final Action action = getFromCommandLine(commandLine);
+        if (action == null) {
+            return;
+        }
+
+        commandLine = replaceCommandLine(commandLine);
+        action.run(player, new ActionArgument(commandLine));
+    }
+
+    @Override
+    public void runCommandLine(@NotNull final OfflinePlayer player, @NotNull final List<String> commandLines) {
+        commandLines.forEach(commandLine -> runCommandLine(player, commandLine));
     }
 
 }
