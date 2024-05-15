@@ -2,7 +2,7 @@ main: dev.fabled.astra.AstraPlugin
 name: Astra
 version: ${version}
 api-version: '1.20'
-authors: ['Mantice']
+authors: ['Mantice', 'DrDivx2k']
 description: The ultimate modern prison core!
 website: https://astra.paracausal.dev
 
