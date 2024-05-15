@@ -1,4 +1,4 @@
-package dev.paracausal.astra.utilities.items.pdc;
+package dev.fabled.astra.utils.items.pdc;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;

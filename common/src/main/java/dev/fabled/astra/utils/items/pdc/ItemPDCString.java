@@ -1,6 +1,5 @@
-package dev.paracausal.astra.utilities.items.pdc.impl;
+package dev.fabled.astra.utils.items.pdc;
 
-import dev.paracausal.astra.utilities.items.pdc.ItemPDC;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
