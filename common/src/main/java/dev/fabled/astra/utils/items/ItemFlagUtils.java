@@ -1,4 +1,4 @@
-package dev.paracausal.astra.utilities.items;
+package dev.fabled.astra.utils.items;
 
 import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.Nullable;

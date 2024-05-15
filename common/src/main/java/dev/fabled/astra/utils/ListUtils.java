@@ -1,6 +1,6 @@
-package dev.paracausal.astra.utilities;
+package dev.fabled.astra.utils;
 
-import dev.paracausal.astra.utilities.configuration.YamlConfig;
+import dev.fabled.astra.utils.configuration.YamlConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,16 +24,12 @@ public class ListUtils {
             return config.options().getStringList(path);
         }
 
-        return new ArrayList<>(Collections.singleton(object.toString()));
+        return new ArrayList<>(Collections.singletonList(object.toString()));
     }
 
     public static @NotNull List<String> fromConfig(@NotNull final YamlConfig config, @NotNull final String path) {
-        List<String> list = fromConfig(config, path, new ArrayList<>());
-        if (list == null) {
-            list = new ArrayList<>();
-        }
-
-        return list;
+        final List<String> result = fromConfig(config, path, null);
+        return result == null ? new ArrayList<>() : result;
     }
 
 }
