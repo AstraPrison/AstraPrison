@@ -1,25 +1,24 @@
-#    #####################################
 #
-#     ###    #####   #####   #####    ###
-#    #   #   #         #     #   #   #   #
-#    #####   #####     #     #####   #####
-#    #   #       #     #     #  #    #   #
-#    #   #   #####     #     #   #   #   #
+#    +++++++  ++++++  +++++++  +++++++  +++++++
+#    +|   ++  +|         ++    +|   ++  +|   ++
+#    +++++++  ++++++     ++    +++++++  +++++++
+#    +|   ++      ++     ++    +| ++    +|   ++
+#    +|   ++  ++++++     ++    +|   ++  +|   ++
 #
-#    #####################################
+#    AstraPrison
 #    Developed by Mantice
 #
 
 
 #
-#  Console Log Settings
+# Console Log Settings
 #
-logging:
+console-logging:
 
-  # Allow color in console messages?
-  #
-  formatting: true
+  #| Allow color in console messages?
+  #|
+  allow-formatting: true
 
-  # Send debug messages to console?
-  #
+  #| Send debug messages to console?
+  #|
   debug-mode: false
