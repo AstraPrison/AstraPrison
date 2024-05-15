@@ -1,6 +1,6 @@
-package dev.paracausal.astra.utilities.configuration;
+package dev.fabled.astra.utils.configuration;
 
-import dev.paracausal.astra.Astra;
+import dev.fabled.astra.Astra;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 
-public class YamlConfig {
+public class YamlConfig implements AstraConfig {
 
     private @NotNull final String filePath;
     private File file;
@@ -29,6 +29,7 @@ public class YamlConfig {
         return fileConfiguration;
     }
 
+    @Override
     public void saveFile() {
         if (fileConfiguration == null || file == null) {
             return;
@@ -40,6 +41,7 @@ public class YamlConfig {
         }
     }
 
+    @Override
     public void save() {
         if (file == null) {
             file = file();
@@ -52,6 +54,7 @@ public class YamlConfig {
         Astra.getPlugin().saveResource(filePath, false);
     }
 
+    @Override
     public void reload() {
         fileConfiguration = YamlConfiguration.loadConfiguration(file());
     }
