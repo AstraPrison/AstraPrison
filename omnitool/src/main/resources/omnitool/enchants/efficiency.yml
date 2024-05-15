@@ -1,0 +1,19 @@
+#
+#
+#
+#
+
+display:
+  name: Efficiency
+
+  # Override this enchant display in the omni-tool's lore
+  tool-lore: ''
+
+max-level: 1000
+starting-level: 0
+
+# Which tool(s) in the omni-tool does this enchant apply to?
+applies-to: ALL
+
+passive:
+  - '[enchant] efficiency {LEVEL}'
