@@ -1,4 +1,4 @@
-main: dev.paracausal.astra.AstraPlugin
+main: dev.fabled.astra.AstraPlugin
 name: Astra
 version: ${version}
 api-version: '1.20'
