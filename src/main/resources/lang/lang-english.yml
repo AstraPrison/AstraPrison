@@ -1,0 +1,9 @@
+#
+#
+#
+#
+
+prefix: '<aqua><b>Astra</b> <dark_gray><b>|<reset>'
+
+errors:
+  no-permission: '{PREFIX} <red>No permission!'
