@@ -1,8 +1,14 @@
 package dev.fabled.astra.modules.impl;
 
 import dev.fabled.astra.Astra;
+import dev.fabled.astra.commands.BrigadierCommand;
+import dev.fabled.astra.commands.CommandManager;
+import dev.fabled.astra.commands.OmniToolCommand;
 import dev.fabled.astra.modules.AstraModule;
 import org.bukkit.NamespacedKey;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class OmniToolModule extends AstraModule {
 
@@ -12,7 +18,7 @@ public class OmniToolModule extends AstraModule {
         ID = "omnitool";
     }
 
-    public static OmniToolModule getInstance() {
+    public static @Nullable OmniToolModule getInstance() {
         final AstraModule module = Astra.getUtilities().getModuleManager().getModule(ID);
         if (module == null) {
             return null;
@@ -23,6 +29,10 @@ public class OmniToolModule extends AstraModule {
 
     private NamespacedKey omniToolKey;
 
+    private final List<BrigadierCommand> commands = List.of(
+            new OmniToolCommand()
+    );
+
     public OmniToolModule() {
         super(ID);
     }
@@ -30,6 +40,9 @@ public class OmniToolModule extends AstraModule {
     @Override
     public void onEnable() {
         omniToolKey = new NamespacedKey(Astra.getPlugin(), "astra_omnitool");
+
+        final CommandManager commandManager = Astra.getUtilities().getCommandManager();
+        commands.forEach(commandManager::register);
     }
 
     public NamespacedKey getOmniToolKey() {
