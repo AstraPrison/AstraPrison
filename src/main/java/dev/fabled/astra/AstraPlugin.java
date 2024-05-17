@@ -48,7 +48,6 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
     @Override
     public void onEnable() {
         commandManager = new CommandManager();
-        commandManager.register(new AstraCommand());
         moduleManager.onEnable();
 
         listeners.forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
