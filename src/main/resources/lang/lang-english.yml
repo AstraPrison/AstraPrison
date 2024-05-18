@@ -5,5 +5,22 @@
 
 prefix: '<aqua><b>Astra</b> <dark_gray><b>|<reset>'
 
+admin:
+  help:
+    - 'Astra Admin Commands:'
+    - '<dark_gray>|<white> /astra <gray>- Shows plugin information!'
+    - '<dark_gray>|<white> /astra help <gray>- Shows this information!'
+
+omni-tool:
+  admin:
+    help:
+      - 'Omni-Tool Admin Commands:'
+      - '<dark_gray>|<white> /omnitool give <gray>- Give an omni-tool to a player!'
+    give: '{PREFIX}<green> You gave<white> {PLAYER}<green> a new omni-tool!'
+
+  received: '{PREFIX}<green> You were given a new omni-tool!'
+
 errors:
-  no-permission: '{PREFIX} <red>No permission!'
+  no-permission: '{PREFIX}<red> No permission!'
+  select-player: '{PREFIX}<red> Select a player!'
+  invalid-player: '{PREFIX}<red> Invalid player: ''<white>{PLAYER}<red>'''
