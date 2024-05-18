@@ -4,7 +4,6 @@ import dev.fabled.astra.utils.configuration.JsonConfig;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class MineManager {
 
@@ -16,9 +15,5 @@ public class MineManager {
         mines = new HashMap<>();
     }
 
-    public void onReload() {
-        final Set<String> mineSet = mineData.options().getSet("mines");
-        mineSet.forEach(id -> mines.put(id, new Mine(id)));
-    }
 
 }

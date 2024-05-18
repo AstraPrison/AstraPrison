@@ -2,7 +2,6 @@ package dev.fabled.astra.commands;
 
 import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
-import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,8 +39,6 @@ public final class CommandManager {
         if (command.usage != null && !command.usage.isEmpty()) {
             wrapper.setUsage(command.usage);
         }
-
-        Bukkit.getCommandMap().register("astra", wrapper);
     }
 
 }

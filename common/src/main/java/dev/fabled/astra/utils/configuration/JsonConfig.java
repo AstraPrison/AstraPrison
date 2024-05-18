@@ -2,84 +2,64 @@ package dev.fabled.astra.utils.configuration;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dev.fabled.astra.Astra;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
+import java.io.*;
 import java.util.HashMap;
+import java.util.Map;
 
-public class JsonConfig implements AstraConfig {
+public class JsonConfig {
 
-    private static final Gson gson;
+    private @NotNull Map<String, Object> map;
 
-    static {
-        gson = new GsonBuilder().setPrettyPrinting().create();
+    public JsonConfig(String s) {
+        map = new HashMap<>();
     }
 
-    private @NotNull final String filePath;
-    private File file;
-    private final JsonConfiguration jsonConfiguration;
-
-    public JsonConfig(@NotNull final String filePath) {
-        this.filePath = filePath.endsWith(".json") ? filePath : filePath + ".json";
-        jsonConfiguration = new JsonConfiguration();
-        save();
-        reload();
-        save();
+    @NotNull Map<String, Object> getMap() {
+        return map;
     }
 
-    private File file() {
-        return new File(Astra.getPlugin().getDataFolder(), filePath);
+    void setMap(@NotNull final Map<String, Object> map) {
+        this.map = map;
     }
 
-    public JsonConfiguration options() {
-        return jsonConfiguration;
-    }
-
-    @Override
-    public void saveFile() {
-        final String json = gson.toJson(jsonConfiguration.getMap());
-        file.delete();
-        try {
-            Files.write(
-                    file.toPath(),
-                    json.getBytes(),
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.WRITE
-            );
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void save() {
-        if (file == null) {
-            file = file();
-        }
-
-        if (file.exists()) {
+    public void set(@NotNull final String path, @Nullable final Object object) {
+        if (object == null) {
+            map.remove(path);
             return;
         }
 
-        Astra.getPlugin().saveResource(filePath, false);
+        map.put(path, object);
     }
 
-    @Override
-    public void reload() {
-        try {
-            //noinspection unchecked
-            jsonConfiguration.setMap(gson.fromJson(new FileReader(file), HashMap.class));
-        }
-        catch (FileNotFoundException e) {
+    public Object get(@NotNull final String path, @Nullable final Object def) {
+        return map.getOrDefault(path, def);
+    }
+
+
+    public Object get(@NotNull final String path) {
+        return get(path, null);
+    }
+
+    public void load(@NotNull File file) {
+        try (Reader reader = new FileReader(file)) {
+            Gson gson = new Gson();
+            map = gson.fromJson(reader, new HashMap<String, Object>().getClass());
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public void save(@NotNull File file) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(map);
+
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
