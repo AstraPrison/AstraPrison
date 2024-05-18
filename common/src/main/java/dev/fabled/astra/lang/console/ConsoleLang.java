@@ -2,8 +2,6 @@ package dev.fabled.astra.lang.console;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.List;
-
 public class ConsoleLang {
 
     /*
