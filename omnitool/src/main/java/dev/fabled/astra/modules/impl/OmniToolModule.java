@@ -4,6 +4,9 @@ import dev.fabled.astra.Astra;
 import dev.fabled.astra.commands.BrigadierCommand;
 import dev.fabled.astra.commands.CommandManager;
 import dev.fabled.astra.commands.OmniToolCommand;
+import dev.fabled.astra.lang.LocaleManager;
+import dev.fabled.astra.lang.impl.OmniToolLang;
+import dev.fabled.astra.lang.interfaces.LangKeys;
 import dev.fabled.astra.modules.AstraModule;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.Nullable;
@@ -29,12 +32,21 @@ public class OmniToolModule extends AstraModule {
 
     private NamespacedKey omniToolKey;
 
+    private final List<LangKeys> lang = List.of(
+            new OmniToolLang()
+    );
+
     private final List<BrigadierCommand> commands = List.of(
             new OmniToolCommand()
     );
 
     public OmniToolModule() {
         super(ID);
+    }
+
+    @Override
+    public void onLoad() {
+        lang.forEach(LocaleManager.getInstance()::registerLanguageKeys);
     }
 
     @Override
