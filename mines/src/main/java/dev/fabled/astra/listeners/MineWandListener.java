@@ -17,6 +17,7 @@ public class MineWandListener implements Listener {
     public void onInteract(PlayerInteractEvent event) {
         final Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.CREATIVE) {
+            event.setCancelled(true);
             return;
         }
 
@@ -37,17 +38,22 @@ public class MineWandListener implements Listener {
 
         final Action action = event.getAction();
         if (action == Action.LEFT_CLICK_BLOCK) {
-            MineWand.setPositionOne(player, event.getClickedBlock().getLocation());
-            player.sendMessage(MiniColor.parse("<green>You set position one!"));
+            if (!MineWand.hasPositionOne(player)) {
+                MineWand.setPositionOne(player, event.getClickedBlock().getLocation());
+                player.sendMessage(MiniColor.parse("<green>You set position one!"));
+            } else {
+                player.sendMessage(MiniColor.parse("<red>Position one is already set!"));
+            }
             return;
         }
 
-        if (action != Action.RIGHT_CLICK_BLOCK) {
-            return;
+        if (action == Action.RIGHT_CLICK_BLOCK && !event.getHand().name().contains("OFF_HAND")) {
+            if (!MineWand.hasPositionTwo(player)) {
+                MineWand.setPositionTwo(player, event.getClickedBlock().getLocation());
+                player.sendMessage(MiniColor.parse("<green>You set position two!"));
+            } else {
+                //player.sendMessage(MiniColor.parse("<red>Position two is already set!"));
+            }
         }
-
-        MineWand.setPositionTwo(player, event.getClickedBlock().getLocation());
-        player.sendMessage(MiniColor.parse("<green>You set position two!"));
     }
-
 }
