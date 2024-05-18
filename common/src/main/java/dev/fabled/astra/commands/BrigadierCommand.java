@@ -4,11 +4,17 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
+import dev.fabled.astra.utils.ListUtils;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 public abstract class BrigadierCommand {
 
@@ -37,19 +43,26 @@ public abstract class BrigadierCommand {
 
     abstract @NotNull CommandNode<CommandSourceStack> buildCommandNode();
 
-    static @NotNull LiteralArgumentBuilder<CommandSourceStack> literal(@NotNull final String name) {
+    @NotNull LiteralArgumentBuilder<CommandSourceStack> literal(@NotNull final String name) {
         return LiteralArgumentBuilder.literal(name);
     }
 
-    static @NotNull <T> RequiredArgumentBuilder<CommandSourceStack, T> arg(
+    @NotNull <T> RequiredArgumentBuilder<CommandSourceStack, T> arg(
             @NotNull final String name,
             @NotNull final ArgumentType<T> argumentType
     ) {
         return RequiredArgumentBuilder.argument(name, argumentType);
     }
 
-    static @NotNull CommandSender getSender(@NotNull final CommandContext<CommandSourceStack> context) {
+    @NotNull CommandSender getSender(@NotNull final CommandContext<CommandSourceStack> context) {
         return context.getSource().getBukkitSender();
+    }
+
+    @NotNull CompletableFuture<Suggestions> suggestOnlinePlayers(
+            @NotNull final CommandContext<CommandSourceStack> context,
+            @NotNull final SuggestionsBuilder builder
+    ) {
+        return SharedSuggestionProvider.suggest(ListUtils.playerNames(), builder);
     }
 
 }
