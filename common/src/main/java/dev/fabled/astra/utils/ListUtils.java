@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +37,25 @@ public class ListUtils {
         return result == null ? new ArrayList<>() : result;
     }
 
+    public static @Nullable List<String> fromConfigString(
+            @NotNull final YamlConfig config,
+            @NotNull final String path,
+            @NotNull final String separator
+    ) {
+        final Object object = config.options().get(path);
+        if (object == null) {
+            return null;
+        }
+
+        if (object instanceof List<?>) {
+            return config.options().getStringList(path);
+        }
+
+        return new ArrayList<>(
+                Arrays.stream(object.toString().split(separator)).toList()
+        );
+    }
+
     public static @NotNull List<String> playerNames() {
         return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
     }
@@ -49,6 +69,39 @@ public class ListUtils {
 
         names.remove(player.getName());
         return names;
+    }
+
+    public static @NotNull List<String> replace(@NotNull final List<String> input, @Nullable final String... replacements) {
+        if (replacements == null) {
+            return input;
+        }
+
+        int length = replacements.length;
+        if (length % 2 != 0) {
+            length--;
+        }
+
+        if (length <= 0) {
+            return input;
+        }
+
+        final List<String> parsed = new ArrayList<>();
+        for (String string : input) {
+            for (int i = 0; i < length; i += 2) {
+                final String target = replacements[i];
+                final String replacement = replacements[i + 1];
+
+                if (target == null || replacement == null) {
+                    continue;
+                }
+
+                string = string.replace(target, replacement);
+            }
+
+            parsed.add(string);
+        }
+
+        return parsed;
     }
 
 }
