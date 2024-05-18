@@ -2,7 +2,8 @@ package dev.fabled.astra;
 
 import dev.fabled.astra.commands.CommandManager;
 import dev.fabled.astra.commands.AstraCommand;
-import dev.fabled.astra.lang.interfaces.MessageKeys;
+import dev.fabled.astra.lang.impl.AstraAdminLang;
+import dev.fabled.astra.lang.interfaces.LangKeys;
 import dev.fabled.astra.lang.LocaleManager;
 import dev.fabled.astra.lang.impl.ErrorLang;
 import dev.fabled.astra.listeners.MenuListener;
@@ -19,11 +20,11 @@ import java.util.List;
 public class AstraPlugin extends JavaPlugin implements AstraUtilities {
 
     private YamlConfig configYml;
-    private LocaleManager localeManager;
     private ModuleManager moduleManager;
     private CommandManager commandManager;
 
-    private final List<MessageKeys> lang = List.of(
+    private final List<LangKeys> lang = List.of(
+            new AstraAdminLang(),
             new ErrorLang()
     );
 
@@ -37,8 +38,8 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         configYml = new YamlConfig("config");
         AstraLog.onLoad();
 
-        localeManager = new LocaleManager();
-        lang.forEach(localeManager::registerKeys);
+        LocaleManager.onLoad();
+        lang.forEach(LocaleManager.getInstance()::registerLanguageKeys);
 
         moduleManager = new ModuleManager();
         new MinesModule();
@@ -87,11 +88,6 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
     @Override
     public YamlConfig getConfigYml() {
         return configYml;
-    }
-
-    @Override
-    public LocaleManager getLocaleManager() {
-        return localeManager;
     }
 
     @Override
