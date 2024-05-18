@@ -6,6 +6,8 @@ import dev.fabled.astra.utils.configuration.YamlConfig;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class AstraLog {
 
     private static @NotNull final String PREFIX;
@@ -50,6 +52,8 @@ public class AstraLog {
         }
     }
 
+
+
     public static void log(@NotNull final AstraLogLevel level, @NotNull final String... input) {
         send(level, false, input);
     }
@@ -58,6 +62,16 @@ public class AstraLog {
         log(AstraLogLevel.INFO, input);
     }
 
+    public static void log(@NotNull final AstraLogLevel level, @NotNull final List<String> input) {
+        send(level, false, input.toArray(new String[0]));
+    }
+
+    public static void log(@NotNull final List<String> input) {
+        log(AstraLogLevel.INFO, input);
+    }
+
+
+
     public static void debug(@NotNull final AstraLogLevel level, @NotNull final String... input) {
         send(level, true, input);
     }
@@ -65,6 +79,16 @@ public class AstraLog {
     public static void debug(@NotNull final String... input) {
         debug(AstraLogLevel.INFO, input);
     }
+
+    public static void debug(@NotNull final AstraLogLevel level, @NotNull final List<String> input) {
+        send(level, true, input.toArray(new String[0]));
+    }
+
+    public static void debug(@NotNull final List<String> input) {
+        debug(AstraLogLevel.INFO, input);
+    }
+
+
 
     public static void divider(@NotNull final AstraLogLevel level, final boolean debug) {
         send(level, debug, DIVIDER);
