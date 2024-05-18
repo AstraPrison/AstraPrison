@@ -23,13 +23,13 @@ public class MineGenerator {
     public static Map<Location, Material> fakeBlockMap = new HashMap<>();
 
 
-    public static Collection<BlockState> getBlocks(UUID playerUUID) {
+    public static Collection<BlockState> getBlocks(UUID playerUUID, String mineName) {
         ArrayList<BlockState> blockChanges = new ArrayList<>();
 
         World world = Bukkit.getWorld("world");
         String filePath = FILE;
 
-        MineData mineData = MineReader.readMineData(filePath);
+        MineData mineData = MineReader.readMineData(filePath, mineName);
 
         if (mineData != null) {
             int startX = mineData.getStartX();
@@ -55,11 +55,8 @@ public class MineGenerator {
                 endZ = temp;
             }
 
-            List<String> materials = Arrays.asList(
-                    "STONE",
-                    "COAL_ORE",
-                    "IRON_ORE",
-                    "GOLD_ORE"
+            List<String> materials = List.of(
+                    mineData.getMaterial().name().replace("material", "")
             );
             Collection<BlockState> existingBlocks = playerBlockChangesMap.get(playerUUID);
             if (existingBlocks != null) {

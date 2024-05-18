@@ -2,6 +2,7 @@ package dev.fabled.astra.utils;
 
 import com.google.gson.*;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -47,6 +48,8 @@ public class MineWriter {
             pos2Data.addProperty("endY", pos2.getY());
             pos2Data.addProperty("endZ", pos2.getZ());
             newMine.add("pos2", pos2Data);
+
+            newMine.addProperty("material", Material.COBBLESTONE.name());
 
             minesArray.add(newMine);
 

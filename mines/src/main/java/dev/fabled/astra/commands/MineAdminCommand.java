@@ -1,5 +1,6 @@
 package dev.fabled.astra.commands;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.CommandNode;
 import dev.fabled.astra.menus.MinePanel;
 import dev.fabled.astra.mines.generator.MineGenerator;
@@ -44,17 +45,19 @@ public class MineAdminCommand extends BrigadierCommand {
                             player.sendMessage("Mine wand given!");
                             return 0;
                         }))
-                .then(literal("create")
+                .then(
+                        literal("create")
+                                .then(arg("minename", StringArgumentType.word())
                         .executes(context -> {
                             if (!(getSender(context) instanceof Player player)) {
                                 return 0;
                             }
-                            Collection<BlockState> blockChanges = MineGenerator.getBlocks(player.getUniqueId());
+                            Collection<BlockState> blockChanges = MineGenerator.getBlocks(player.getUniqueId(), StringArgumentType.getString(context, "minename"));
                             player.sendMessage(blockChanges.size() + " blocks created!");
                             player.sendBlockChanges(blockChanges);
                             player.sendMessage("Mine created!");
                             return 0;
-                        }))
+                        })))
                 .then(literal("panel")
                         .executes(context -> {
                             if (!(getSender(context) instanceof Player player)) {
@@ -65,5 +68,6 @@ public class MineAdminCommand extends BrigadierCommand {
                         }))
                 .build();
     }
+
 
 }

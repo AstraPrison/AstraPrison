@@ -27,6 +27,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
     private ModuleManager moduleManager;
     private CommandManager commandManager;
 
+
     private final List<MessageKeys> lang = List.of(
             new ErrorLang()
     );
@@ -49,6 +50,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         moduleManager = new ModuleManager();
         new MinesModule();
         moduleManager.onLoad();
+
     }
 
     @Override
@@ -84,6 +86,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         AstraLog.onReload();
         moduleManager.onReload();
     }
+
 
     @Override
     public void onDisable() {

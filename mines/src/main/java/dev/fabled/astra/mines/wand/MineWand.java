@@ -91,57 +91,58 @@ public class MineWand implements Listener {
     public static void setPositionTwo(@NotNull final Player player, @NotNull final Location location) {
         if (!hasPositionTwo(player)) {
             Location pos1 = getPositionOne(player);
-            //if (pos1 != null && checkOverlap(pos1, location)) {
-            //    player.sendMessage(MiniColor.parse("<red>Positions overlap! Please select new positions."));
-            //   return;
-            // }
+            if (pos1 != null && checkOverlap(pos1, location)) {
+                player.sendMessage(MiniColor.parse("<red>Positions overlap! Please select new positions."));
+                return;
+            }
 
             POSITION_TWO.put(player.getUniqueId(), location);
             String mineName = generateMineName();
             MineWriter.writeMineToFile(pos1, location, mineName);
             player.sendMessage(MiniColor.parse("<green>The mine with the name \"" + mineName + "\" has been successfully created!"));
 
-            // Setze die Positionen und den Rechtsklick-Status zurück
+
             POSITION_ONE.remove(player.getUniqueId());
             POSITION_TWO.remove(player.getUniqueId());
             hasRightClicked.remove(player.getUniqueId());
         }
     }
 
+
     private static String generateMineName() {
         String baseName = "Mine";
         char letter = 'A';
-        //while (isMineNameTaken(baseName + letter)) {
-        //    letter++;
-        // }
+        while (isMineNameTaken(baseName + letter)) {
+            letter++;
+        }
         return baseName + letter;
     }
 
-    //  private static boolean isMineNameTaken(String mineName) {
-    //      try {
-    //          File file = new File(FILE);
-    //          if (!file.exists()) {
-    //              return false;
-    //          }
-    //
-    //          FileReader reader = new FileReader(file);
-    //          JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
-    //          reader.close();
-    //
-    //          if (jsonObject.has("mines")) {
-    //              JsonArray minesArray = jsonObject.getAsJsonArray("mines");
-    //              for (int i = 0; i < minesArray.size(); i++) {
-    //                  JsonObject mine = minesArray.get(i).getAsJsonObject();
-    //                  if (mine.has("name") && mine.get("name").getAsString().equals(mineName)) {
-    //                      return true;
-    //                  }
-    //              }
-    //          }
-    //      } catch (IOException e) {
-    //          e.printStackTrace();
-    //      }
-    //      return false;
-    //  }
+    private static boolean isMineNameTaken(String mineName) {
+        try {
+            File file = new File(FILE);
+            if (!file.exists()) {
+                return false;
+            }
+
+            FileReader reader = new FileReader(file);
+            JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+            reader.close();
+
+            if (jsonObject.has("mines")) {
+                JsonArray minesArray = jsonObject.getAsJsonArray("mines");
+                for (int i = 0; i < minesArray.size(); i++) {
+                    JsonObject mine = minesArray.get(i).getAsJsonObject();
+                    if (mine.has("name") && mine.get("name").getAsString().equals(mineName)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public static boolean hasPositionOne(@NotNull final Player player) {
         return POSITION_ONE.containsKey(player.getUniqueId());

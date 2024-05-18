@@ -1,5 +1,7 @@
 package dev.fabled.astra.utils;
 
+import org.bukkit.Material;
+
 public class MineData {
     private final int startX;
     private final int startY;
@@ -7,14 +9,16 @@ public class MineData {
     private final int endX;
     private final int endY;
     private final int endZ;
+    private final Material material;
 
-    public MineData(int startX, int startY, int startZ, int endX, int endY, int endZ) {
+    public MineData(int startX, int startY, int startZ, int endX, int endY, int endZ, Material material) {
         this.startX = startX;
         this.startY = startY;
         this.startZ = startZ;
         this.endX = endX;
         this.endY = endY;
         this.endZ = endZ;
+        this.material = material;
     }
 
     public int getStartX() {
@@ -39,5 +43,9 @@ public class MineData {
 
     public int getEndZ() {
         return endZ;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 }
