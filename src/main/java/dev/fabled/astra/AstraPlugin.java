@@ -1,20 +1,16 @@
 package dev.fabled.astra;
 
-import dev.fabled.astra.commands.AstraCommand;
 import dev.fabled.astra.commands.CommandManager;
-import dev.fabled.astra.commands.MineAdminCommand;
+import dev.fabled.astra.commands.AstraCommand;
+import dev.fabled.astra.lang.interfaces.MessageKeys;
 import dev.fabled.astra.lang.LocaleManager;
 import dev.fabled.astra.lang.impl.ErrorLang;
-import dev.fabled.astra.lang.interfaces.MessageKeys;
 import dev.fabled.astra.listeners.MenuListener;
-import dev.fabled.astra.listeners.MineWandListener;
-import dev.fabled.astra.menus.MinePanel;
 import dev.fabled.astra.modules.ModuleManager;
 import dev.fabled.astra.modules.impl.MinesModule;
 import dev.fabled.astra.utils.configuration.YamlConfig;
 import dev.fabled.astra.utils.logger.AstraLog;
 import dev.fabled.astra.utils.logger.AstraLogLevel;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,15 +23,12 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
     private ModuleManager moduleManager;
     private CommandManager commandManager;
 
-
     private final List<MessageKeys> lang = List.of(
             new ErrorLang()
     );
 
     private final List<Listener> listeners = List.of(
-            new MenuListener(),
-            new MineWandListener(),
-            new MinePanel(Bukkit.getServer().getPlayer(""))
+            new MenuListener()
     );
 
     @Override
@@ -50,17 +43,16 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         moduleManager = new ModuleManager();
         new MinesModule();
         moduleManager.onLoad();
-
     }
 
     @Override
     public void onEnable() {
         commandManager = new CommandManager();
         commandManager.register(new AstraCommand());
-        commandManager.register(new MineAdminCommand());
-        //moduleManager.onEnable();
+        moduleManager.onEnable();
 
         listeners.forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
+        commandManager.register(new AstraCommand());
 
         AstraLog.divider();
         AstraLog.log("",
@@ -74,7 +66,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         AstraLog.log(AstraLogLevel.SUCCESS, "AstraPrison enabled!");
         AstraLog.log(
                 "Version: " + getPluginMeta().getVersion(),
-                "Developed by Mantice, DrDivx2k",
+                "Developed by Mantice",
                 ""
         );
         AstraLog.divider();
@@ -86,7 +78,6 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         AstraLog.onReload();
         moduleManager.onReload();
     }
-
 
     @Override
     public void onDisable() {

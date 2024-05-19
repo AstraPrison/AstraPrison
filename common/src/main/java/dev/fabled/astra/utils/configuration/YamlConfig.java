@@ -3,6 +3,7 @@ package dev.fabled.astra.utils.configuration;
 import dev.fabled.astra.Astra;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -51,7 +52,12 @@ public class YamlConfig implements AstraConfig {
             return;
         }
 
-        Astra.getPlugin().saveResource(filePath, false);
+        final JavaPlugin plugin = Astra.getPlugin();
+        if (plugin.getResource(filePath) == null) {
+            return;
+        }
+
+        plugin.saveResource(filePath, false);
     }
 
     @Override
