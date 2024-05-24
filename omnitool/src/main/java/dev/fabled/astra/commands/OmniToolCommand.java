@@ -32,11 +32,12 @@ public class OmniToolCommand extends BrigadierCommand {
                 .then(literal("give").executes(this::give)
                         .then(arg("player", StringArgumentType.word())
                                 .executes(this::givePlayer)
-                                .suggests(this::suggestOnlinePlayers)
+                                .suggests(this::suggestPlayers)
                         )
                 )
                 .build();
     }
+
 
     @SuppressWarnings("SameReturnValue")
     private int help(@NotNull final CommandContext<CommandSourceStack> context) {
@@ -84,5 +85,4 @@ public class OmniToolCommand extends BrigadierCommand {
         LocaleManager.send(player, OmniToolLang.ADMIN_GIVE, "{PLAYER}", target.getName());
         return 0;
     }
-
 }

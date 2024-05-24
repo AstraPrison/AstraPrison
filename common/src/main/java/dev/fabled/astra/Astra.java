@@ -10,7 +10,7 @@ public final class Astra {
     private static JavaPlugin plugin;
     private static AstraUtilities utilities;
 
-    private static AllowedMaterials allowedMaterials;
+    public static AllowedMaterials allowedMaterials;
 
     static void onLoad(final JavaPlugin plugin) {
         Astra.plugin = plugin;

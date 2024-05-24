@@ -1,14 +1,22 @@
 package dev.fabled.astra.commands;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public abstract class BrigadierCommand {
 
@@ -50,6 +58,14 @@ public abstract class BrigadierCommand {
 
     static @NotNull CommandSender getSender(@NotNull final CommandContext<CommandSourceStack> context) {
         return context.getSource().getBukkitSender();
+    }
+
+    public CompletableFuture<Suggestions> suggestPlayers(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
+        List<String> playerNames = context.getSource().getServer().getPlayerList().getPlayers().stream()
+                .map(ServerPlayer::getGameProfile)
+                .map(GameProfile::getName)
+                .collect(Collectors.toList());
+        return net.minecraft.commands.SharedSuggestionProvider.suggest(playerNames, builder);
     }
 
 }

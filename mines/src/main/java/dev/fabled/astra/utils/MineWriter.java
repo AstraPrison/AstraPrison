@@ -49,7 +49,11 @@ public class MineWriter {
             pos2Data.addProperty("endZ", pos2.getZ());
             newMine.add("pos2", pos2Data);
 
-            newMine.addProperty("material", Material.COBBLESTONE.name());
+            newMine.addProperty("material1", Material.COBBLESTONE.name());
+            newMine.addProperty("material2", Material.STONE.name());
+            newMine.addProperty("material3", Material.COAL_ORE.name());
+            newMine.addProperty("resetType", "Blocks");
+            newMine.addProperty("airgap", true);
 
             minesArray.add(newMine);
 
@@ -59,6 +63,41 @@ public class MineWriter {
             FileWriter writer = new FileWriter(file);
             writer.write(jsonOutput);
             writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteMineFromFile(@NotNull final String mineName) {
+        try {
+            File file = new File(FILE);
+            if (file.exists()) {
+                FileReader reader = new FileReader(file);
+                JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+                reader.close();
+
+                if (jsonObject.has("mines")) {
+                    JsonArray minesArray = jsonObject.getAsJsonArray("mines");
+
+                    JsonArray updatedMinesArray = new JsonArray();
+
+                    for (JsonElement element : minesArray) {
+                        JsonObject mine = element.getAsJsonObject();
+                        String name = mine.get("name").getAsString();
+
+                        if (!name.equals(mineName)) {
+                            updatedMinesArray.add(mine);
+                        }
+                    }
+
+                    jsonObject.add("mines", updatedMinesArray);
+
+                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    FileWriter writer = new FileWriter(file);
+                    writer.write(gson.toJson(jsonObject));
+                    writer.close();
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

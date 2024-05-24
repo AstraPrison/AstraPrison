@@ -32,10 +32,16 @@ public class MineReader {
                         int endY = pos2.get("endY").getAsInt();
                         int endZ = pos2.get("endZ").getAsInt();
 
-                        String materialString = mine.get("material").getAsString();
+                        String materialString = mine.get("material1").getAsString();
+                        String materialString2 = mine.get("material2").getAsString();
+                        String materialString3 = mine.get("material3").getAsString();
                         Material material = parseMaterial(materialString);
-                        if (material != null) {
-                            return new MineData(startX, startY, startZ, endX, endY, endZ, material);
+                        Material material2 = parseMaterial(materialString2);
+                        Material material3 = parseMaterial(materialString3);
+                        String resetType = mine.get("resetType").getAsString();
+                        Boolean airgap = mine.get("airgap").getAsBoolean();
+                        if (material != null && material2 != null && material3 != null) {
+                            return new MineData(startX, startY, startZ, endX, endY, endZ, material, material2, material3, resetType, airgap);
                         } else {
                             System.err.println("Invalid material name: " + materialString);
                             return null;

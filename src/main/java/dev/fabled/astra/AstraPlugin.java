@@ -1,16 +1,21 @@
 package dev.fabled.astra;
 
-import dev.fabled.astra.commands.CommandManager;
+import com.github.retrooper.packetevents.PacketEvents;
 import dev.fabled.astra.commands.AstraCommand;
-import dev.fabled.astra.lang.interfaces.MessageKeys;
+import dev.fabled.astra.commands.CommandManager;
+import dev.fabled.astra.commands.OmniToolCommand;
 import dev.fabled.astra.lang.LocaleManager;
+import dev.fabled.astra.lang.impl.AstraAdminLang;
 import dev.fabled.astra.lang.impl.ErrorLang;
-import dev.fabled.astra.listeners.MenuListener;
+import dev.fabled.astra.lang.interfaces.LangKeys;
+import dev.fabled.astra.listeners.*;
 import dev.fabled.astra.modules.ModuleManager;
 import dev.fabled.astra.modules.impl.MinesModule;
+import dev.fabled.astra.modules.impl.OmniToolModule;
 import dev.fabled.astra.utils.configuration.YamlConfig;
 import dev.fabled.astra.utils.logger.AstraLog;
 import dev.fabled.astra.utils.logger.AstraLogLevel;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,12 +28,18 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
     private ModuleManager moduleManager;
     private CommandManager commandManager;
 
-    private final List<MessageKeys> lang = List.of(
+
+    private final List<LangKeys> lang = List.of(
+            new AstraAdminLang(),
             new ErrorLang()
     );
 
     private final List<Listener> listeners = List.of(
-            new MenuListener()
+            new MenuListener(),
+            new MineWandListener(),
+            new PacketInteractListener(this),
+            new PacketAdapter(),
+            new MinePanelListener()
     );
 
     @Override
@@ -37,22 +48,36 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         configYml = new YamlConfig("config");
         AstraLog.onLoad();
 
-        localeManager = new LocaleManager();
-        lang.forEach(localeManager::registerKeys);
+        LocaleManager.onLoad();
+        lang.forEach(LocaleManager.getInstance()::registerLanguageKeys);
+
 
         moduleManager = new ModuleManager();
         new MinesModule();
+        new OmniToolModule();
         moduleManager.onLoad();
     }
 
     @Override
     public void onEnable() {
         commandManager = new CommandManager();
-        commandManager.register(new AstraCommand());
+        commandManager.register(new AstraCommand(this));
+        commandManager.register(new OmniToolCommand());
         moduleManager.onEnable();
 
         listeners.forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
-        commandManager.register(new AstraCommand());
+
+        //Packetevents
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
+                .checkForUpdates(true)
+                .bStats(true);
+        PacketEvents.getAPI().load();
+
+        //PacketEvents.getAPI().getEventManager().registerListener(new PacketEventsListener());
+        //PacketEvents.getAPI().getEventManager().registerListener(new PacketInteractListener());
+        PacketEvents.getAPI().init();
+
 
         AstraLog.divider();
         AstraLog.log("",
@@ -66,7 +91,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         AstraLog.log(AstraLogLevel.SUCCESS, "AstraPrison enabled!");
         AstraLog.log(
                 "Version: " + getPluginMeta().getVersion(),
-                "Developed by Mantice",
+                "Developed by Mantice and DrDivx2k",
                 ""
         );
         AstraLog.divider();
@@ -84,6 +109,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         moduleManager.onDisable();
         AstraLog.log(AstraLogLevel.SUCCESS, "AstraPrison disabled!");
     }
+
 
     @Override
     public YamlConfig getConfigYml() {

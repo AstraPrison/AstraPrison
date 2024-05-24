@@ -13,7 +13,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -38,7 +40,7 @@ public class MineWand implements Listener {
     private static final Map<UUID, Location> POSITION_ONE;
     private static final Map<UUID, Location> POSITION_TWO;
     private static final Map<UUID, Boolean> hasRightClicked = new HashMap<>();
-    private static final int mineCounter = 0;
+    private static final Map<UUID, Boolean> waitingForName = new HashMap<>();
 
     static {
         WAND_NAMESPACED_KEY = new NamespacedKey(Astra.getPlugin(), "astra-mine-wand");
@@ -83,31 +85,21 @@ public class MineWand implements Listener {
     }
 
     public static void setPositionOne(@NotNull final Player player, @NotNull final Location location) {
-        if (!hasPositionOne(player)) {
-            POSITION_ONE.put(player.getUniqueId(), location);
-        }
+        POSITION_ONE.put(player.getUniqueId(), location);
+        player.sendMessage(MiniColor.parse("<green>Position one set!"));
     }
 
     public static void setPositionTwo(@NotNull final Player player, @NotNull final Location location) {
-        if (!hasPositionTwo(player)) {
-            Location pos1 = getPositionOne(player);
-            if (pos1 != null && checkOverlap(pos1, location)) {
-                player.sendMessage(MiniColor.parse("<red>Positions overlap! Please select new positions."));
-                return;
-            }
-
-            POSITION_TWO.put(player.getUniqueId(), location);
-            String mineName = generateMineName();
-            MineWriter.writeMineToFile(pos1, location, mineName);
-            player.sendMessage(MiniColor.parse("<green>The mine with the name \"" + mineName + "\" has been successfully created!"));
-
-
-            POSITION_ONE.remove(player.getUniqueId());
-            POSITION_TWO.remove(player.getUniqueId());
-            hasRightClicked.remove(player.getUniqueId());
+        Location pos1 = getPositionOne(player);
+        if (pos1 == null) {
+            player.sendMessage(MiniColor.parse("<red>Position one not set! Please set position one first."));
+            return;
         }
-    }
 
+        POSITION_TWO.put(player.getUniqueId(), location);
+        waitingForName.put(player.getUniqueId(), true);
+        player.sendMessage(MiniColor.parse("<yellow>Type the name of the mine: "));
+    }
 
     private static String generateMineName() {
         String baseName = "Mine";
@@ -160,44 +152,12 @@ public class MineWand implements Listener {
         return POSITION_TWO.get(player.getUniqueId());
     }
 
-    public static boolean checkOverlap(@NotNull Location pos1, @NotNull Location pos2) {
-        try {
-            File file = new File(FILE);
-            if (!file.exists()) {
-                return false;
-            }
-
-            FileReader reader = new FileReader(file);
-            JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
-            reader.close();
-
-            if (jsonObject.has("mines")) {
-                JsonArray minesArray = jsonObject.getAsJsonArray("mines");
-                for (int i = 0; i < minesArray.size(); i++) {
-                    JsonObject mine = minesArray.get(i).getAsJsonObject();
-                    JsonObject pos1Data = mine.getAsJsonObject("pos1");
-                    JsonObject pos2Data = mine.getAsJsonObject("pos2");
-
-                    Location existingPos1 = new Location(null, pos1Data.get("startX").getAsDouble(), pos1Data.get("startY").getAsDouble(), pos1Data.get("startZ").getAsDouble());
-                    Location existingPos2 = new Location(null, pos2Data.get("endX").getAsDouble(), pos2Data.get("endY").getAsDouble(), pos2Data.get("endZ").getAsDouble());
-
-                    if (positionsOverlap(existingPos1, existingPos2, pos1, pos2)) {
-                        return true;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private static boolean positionsOverlap(Location existingPos1, Location existingPos2, Location pos1, Location pos2) {
-        return existingPos1.equals(pos1) || existingPos2.equals(pos1) || existingPos1.equals(pos2) || existingPos2.equals(pos2);
-    }
-
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND) {
+            return;
+        }
+
         Player player = event.getPlayer();
         ItemStack item = event.getItem();
         UUID playerId = player.getUniqueId();
@@ -207,7 +167,12 @@ public class MineWand implements Listener {
                 return;
             }
 
-            if (event.getHand().name().contains("HAND") && event.getAction().name().contains("RIGHT")) {
+            if (event.getAction().name().contains("RIGHT")) {
+                if (!hasPositionOne(player)) {
+                    player.sendMessage(MiniColor.parse("<red>Position one not set! Please set position one first."));
+                    return;
+                }
+
                 setPositionTwo(player, player.getLocation());
                 hasRightClicked.put(playerId, true);
                 event.setCancelled(true);
@@ -216,6 +181,36 @@ public class MineWand implements Listener {
                 hasRightClicked.put(playerId, false);
                 event.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
+        UUID playerId = player.getUniqueId();
+
+        if (waitingForName.containsKey(playerId) && waitingForName.get(playerId)) {
+            String mineName = event.getMessage().trim();
+            Location pos1 = getPositionOne(player);
+            Location pos2 = getPositionTwo(player);
+
+            if (mineName.isEmpty()) {
+                mineName = generateMineName();
+                player.sendMessage(MiniColor.parse("<yellow>No name provided. Using default name: " + mineName));
+            } else if (isMineNameTaken(mineName)) {
+                player.sendMessage(MiniColor.parse("<red>The mine name \"" + mineName + "\" is already taken. Using default name."));
+                mineName = generateMineName();
+            }
+
+            MineWriter.writeMineToFile(pos1, pos2, mineName);
+            player.sendMessage(MiniColor.parse("<green>The mine with the name \"" + mineName + "\" has been successfully created!"));
+
+            POSITION_ONE.remove(playerId);
+            POSITION_TWO.remove(playerId);
+            hasRightClicked.remove(playerId);
+            waitingForName.remove(playerId);
+
+            event.setCancelled(true);
         }
     }
 }

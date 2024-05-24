@@ -63,7 +63,7 @@ public class MineAdminCommand extends BrigadierCommand {
                             if (!(getSender(context) instanceof Player player)) {
                                 return 0;
                             }
-                            player.openInventory(new MinePanel(player).getInventory());
+                            player.openInventory(new MinePanel().getInventory());
                             return 0;
                         }))
                 .build();

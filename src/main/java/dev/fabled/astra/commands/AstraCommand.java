@@ -2,16 +2,19 @@ package dev.fabled.astra.commands;
 
 import com.mojang.brigadier.tree.CommandNode;
 import dev.fabled.astra.Astra;
+import dev.fabled.astra.AstraPlugin;
 import dev.fabled.astra.utils.MiniColor;
 import dev.fabled.astra.utils.logger.AstraLog;
 import net.minecraft.commands.CommandSourceStack;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-
 public class AstraCommand extends BrigadierCommand {
 
-    public AstraCommand() {
+    private final AstraPlugin plugin;
+
+    public AstraCommand(AstraPlugin plugin) {
         super(
                 "astra",
                 new String[]{"astraprison"},
@@ -19,10 +22,12 @@ public class AstraCommand extends BrigadierCommand {
                 "The main AstraPrison admin command!",
                 "/astra"
         );
+        this.plugin = plugin;
     }
 
     @Override
-    @NotNull CommandNode<CommandSourceStack> buildCommandNode() {
+    @NotNull
+    CommandNode<CommandSourceStack> buildCommandNode() {
         return literal(name)
                 .executes(c -> {
                     if (!(getSender(c) instanceof Player player)) {
@@ -39,7 +44,22 @@ public class AstraCommand extends BrigadierCommand {
                     player.sendMessage(MiniColor.parse("<gray>Type <white>/astra help<gray> for more commands!"));
                     return 0;
                 })
+                .then(literal("reload")
+                        .executes(context -> {
+                            CommandSender sender = getSender(context);
+                            if (sender instanceof Player player) {
+                                if (player.hasPermission("astra.reload")) {
+                                    plugin.onReload();
+                                    player.sendMessage("Astra plugin reloaded!");
+                                } else {
+                                    player.sendMessage("You don't have permission to use this command!");
+                                }
+                            } else {
+                                plugin.onReload();
+                                sender.sendMessage("Astra plugin reloaded!");
+                            }
+                            return 1;
+                        }))
                 .build();
     }
-
 }

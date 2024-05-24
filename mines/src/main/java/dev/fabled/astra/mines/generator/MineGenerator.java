@@ -56,68 +56,49 @@ public class MineGenerator {
             }
 
             List<String> materials = List.of(
-                    mineData.getMaterial().name().replace("material", "")
+                    mineData.getMaterial().name(),
+                    mineData.getMaterial2().name(),
+                    mineData.getMaterial3().name()
             );
-            Collection<BlockState> existingBlocks = playerBlockChangesMap.get(playerUUID);
-            if (existingBlocks != null) {
-                blockChanges.addAll(existingBlocks);
-            } else {
-                for (int x = startX; x <= endX; ++x) {
-                    for (int y = startY; y <= endY; ++y) {
-                        for (int z = startZ; z <= endZ; ++z) {
-                            String selectedMaterial = materials.get(new Random().nextInt(materials.size()));
-                            if (selectedMaterial == null) {
-                                Astra.getPlugin().getLogger().severe("Wrong material: " + selectedMaterial);
-                                continue;
-                            }
-                            Location blockLocation = new Location(world, x, y, z);
-                            Block block = blockLocation.getBlock();
-                            BlockState blockState = block.getState();
-                            String minecraftMaterial = convertToMinecraftMaterial(selectedMaterial);
-                            BlockData blockData = Bukkit.createBlockData(minecraftMaterial);
-                            blockState.setBlockData(blockData);
-                            blockState.setType(Material.valueOf(selectedMaterial));
 
-                            savePlayerUUIDForBlock(blockState, playerUUID);
+            playerBlockChangesMap.remove(playerUUID);
 
-                            blockState.setMetadata("material", new FixedMetadataValue(Astra.getPlugin(), selectedMaterial));
-                            blockState.setMetadata("amount", new FixedMetadataValue(Astra.getPlugin(), 1.0));
+            int gap = mineData.airgap() ? 1 : 0;
+            int adjustedStartX = startX + gap;
+            int adjustedStartY = startY;
+            int adjustedStartZ = startZ + gap;
+            int adjustedEndX = endX - gap;
+            int adjustedEndY = endY - gap;
+            int adjustedEndZ = endZ - gap;
 
-                            fakeBlockMap.put(blockLocation, Material.valueOf(selectedMaterial));
-                            blockChanges.add(blockState);
+            for (int x = adjustedStartX; x <= adjustedEndX; ++x) {
+                for (int y = adjustedStartY; y <= adjustedEndY; ++y) {
+                    for (int z = adjustedStartZ; z <= adjustedEndZ; ++z) {
+                        String selectedMaterial = materials.get(new Random().nextInt(materials.size()));
+                        if (selectedMaterial == null) {
+                            Astra.getPlugin().getLogger().severe("Wrong material: " + selectedMaterial);
+                            continue;
                         }
-                    }
-                }
-                playerBlockChangesMap.put(playerUUID, blockChanges);
-            }
-            for (int x = startX - 1; x <= endX + 1; ++x) {
-                for (int y = startY; y <= endY + 1; ++y) {
-                    for (int z = startZ - 1; z <= endZ + 1; ++z) {
-                        if (x >= startX && x <= endX && y >= startY && y <= endY && z >= startZ && z <= endZ) continue;
-                        Location airLocation = new Location(world, x, y, z);
-                        Block airBlock = airLocation.getBlock();
-                        BlockState airBlockState = airBlock.getState();
-                        airBlockState.setType(Material.AIR);
-                        blockChanges.add(airBlockState);
-                    }
-                }
-            }
-            for (int x = startX - 2; x <= endX + 2; ++x) {
-                for (int y = startY - 1; y <= endY; ++y) {
-                    for (int z = startZ - 2; z <= endZ + 2; ++z) {
-                        if (x >= startX && x <= endX && y >= startY && y <= endY && z >= startZ && z <= endZ) continue;
-                        Location bedrockLocation = new Location(world, x, y, z);
-                        Block bedrockBlock = bedrockLocation.getBlock();
-                        BlockState bedrockBlockState = bedrockBlock.getState();
-                        ArrayList<String> bordermaterials = new ArrayList<>(Collections.singletonList("BEDROCK"));
-                        Collections.shuffle(bordermaterials);
-                        String borderMaterial = bordermaterials.get(0);
-                        bedrockBlockState.setType(Material.valueOf(borderMaterial));
-                        bedrockBlockState.setBlockData(Bukkit.createBlockData(MineGenerator.convertToMinecraftMaterial(borderMaterial)));
-                        blockChanges.add(bedrockBlockState);
+                        Location blockLocation = new Location(world, x, y, z);
+                        Block block = blockLocation.getBlock();
+                        BlockState blockState = block.getState();
+                        String minecraftMaterial = convertToMinecraftMaterial(selectedMaterial);
+                        BlockData blockData = Bukkit.createBlockData(minecraftMaterial);
+                        blockState.setBlockData(blockData);
+                        blockState.setType(Material.valueOf(selectedMaterial));
+
+                        savePlayerUUIDForBlock(blockState, playerUUID);
+
+                        blockState.setMetadata("material", new FixedMetadataValue(Astra.getPlugin(), selectedMaterial));
+                        blockState.setMetadata("amount", new FixedMetadataValue(Astra.getPlugin(), 1.0));
+
+                        fakeBlockMap.put(blockLocation, Material.valueOf(selectedMaterial));
+                        blockChanges.add(blockState);
                     }
                 }
             }
+
+            playerBlockChangesMap.put(playerUUID, blockChanges);
         }
 
         return blockChanges;
@@ -161,35 +142,6 @@ public class MineGenerator {
         blockState.setMetadata("playerUUID", new FixedMetadataValue(Astra.getPlugin(), blockStatePlayerUUIDsMap));
     }
 
-    public static Collection<BlockState> generateBedrockLayer(UUID playerUUID, Location layerStart, Location layerEnd) {
-        Collection<BlockState> bedrockBlocks = new ArrayList<>();
-        World world = layerStart.getWorld();
-        if (world == null) {
-            return bedrockBlocks;
-        }
-
-        int startX = layerStart.getBlockX();
-        int startY = layerStart.getBlockY();
-        int startZ = layerStart.getBlockZ();
-        int endX = layerEnd.getBlockX();
-        int endY = layerEnd.getBlockY();
-        int endZ = layerEnd.getBlockZ();
-
-        for (int x = startX; x <= endX; x++) {
-            for (int y = startY; y <= endY; y++) {
-                for (int z = startZ; z <= endZ; z++) {
-                    if (y == startY || y == endY || x == startX || x == endX || z == startZ || z == endZ) {
-                        Location bedrockLocation = new Location(world, x, y, z);
-                        Block bedrockBlock = bedrockLocation.getBlock();
-                        BlockState bedrockBlockState = bedrockBlock.getState();
-                        bedrockBlockState.setType(Material.BEDROCK);
-                        bedrockBlocks.add(bedrockBlockState);
-                    }
-                }
-            }
-        }
-        return bedrockBlocks;
-    }
 
 
     public static List<UUID> getPlayerUUIDsForBlock(Block block, UUID playerUUID) {
@@ -213,6 +165,37 @@ public class MineGenerator {
 
         return playerUUIDs;
     }
+
+    public static Map<Location, Material> getFakeBlocksForPlayer(UUID playerUUID) {
+        Map<Location, Material> playerFakeBlocks = new HashMap<>();
+
+        for (Map.Entry<Location, Material> entry : fakeBlockMap.entrySet()) {
+            Location location = entry.getKey();
+            Material material = entry.getValue();
+            Block block = location.getBlock();
+            BlockState blockState = block.getState();
+
+            if (blockState.hasMetadata("playerUUID")) {
+                List<MetadataValue> metadataValues = blockState.getMetadata("playerUUID");
+                for (MetadataValue value : metadataValues) {
+                    if (value.value() instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<BlockState, List<UUID>> map = (Map<BlockState, List<UUID>>) value.value();
+                        for (Map.Entry<BlockState, List<UUID>> blockEntry : map.entrySet()) {
+                            if (areBlockStatesEqual(blockEntry.getKey(), playerUUID)) {
+                                playerFakeBlocks.put(location, material);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return playerFakeBlocks;
+    }
+
+
+
 
 
     private static boolean areBlockStatesEqual(BlockState blockState1, UUID playerUUID) {
