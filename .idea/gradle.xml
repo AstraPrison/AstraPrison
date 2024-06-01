@@ -9,8 +9,10 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/common" />
+            <option value="$PROJECT_DIR$/explosives" />
             <option value="$PROJECT_DIR$/mines" />
             <option value="$PROJECT_DIR$/omnitool" />
+            <option value="$PROJECT_DIR$/privatemines" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -5,7 +5,6 @@ import dev.fabled.astra.utils.MineData;
 import dev.fabled.astra.utils.MineReader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -20,7 +19,7 @@ import static dev.fabled.astra.utils.MineWriter.FILE;
 public class MineGenerator {
 
     public static Map<UUID, Collection<BlockState>> playerBlockChangesMap = new HashMap<>();
-    public static Map<Location, Material> fakeBlockMap = new HashMap<>();
+    public static Map<Location, String> fakeBlockMap = new HashMap<Location, String>();
 
 
     public static Collection<BlockState> getBlocks(UUID playerUUID, String mineName) {
@@ -55,11 +54,21 @@ public class MineGenerator {
                 endZ = temp;
             }
 
-            List<String> materials = List.of(
-                    mineData.getMaterial().name(),
-                    mineData.getMaterial2().name(),
-                    mineData.getMaterial3().name()
-            );
+            List<Material> materials;
+            if (mineData.luckyblocks()) {
+                materials = List.of(
+                        new Material(mineData.getMaterial().name(), 40.0),
+                        new Material(mineData.getMaterial2().name(), 30.0),
+                        new Material(mineData.getMaterial3().name(), 29.0),
+                        new Material(MineData.luckyblockMaterial().name(), 1.0)
+                );
+            } else {
+                materials = List.of(
+                        new Material(mineData.getMaterial().name(), 40.0),
+                        new Material(mineData.getMaterial2().name(), 30.0),
+                        new Material(mineData.getMaterial3().name(), 30.0)
+                );
+            }
 
             playerBlockChangesMap.remove(playerUUID);
 
@@ -68,13 +77,13 @@ public class MineGenerator {
             int adjustedStartY = startY;
             int adjustedStartZ = startZ + gap;
             int adjustedEndX = endX - gap;
-            int adjustedEndY = endY - gap;
+            int adjustedEndY = endY;
             int adjustedEndZ = endZ - gap;
 
             for (int x = adjustedStartX; x <= adjustedEndX; ++x) {
                 for (int y = adjustedStartY; y <= adjustedEndY; ++y) {
                     for (int z = adjustedStartZ; z <= adjustedEndZ; ++z) {
-                        String selectedMaterial = materials.get(new Random().nextInt(materials.size()));
+                        String selectedMaterial = selectMaterialBasedOnPercentage(materials);
                         if (selectedMaterial == null) {
                             Astra.getPlugin().getLogger().severe("Wrong material: " + selectedMaterial);
                             continue;
@@ -85,14 +94,15 @@ public class MineGenerator {
                         String minecraftMaterial = convertToMinecraftMaterial(selectedMaterial);
                         BlockData blockData = Bukkit.createBlockData(minecraftMaterial);
                         blockState.setBlockData(blockData);
-                        blockState.setType(Material.valueOf(selectedMaterial));
+                        blockState.setType(org.bukkit.Material.valueOf(selectedMaterial));
 
                         savePlayerUUIDForBlock(blockState, playerUUID);
 
                         blockState.setMetadata("material", new FixedMetadataValue(Astra.getPlugin(), selectedMaterial));
+                        blockState.setMetadata("mineName", new FixedMetadataValue(Astra.getPlugin(), mineName));
                         blockState.setMetadata("amount", new FixedMetadataValue(Astra.getPlugin(), 1.0));
 
-                        fakeBlockMap.put(blockLocation, Material.valueOf(selectedMaterial));
+                        fakeBlockMap.put(blockLocation, selectedMaterial);
                         blockChanges.add(blockState);
                     }
                 }
@@ -102,6 +112,47 @@ public class MineGenerator {
         }
 
         return blockChanges;
+    }
+
+    private static String selectMaterialBasedOnPercentage(List<Material> materials) {
+        Random random = new Random();
+        double rand = random.nextDouble() * 100;
+        double cumulativePercentage = 0.0;
+        for (Material material : materials) {
+            cumulativePercentage += material.getPercentage();
+            if (rand <= cumulativePercentage) {
+                return material.getName();
+            }
+        }
+        return null;
+    }
+
+    public static Map<Location, String> getFakeBlocksForPlayer(UUID playerUUID) {
+        Map<Location, String> playerFakeBlocks = new HashMap<>();
+
+        for (Map.Entry<Location, String> entry : fakeBlockMap.entrySet()) {
+            Location location = entry.getKey();
+            String material = entry.getValue();
+            Block block = location.getBlock();
+            BlockState blockState = block.getState();
+
+            if (blockState.hasMetadata("playerUUID")) {
+                List<MetadataValue> metadataValues = blockState.getMetadata("playerUUID");
+                for (MetadataValue value : metadataValues) {
+                    if (value.value() instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<BlockState, List<UUID>> map = (Map<BlockState, List<UUID>>) value.value();
+                        for (Map.Entry<BlockState, List<UUID>> blockEntry : map.entrySet()) {
+                            if (areBlockStatesEqual(blockEntry.getKey(), playerUUID)) {
+                                playerFakeBlocks.put(location, material);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return playerFakeBlocks;
     }
 
 
@@ -166,32 +217,22 @@ public class MineGenerator {
         return playerUUIDs;
     }
 
-    public static Map<Location, Material> getFakeBlocksForPlayer(UUID playerUUID) {
-        Map<Location, Material> playerFakeBlocks = new HashMap<>();
+    private static class Material {
+        private final String name;
+        private final double percentage;
 
-        for (Map.Entry<Location, Material> entry : fakeBlockMap.entrySet()) {
-            Location location = entry.getKey();
-            Material material = entry.getValue();
-            Block block = location.getBlock();
-            BlockState blockState = block.getState();
-
-            if (blockState.hasMetadata("playerUUID")) {
-                List<MetadataValue> metadataValues = blockState.getMetadata("playerUUID");
-                for (MetadataValue value : metadataValues) {
-                    if (value.value() instanceof Map) {
-                        @SuppressWarnings("unchecked")
-                        Map<BlockState, List<UUID>> map = (Map<BlockState, List<UUID>>) value.value();
-                        for (Map.Entry<BlockState, List<UUID>> blockEntry : map.entrySet()) {
-                            if (areBlockStatesEqual(blockEntry.getKey(), playerUUID)) {
-                                playerFakeBlocks.put(location, material);
-                            }
-                        }
-                    }
-                }
-            }
+        Material(String name, double percentage) {
+            this.name = name;
+            this.percentage = percentage;
         }
 
-        return playerFakeBlocks;
+        String getName() {
+            return name;
+        }
+
+        double getPercentage() {
+            return percentage;
+        }
     }
 
 

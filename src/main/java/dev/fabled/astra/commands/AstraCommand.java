@@ -1,5 +1,6 @@
 package dev.fabled.astra.commands;
 
+
 import com.mojang.brigadier.tree.CommandNode;
 import dev.fabled.astra.Astra;
 import dev.fabled.astra.AstraPlugin;
@@ -27,7 +28,7 @@ public class AstraCommand extends BrigadierCommand {
 
     @Override
     @NotNull
-    CommandNode<CommandSourceStack> buildCommandNode() {
+    public CommandNode<CommandSourceStack> buildCommandNode() {
         return literal(name)
                 .executes(c -> {
                     if (!(getSender(c) instanceof Player player)) {

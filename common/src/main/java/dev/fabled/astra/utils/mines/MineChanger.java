@@ -124,8 +124,37 @@ public class MineChanger {
                     if (mine.has("name") && mine.get("name").getAsString().equals(mineName)) {
                         if (mine.has("airgap")) {
                             boolean currentAirgap = mine.get("airgap").getAsBoolean();
-                            boolean newAirgap = !currentAirgap; // Toggle the boolean value
+                            boolean newAirgap = !currentAirgap;
                             mine.add("airgap", new JsonPrimitive(newAirgap));
+                            try (FileWriter writer = new FileWriter(file)) {
+                                gson.toJson(jsonObject, writer);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean toggleluckyblocks(String mineName) {
+        File file = new File("plugins/Astra/data/mines.json");
+        if (!file.exists()) return false;
+
+        try (FileReader reader = new FileReader(file)) {
+            JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+            if (jsonObject.has("mines")) {
+                JsonArray minesArray = jsonObject.getAsJsonArray("mines");
+                for (JsonElement element : minesArray) {
+                    JsonObject mine = element.getAsJsonObject();
+                    if (mine.has("name") && mine.get("name").getAsString().equals(mineName)) {
+                        if (mine.has("luckyblocks")) {
+                            boolean currentluckyblocks = mine.get("luckyblocks").getAsBoolean();
+                            boolean newluckyblocks = !currentluckyblocks;
+                            mine.add("luckyblocks", new JsonPrimitive(newluckyblocks));
                             try (FileWriter writer = new FileWriter(file)) {
                                 gson.toJson(jsonObject, writer);
                                 return true;

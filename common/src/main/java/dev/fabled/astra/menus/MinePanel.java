@@ -163,6 +163,7 @@ public class MinePanel implements InventoryHolder {
                 JsonArray minesArray = jsonObject.getAsJsonArray("mines");
                 String resetType = "Unknown";
                 Boolean airgap = true;
+                Boolean luckyblocks = true;
 
                 for (JsonElement mineElement : minesArray) {
                     JsonObject mineObject = mineElement.getAsJsonObject();
@@ -172,6 +173,9 @@ public class MinePanel implements InventoryHolder {
                         }
                         if (mineObject.has("airgap")) {
                             airgap = mineObject.get("airgap").getAsBoolean();
+                        }
+                        if (mineObject.has("luckyblocks")) {
+                            luckyblocks = mineObject.get("luckyblocks").getAsBoolean();
                         }
                         break;
                     }
@@ -195,6 +199,15 @@ public class MinePanel implements InventoryHolder {
                         ChatColor.WHITE + "(( Click to change the airgap of the mine ))"));
                 airgapItem.setItemMeta(airgapmeta);
                 inventory.setItem(17, airgapItem);
+                ItemStack luckyblockItem = new ItemStack(Material.SPONGE);
+                ItemMeta luckyblockmeta = luckyblockItem.getItemMeta();
+                luckyblockmeta.setDisplayName(ChatColor.GREEN + "Change luckyblocks of " + mineName);
+                luckyblockmeta.setLore(List.of(
+                        ChatColor.GRAY + "Current status: " + ChatColor.GREEN + luckyblocks,
+                        ChatColor.GRAY + "",
+                        ChatColor.WHITE + "(( Click to change ))"));
+                luckyblockItem.setItemMeta(luckyblockmeta);
+                inventory.setItem(16, luckyblockItem);
             } else {
                 throw new RuntimeException("Invalid JSON structure.");
             }

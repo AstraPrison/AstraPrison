@@ -2,4 +2,6 @@ rootProject.name = 'AstraPrison'
 include 'common'
 include 'mines'
 include 'omnitool'
+include 'privatemines'
+include 'explosives'
 

@@ -35,4 +35,5 @@ public final class Astra {
     public static AstraUtilities getUtilities() {
         return utilities;
     }
+
 }

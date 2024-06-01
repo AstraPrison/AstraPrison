@@ -54,6 +54,8 @@ public class MineWriter {
             newMine.addProperty("material3", Material.COAL_ORE.name());
             newMine.addProperty("resetType", "Blocks");
             newMine.addProperty("airgap", true);
+            newMine.addProperty("luckyblocks", true);
+            newMine.addProperty("luckyblockMaterial", Material.SPONGE.name());
 
             minesArray.add(newMine);
 

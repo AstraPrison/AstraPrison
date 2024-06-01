@@ -51,6 +51,8 @@ dependencies {
     implementation project(':common')
     implementation project(':mines')
     implementation project(':omnitool')
+    implementation project(':privatemines')
+    implementation project(':explosives')
 }
 
 java {

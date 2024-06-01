@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public abstract class BrigadierCommand {
 
-    final String name;
+    public final String name;
     final String[] aliases;
     final String permission;
     final String description;
@@ -43,10 +43,12 @@ public abstract class BrigadierCommand {
         this.node = buildCommandNode();
     }
 
-    abstract @NotNull CommandNode<CommandSourceStack> buildCommandNode();
-
-    static @NotNull LiteralArgumentBuilder<CommandSourceStack> literal(@NotNull final String name) {
+    public static @NotNull LiteralArgumentBuilder<CommandSourceStack> literal(@NotNull final String name) {
         return LiteralArgumentBuilder.literal(name);
+    }
+
+    public static @NotNull CommandSender getSender(@NotNull final CommandContext<CommandSourceStack> context) {
+        return context.getSource().getBukkitSender();
     }
 
     static @NotNull <T> RequiredArgumentBuilder<CommandSourceStack, T> arg(
@@ -56,9 +58,7 @@ public abstract class BrigadierCommand {
         return RequiredArgumentBuilder.argument(name, argumentType);
     }
 
-    static @NotNull CommandSender getSender(@NotNull final CommandContext<CommandSourceStack> context) {
-        return context.getSource().getBukkitSender();
-    }
+    public abstract @NotNull CommandNode<CommandSourceStack> buildCommandNode();
 
     public CompletableFuture<Suggestions> suggestPlayers(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
         List<String> playerNames = context.getSource().getServer().getPlayerList().getPlayers().stream()

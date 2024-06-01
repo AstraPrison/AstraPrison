@@ -8,8 +8,15 @@ import org.bukkit.Material;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MineReader {
+
+    private static final Map<String, MineData> mineMap = new HashMap<>();
+
     public static MineData readMineData(String filePath, String mineName) {
         File file = new File(filePath);
         if (!file.exists()) return null;
@@ -40,8 +47,11 @@ public class MineReader {
                         Material material3 = parseMaterial(materialString3);
                         String resetType = mine.get("resetType").getAsString();
                         Boolean airgap = mine.get("airgap").getAsBoolean();
+                        Boolean luckyblocks = mine.get("luckyblocks").getAsBoolean();
+                        Material luckyblockMaterial = Material.valueOf(mine.get("luckyblockMaterial").getAsString());
                         if (material != null && material2 != null && material3 != null) {
-                            return new MineData(startX, startY, startZ, endX, endY, endZ, material, material2, material3, resetType, airgap);
+                            mineMap.put(mineName, new MineData(startX, startY, startZ, endX, endY, endZ, material, material2, material3, resetType, airgap, luckyblocks, luckyblockMaterial));
+                            return new MineData(startX, startY, startZ, endX, endY, endZ, material, material2, material3, resetType, airgap, luckyblocks, luckyblockMaterial);
                         } else {
                             System.err.println("Invalid material name: " + materialString);
                             return null;
@@ -56,6 +66,29 @@ public class MineReader {
         return null;
     }
 
+    public static List<String> getMineNames(String filePath) {
+        List<String> mineNames = new ArrayList<>();
+        File file = new File(filePath);
+        if (!file.exists()) return mineNames;
+
+        try (FileReader reader = new FileReader(file)) {
+            JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+            if (jsonObject.has("mines")) {
+                JsonArray minesArray = jsonObject.getAsJsonArray("mines");
+                for (int i = 0; i < minesArray.size(); i++) {
+                    JsonObject mine = minesArray.get(i).getAsJsonObject();
+                    if (mine.has("name")) {
+                        mineNames.add(mine.get("name").getAsString());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return mineNames;
+    }
+
     private static Material parseMaterial(String materialString) {
         try {
             return Material.valueOf(materialString);
@@ -64,4 +97,9 @@ public class MineReader {
             return null;
         }
 }
+
+
+    public static Map<String, MineData> getMineMap() {
+        return mineMap;
+    }
 }

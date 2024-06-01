@@ -46,6 +46,11 @@ public class MinePanelListener implements Listener {
                 previousInventory = event.getInventory();
                 MineChanger.toggleairgap(mineName);
                 player.openInventory(minePanel.createMineConfigurationMenu(mineName));
+            } else if (clickedItem.getType() == Material.SPONGE && clickedItem.hasItemMeta()) {
+                String mineName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName().replace("Change luckyblocks of ", ""));
+                previousInventory = event.getInventory();
+                MineChanger.toggleluckyblocks(mineName);
+                player.openInventory(minePanel.createMineConfigurationMenu(mineName));
             } else if (clickedItem.getType() == Material.STONE && clickedItem.hasItemMeta()) {
                 String mineName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
                 previousInventory = event.getInventory();
