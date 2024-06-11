@@ -258,6 +258,45 @@ public class MineGenerator {
         return false;
     }
 
+    public static int getTotalBlocks(String mineName) {
+        String filePath = FILE;
+        MineData mineData = MineReader.readMineData(filePath, mineName);
+
+        if (mineData != null) {
+            int startX = mineData.getStartX();
+            int startY = mineData.getStartY();
+            int startZ = mineData.getStartZ();
+            int endX = mineData.getEndX();
+            int endY = mineData.getEndY();
+            int endZ = mineData.getEndZ();
+
+            if (startX > endX) {
+                int temp = startX;
+                startX = endX;
+                endX = temp;
+            }
+            if (startY > endY) {
+                int temp = startY;
+                startY = endY;
+                endY = temp;
+            }
+            if (startZ > endZ) {
+                int temp = startZ;
+                startZ = endZ;
+                endZ = temp;
+            }
+            int blockCount = (endX - startX + 1) * (endY - startY + 1) * (endZ - startZ + 1);
+            if (mineData.airgap()) {
+                int gap = 1;
+                blockCount = ((endX - startX + 1 - 2 * gap) * (endY - startY + 1) * (endZ - startZ + 1 - 2 * gap));
+            }
+
+            return blockCount;
+        }
+
+        return 0;
+    }
+
     private static String convertToMinecraftMaterial(String material) {
         return "minecraft:" + material.toLowerCase();
     }

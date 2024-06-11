@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import dev.fabled.astra.Astra;
 import dev.fabled.astra.items.BombItem;
 import dev.fabled.astra.mines.generator.MineGenerator;
+import dev.fabled.astra.utils.ExplosiveReset;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -35,17 +36,30 @@ public class BombsPacketHandler extends PacketListenerAbstract implements Listen
         return activeBombs.getOrDefault(playerUUID, 0);
     }
 
+    private static void addActiveBomb(UUID playerUUID) {
+        activeBombs.put(playerUUID, activeBombs.getOrDefault(playerUUID, 0) + 1);
+    }
+
+    private static void removeActiveBomb(UUID playerUUID) {
+        int count = activeBombs.getOrDefault(playerUUID, 0);
+        if (count > 1) {
+            activeBombs.put(playerUUID, count - 1);
+        } else {
+            activeBombs.remove(playerUUID);
+        }
+    }
+
     public static void startBombAnimation(Block block, World world, int x, int y, int z, Player player, String mineName, ItemStack bombItem) {
         if (player == null || world == null) return;
 
         JavaPlugin plugin = Astra.getPlugin();
         int radius;
 
-        if (BombItem.isBombItem(bombItem, plugin, "normal_bomb_item")) {
+        if (BombItem.isBombItem(bombItem, "normal_bomb_item")) {
             radius = 3;
-        } else if (BombItem.isBombItem(bombItem, plugin, "big_bomb_item")) {
+        } else if (BombItem.isBombItem(bombItem, "big_bomb_item")) {
             radius = 5;
-        } else if (BombItem.isBombItem(bombItem, plugin, "ultra_bomb_item")) {
+        } else if (BombItem.isBombItem(bombItem, "ultra_bomb_item")) {
             radius = 9;
         } else {
             return;
@@ -73,7 +87,13 @@ public class BombsPacketHandler extends PacketListenerAbstract implements Listen
                 blockState.removeMetadata("material", plugin);
             }
 
+            removeItemFromPlayer(player, bombItem);
+            removeActiveBomb(player.getUniqueId());
+
+
+
         }, 1L);
+
     }
 
 
@@ -120,6 +140,13 @@ public class BombsPacketHandler extends PacketListenerAbstract implements Listen
                             BlockState blockState = block.getState();
                             blockState.setType(Material.AIR);
                             blockStates.add(blockState);
+
+                            String mineName = block.getMetadata("mineName").get(0).asString();
+                            UUID userUUID = player.getUniqueId();
+                            ExplosiveReset.updateBlockCount(userUUID, mineName);
+                            if (ExplosiveReset.shouldResetMine(userUUID, mineName)) {
+                                ExplosiveReset.resetMine(player, mineName);
+                            }
                         }
                     }
                 }
@@ -132,11 +159,11 @@ public class BombsPacketHandler extends PacketListenerAbstract implements Listen
         JavaPlugin plugin = (JavaPlugin) player.getServer().getPluginManager().getPlugin("YourPluginName");
         if (plugin == null) return new ArrayList<>();
 
-        if (BombItem.isBombItem(item, plugin, "normal_bomb_item")) {
+        if (BombItem.isBombItem(item, "normal_bomb_item")) {
             return getBlocksInSphere(player, world, centerX, centerY, centerZ, 3);
-        } else if (BombItem.isBombItem(item, plugin, "big_bomb_item")) {
+        } else if (BombItem.isBombItem(item, "big_bomb_item")) {
             return getBlocksInSphere(player, world, centerX, centerY, centerZ, 5);
-        } else if (BombItem.isBombItem(item, plugin, "ultra_bomb_item")) {
+        } else if (BombItem.isBombItem(item, "ultra_bomb_item")) {
             return getBlocksInSphere(player, world, centerX, centerY, centerZ, 9);
         } else {
             return new ArrayList<>();
@@ -148,18 +175,35 @@ public class BombsPacketHandler extends PacketListenerAbstract implements Listen
         return playerUUIDsForBlock.contains(player.getUniqueId());
     }
 
+    private static void removeItemFromPlayer(Player player, ItemStack item) {
+        ItemStack itemInHand = player.getItemInHand();
+        if (itemInHand.isSimilar(item)) {
+            int newAmount = itemInHand.getAmount() - 1;
+            if (newAmount <= 0) {
+                player.setItemInHand(null);
+            } else {
+                itemInHand.setAmount(newAmount);
+            }
+        }
+    }
+
     @EventHandler
     public void bombdrop(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         ItemStack itemInHand = player.getItemInHand();
         JavaPlugin plugin = Astra.getPlugin();
 
-        if (BombItem.isBombItem(itemInHand, plugin, "normal_bomb_item") ||
-                BombItem.isBombItem(itemInHand, plugin, "big_bomb_item") ||
-                BombItem.isBombItem(itemInHand, plugin, "ultra_bomb_item")) {
+        if (BombItem.isBombItem(itemInHand, "normal_bomb_item") ||
+                BombItem.isBombItem(itemInHand, "big_bomb_item") ||
+                BombItem.isBombItem(itemInHand, "ultra_bomb_item")) {
 
             if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                //player.sendMessage("Drop Bomb");
+                if (getActiveBombs(player.getUniqueId()) > 0) {
+                    player.sendMessage(ChatColor.RED + "You already have an active bomb!");
+                    return;
+                }
+
+                addActiveBomb(player.getUniqueId());
 
                 World world = player.getWorld();
                 Location startLocation = player.getLocation();
@@ -191,6 +235,7 @@ public class BombsPacketHandler extends PacketListenerAbstract implements Listen
                                                 itemInHand
                                         );
 
+
                                         tnt.remove();
                                         hasHitBlock.set(true);
                                         return;
@@ -200,6 +245,7 @@ public class BombsPacketHandler extends PacketListenerAbstract implements Listen
                         }
                     }
                 }, 0L, 1L);
+
 
                 event.setCancelled(true);
             }

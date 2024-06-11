@@ -4,7 +4,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.CommandNode;
-import dev.fabled.astra.Astra;
 import dev.fabled.astra.items.BombItem;
 import dev.fabled.astra.items.DrillsItem;
 import dev.fabled.astra.utils.MiniColor;
@@ -21,10 +20,10 @@ public class ExplosivesCommand extends BrigadierCommand {
 
     public ExplosivesCommand() {
         super(
-                "explosives",
+                "specials",
                 new String[]{"explosive", "bombs", "drills"},
-                "astra.admin.mine",
-                "The admin command for mine management!",
+                "astra.admin.specials",
+                "The admin command for bomb and drill management!",
                 "/mineadmin help"
         );
     }
@@ -35,18 +34,18 @@ public class ExplosivesCommand extends BrigadierCommand {
             Player player = Bukkit.getPlayer(serverPlayer.getUUID());
             String item = StringArgumentType.getString(context, "item");
 
-            if (player == null) {
+            if (player == null || !player.isOnline()) {
                 System.out.println("Player not found or offline.");
                 return 0;
             }
 
             ItemStack drillItem;
             if ("normalDrill".equalsIgnoreCase(item)) {
-                drillItem = DrillsItem.createNormalDrill(Astra.getPlugin());
+                drillItem = DrillsItem.createNormalDrill();
             } else if ("bigDrill".equalsIgnoreCase(item)) {
-                drillItem = DrillsItem.createBigDrill(Astra.getPlugin());
+                drillItem = DrillsItem.createBigDrill();
             } else if ("ultraDrill".equalsIgnoreCase(item)) {
-                drillItem = DrillsItem.createUltraDrill(Astra.getPlugin());
+                drillItem = DrillsItem.createUltraDrill();
             } else {
                 player.sendMessage(MiniColor.parse("<red>Please use one of the following: normalDrill, bigDrill, ultraDrill"));
                 return 0;
@@ -76,11 +75,11 @@ public class ExplosivesCommand extends BrigadierCommand {
 
             ItemStack drillItem;
             if ("normalBomb".equalsIgnoreCase(item)) {
-                drillItem = BombItem.createNormalBomb(Astra.getPlugin());
+                drillItem = BombItem.createNormalBomb();
             } else if ("bigBomb".equalsIgnoreCase(item)) {
-                drillItem = BombItem.createBigBomb(Astra.getPlugin());
+                drillItem = BombItem.createBigBomb();
             } else if ("ultraBomb".equalsIgnoreCase(item)) {
-                drillItem = BombItem.createUltraBomb(Astra.getPlugin());
+                drillItem = BombItem.createUltraBomb();
             } else {
                 player.sendMessage(MiniColor.parse("<red>Please use one of the following: normalDrill, bigDrill, ultraDrill"));
                 return 0;

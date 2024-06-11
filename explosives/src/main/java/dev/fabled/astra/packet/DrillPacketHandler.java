@@ -9,6 +9,7 @@ import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPl
 import dev.fabled.astra.Astra;
 import dev.fabled.astra.items.DrillsItem;
 import dev.fabled.astra.mines.generator.MineGenerator;
+import dev.fabled.astra.utils.ExplosiveReset;
 import dev.fabled.astra.utils.MineData;
 import dev.fabled.astra.utils.MineReader;
 import org.bukkit.*;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -39,6 +41,17 @@ public class DrillPacketHandler extends PacketListenerAbstract {
         return activeDrills.getOrDefault(playerUUID, 0);
     }
 
+    private static void drillreset(Player player, Block block) {
+
+        String mineName = block.getMetadata("mineName").get(0).asString();
+        UUID userUUID = player.getUniqueId();
+        ExplosiveReset.updateBlockCount(userUUID, mineName);
+        if (ExplosiveReset.shouldResetMine(userUUID, mineName)) {
+            ExplosiveReset.resetMine(player, mineName);
+        }
+
+    }
+
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
         if (event.getPacketType() == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT) {
@@ -54,12 +67,13 @@ public class DrillPacketHandler extends PacketListenerAbstract {
                 Block block = world.getBlockAt(blockX, blockY, blockZ);
                 if (user != null) {
                     Player player = Bukkit.getPlayer(user.getUUID());
-                    if (player != null && DrillsItem.isDrillsItem(player.getItemInHand(), Astra.getPlugin())) {
+                    if (player != null && DrillsItem.isDrillsItem(player.getItemInHand())) {
                         player.setMetadata("drilling", new FixedMetadataValue(Astra.getPlugin(), true));
+                        int drillSize = getDrillSize(player.getItemInHand());
                         Bukkit.getScheduler().runTask(Astra.getPlugin(), () -> {
                             String mineName = block.getLocation().getBlock().getMetadata("mineName").get(0).asString();
                             player.sendBlockChange(block.getLocation().add(0, 1, 0), Material.HOPPER.createBlockData());
-                            startDrillAnimation(block, world, blockX, blockY, blockZ, user, mineName, player.getItemInHand());
+                            startDrillAnimation(block, world, blockX, blockY, blockZ, user, mineName, player.getItemInHand(), Integer.valueOf(drillSize));
                         });
                     }
                 }
@@ -69,8 +83,8 @@ public class DrillPacketHandler extends PacketListenerAbstract {
         }
     }
 
-    private void startDrillAnimation(Block block, World world, int x, int y, int z, User user, String mineName, ItemStack drillItem) {
-        int drillSize = getDrillSize(drillItem);
+    private void startDrillAnimation(Block block, World world, int x, int y, int z, User user, String mineName, ItemStack drillItem, int drillSize) {
+        //int drillSize = getDrillSize(drillItem);
 
         new BukkitRunnable() {
 
@@ -111,7 +125,13 @@ public class DrillPacketHandler extends PacketListenerAbstract {
                                 BlockState blockState = currentBlock.getState();
                                 blockState.setType(Material.AIR);
                                 blockStates.add(blockState);
+                                drillreset(player, block);
+                                //blockState.removeMetadata("material", Astra.getPlugin());
+                                String blockmaterial = block.getMetadata("mineName").get(0).asString();
+                                if (blockmaterial != null) {
                                 countblocks++;
+                                }
+                                blockState.removeMetadata("material", Astra.getPlugin());
                             }
                         }
                     }
@@ -153,18 +173,17 @@ public class DrillPacketHandler extends PacketListenerAbstract {
 
     private int getDrillSize(ItemStack drillItem) {
         ItemMeta meta = drillItem.getItemMeta();
+        JavaPlugin plugin = Astra.getPlugin();
         if (meta != null && meta.hasDisplayName()) {
             String displayName = ChatColor.stripColor(meta.getDisplayName());
-            if ("Normal Mine Drill".equalsIgnoreCase(displayName)) {
+            if (DrillsItem.getdrillkey(drillItem, "normal_drill_item")) {
                 return 3;
-            } else if ("Big Mine Drill".equalsIgnoreCase(displayName)) {
+            } else if (DrillsItem.getdrillkey(drillItem, "big_drill_item")) {
                 return 5;
-            } else if ("Ultra Mine Drill".equalsIgnoreCase(displayName)) {
+            } else if (DrillsItem.getdrillkey(drillItem, "ultra_drill_item")) {
                 return 9;
             }
         }
         return 3;
     }
 }
-
-

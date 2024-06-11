@@ -74,7 +74,15 @@ processResources {
     def props = [version: version]
     inputs.properties props
     filteringCharset 'UTF-8'
+
     filesMatching('paper-plugin.yml') {
         expand props
     }
+
+    // Ensure the config.yml is included in the JAR
+    from(sourceSets.main.resources.srcDirs) {
+        include 'explosives/rpgconfig.yml'
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

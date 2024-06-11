@@ -2,10 +2,12 @@ package dev.fabled.astra.listeners;
 
 
 import dev.fabled.astra.menus.MinePanel;
+import dev.fabled.astra.mines.generator.MineGenerator;
 import dev.fabled.astra.utils.MineWriter;
 import dev.fabled.astra.utils.mines.MineChanger;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,6 +16,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Collection;
 
 public class MinePanelListener implements Listener {
 
@@ -74,6 +78,8 @@ public class MinePanelListener implements Listener {
                 if (event.getClick() == ClickType.LEFT) {
                     if (MineChanger.updateMineMaterialInJson(mineName, clickedItem.getType(), MineChanger.MaterialType.MATERIAL1)) {
                         player.sendMessage(ChatColor.GREEN + "Material1 of mine \"" + mineName + "\" has been updated to " + clickedItem.getType().name() + ".");
+                        Collection<BlockState> blockChanges = MineGenerator.getBlocks(player.getUniqueId(), mineName);
+                        player.sendBlockChanges(blockChanges);
                         player.openInventory(previousInventory);
                     } else {
                         player.sendMessage(ChatColor.RED + "Failed to update the material. Please try again.");
@@ -81,6 +87,8 @@ public class MinePanelListener implements Listener {
                 } else if (event.getClick() == ClickType.DROP) {
                     if (MineChanger.updateMineMaterialInJson(mineName, clickedItem.getType(), MineChanger.MaterialType.MATERIAL2)) {
                         player.sendMessage(ChatColor.GREEN + "Material2 of mine \"" + mineName + "\" has been updated to " + clickedItem.getType().name() + ".");
+                        Collection<BlockState> blockChanges = MineGenerator.getBlocks(player.getUniqueId(), mineName);
+                        player.sendBlockChanges(blockChanges);
                         player.openInventory(previousInventory);
                     } else {
                         player.sendMessage(ChatColor.RED + "Failed to update the material. Please try again.");
@@ -88,6 +96,8 @@ public class MinePanelListener implements Listener {
                 } else if (event.getClick() == ClickType.RIGHT) {
                     if (MineChanger.updateMineMaterialInJson(mineName, clickedItem.getType(), MineChanger.MaterialType.MATERIAL3)) {
                         player.sendMessage(ChatColor.GREEN + "Material3 of mine \"" + mineName + "\" has been updated to " + clickedItem.getType().name() + ".");
+                        Collection<BlockState> blockChanges = MineGenerator.getBlocks(player.getUniqueId(), mineName);
+                        player.sendBlockChanges(blockChanges);
                         player.openInventory(previousInventory);
                     } else {
                         player.sendMessage(ChatColor.RED + "Failed to update the material. Please try again.");
