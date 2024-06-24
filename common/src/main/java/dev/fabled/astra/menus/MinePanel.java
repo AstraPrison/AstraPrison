@@ -162,6 +162,7 @@ public class MinePanel implements InventoryHolder {
             if (jsonObject.has("mines") && jsonObject.get("mines").isJsonArray()) {
                 JsonArray minesArray = jsonObject.getAsJsonArray("mines");
                 String resetType = "Unknown";
+                int resetTime = 0;
                 Boolean airgap = true;
                 Boolean luckyblocks = true;
 
@@ -170,6 +171,9 @@ public class MinePanel implements InventoryHolder {
                     if (mineObject.has("name") && mineObject.get("name").getAsString().equals(mineName)) {
                         if (mineObject.has("resetType")) {
                             resetType = mineObject.get("resetType").getAsString();
+                        }
+                        if (mineObject.has("resetTime")) {
+                            resetTime = mineObject.get("resetTime").getAsInt();
                         }
                         if (mineObject.has("airgap")) {
                             airgap = mineObject.get("airgap").getAsBoolean();
@@ -184,10 +188,18 @@ public class MinePanel implements InventoryHolder {
                 ItemStack resetItem = new ItemStack(Material.ANVIL);
                 ItemMeta resetMeta = resetItem.getItemMeta();
                 resetMeta.setDisplayName(ChatColor.RED + "Change reset type of " + mineName);
-                resetMeta.setLore(List.of(
-                        ChatColor.GRAY + "Current reset type: " + ChatColor.GREEN + resetType,
-                        ChatColor.GRAY + "",
-                        ChatColor.WHITE + "(( Click to change the reset type of the mine ))"));
+                if (resetType.equals("Timed")) {
+                    resetMeta.setLore(List.of(
+                            ChatColor.GRAY + "Current reset type: " + ChatColor.GREEN + resetType,
+                            ChatColor.GRAY + "Current reset time: " + ChatColor.GREEN + resetTime + " seconds",
+                            ChatColor.GRAY + "",
+                            ChatColor.WHITE + "(( Click to change the reset type of the mine ))"));
+                } else if (resetType.equals("Blocks")) {
+                    resetMeta.setLore(List.of(
+                            ChatColor.GRAY + "Current reset type: " + ChatColor.GREEN + resetType,
+                            ChatColor.GRAY + "",
+                            ChatColor.WHITE + "(( Click to change the reset type of the mine ))"));
+                }
                 resetItem.setItemMeta(resetMeta);
                 inventory.setItem(14, resetItem);
                 ItemStack airgapItem = new ItemStack(Material.TRIPWIRE_HOOK);

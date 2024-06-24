@@ -16,6 +16,8 @@ public class ErrorLang implements LangKeys {
     public static final String INVALID_ENCHANTMENT = "Enchantment '{ENCHANTMENT}' is not valid.";
     public static final String MISSING_ENCHANT_ARGS = "Missing arguments for enchant command.";
     public static final String GIVE_COMMAND_MISSING_ARGUMENT = "Missing arguments for omnitool command.";
+    public static final String INVALID_ARMOR = "Invalid armor type specified: ";
+    public static final String INVALID_ARMOR_TYPE = "Invalid armor type: ";
 
     // Method to send the message with placeholder replacement
     public static void sendInvalidPlayerMessage(Player player, String playerName) {

@@ -172,8 +172,6 @@ public class MineChanger {
     private static String getNextResetType(String currentResetType) {
         switch (currentResetType) {
             case "Blocks":
-                return "Periodic";
-            case "Periodic":
                 return "Timed";
             case "Timed":
                 return "Blocks";

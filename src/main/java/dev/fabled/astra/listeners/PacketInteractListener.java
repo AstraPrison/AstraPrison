@@ -38,15 +38,6 @@ public class PacketInteractListener extends PacketListenerAbstract implements Li
                         }
                     }
                 }
-
-
-                //   ItemStack itemInHand = player.getInventory().getItemInMainHand();
-                //   if (itemInHand == null || itemInHand.getType() == Material.AIR) {
-                //       if (event.getPacketType() == PacketType.Play.Server.BLOCK_CHANGE) {
-                //           event.setCancelled(true);
-                //       }
-                //   }
-
             }
         }
     }

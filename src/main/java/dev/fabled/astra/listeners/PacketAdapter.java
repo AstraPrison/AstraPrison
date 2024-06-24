@@ -21,7 +21,6 @@ public class PacketAdapter implements Listener {
 
 
         if (!PlayerDataWriter.doesPlayerExist(playerUUID.toString())) {
-            // Standardwerte setzen
             int defaultTokens = 0;
             double defaultMoney = 0.0;
             int defaultOmniToolLevel1 = 0;

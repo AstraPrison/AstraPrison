@@ -48,6 +48,7 @@ subprojects {
 }
 
 dependencies {
+    implementation project(path: ':armor')
     implementation project(':common')
     implementation project(':mines')
     implementation project(':omnitool')

@@ -3,6 +3,7 @@ package dev.fabled.astra.listener;
 import dev.fabled.astra.Astra;
 import dev.fabled.astra.omnitool.OmniToolItem;
 import dev.fabled.astra.omnitool.menu.EnchantGui;
+import dev.fabled.astra.omnitool.utils.EnchantmentData;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -16,35 +17,29 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class EnchantMenuListener implements Listener {
-
-    private final Map<String, NamespacedKey> enchantmentKeys;
-
-    public EnchantMenuListener() {
-        enchantmentKeys = new HashMap<>();
-        enchantmentKeys.put("tokenfinder", new NamespacedKey(Astra.getPlugin(), "tokenfinder"));
-        enchantmentKeys.put("shockwave", new NamespacedKey(Astra.getPlugin(), "shockwave"));
-        enchantmentKeys.put("fortune", new NamespacedKey(Astra.getPlugin(), "fortune"));
-        Astra.getPlugin().getLogger().info("Enchantment menu listener initialized!");
-    }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         Inventory clickedInventory = event.getClickedInventory();
 
-        if (clickedInventory != null && clickedInventory.getHolder() instanceof EnchantGui) {
+        if (clickedInventory != null && clickedInventory.getHolder() instanceof EnchantGui enchantGui) {
             event.setCancelled(true);
 
             String menuTitle = ChatColor.stripColor(event.getView().getTitle());
-            String formatedMenuTitle = menuTitle.replace("Upgrading ", "");
-            String enchantName = formatedMenuTitle;
-            NamespacedKey enchantKey = enchantmentKeys.get(enchantName.toLowerCase());
+            String formattedMenuTitle = menuTitle.replace("Upgrading ", "").toLowerCase();
+            String enchantName = formattedMenuTitle.toLowerCase();
 
-            if (enchantKey == null) return;
+            EnchantmentData enchantmentData = EnchantmentData.enchantments.get(enchantName);
+
+            if (enchantmentData == null) {
+                player.sendMessage(ChatColor.RED + "Enchantment data not found for " + enchantName);
+                return;
+            }
+
+            NamespacedKey enchantKey = new NamespacedKey(Astra.getPlugin(), enchantName);
+            NamespacedKey prestigeKey = new NamespacedKey(Astra.getPlugin(), enchantName + "_prestige");
 
             ItemStack clickedItem = event.getCurrentItem();
             if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
@@ -62,24 +57,39 @@ public class EnchantMenuListener implements Listener {
 
             if (clickedItem.hasItemMeta() && clickedItem.getItemMeta().hasDisplayName()) {
                 String displayName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
+                int currentLevel = pdc.getOrDefault(enchantKey, PersistentDataType.INTEGER, 0);
+                int maxLevel = enchantmentData.getMaxLevel();
+
                 if (displayName.contains("+1 level")) {
-                    int currentLevel = pdc.getOrDefault(enchantKey, PersistentDataType.INTEGER, 0);
-                    pdc.set(enchantKey, PersistentDataType.INTEGER, currentLevel + 1);
+                    int newLevel = Math.min(currentLevel + 1, maxLevel);
+                    pdc.set(enchantKey, PersistentDataType.INTEGER, newLevel);
                 } else if (displayName.contains("+10 levels")) {
-                    int currentLevel = pdc.getOrDefault(enchantKey, PersistentDataType.INTEGER, 0);
-                    pdc.set(enchantKey, PersistentDataType.INTEGER, currentLevel + 10);
+                    int newLevel = Math.min(currentLevel + 10, maxLevel);
+                    pdc.set(enchantKey, PersistentDataType.INTEGER, newLevel);
                 } else if (displayName.contains("+100 levels")) {
-                    int currentLevel = pdc.getOrDefault(enchantKey, PersistentDataType.INTEGER, 0);
-                    pdc.set(enchantKey, PersistentDataType.INTEGER, currentLevel + 100);
+                    int newLevel = Math.min(currentLevel + 100, maxLevel);
+                    pdc.set(enchantKey, PersistentDataType.INTEGER, newLevel);
                 } else if (displayName.contains("+1k levels")) {
-                    int currentLevel = pdc.getOrDefault(enchantKey, PersistentDataType.INTEGER, 0);
-                    pdc.set(enchantKey, PersistentDataType.INTEGER, currentLevel + 1000);
+                    int newLevel = Math.min(currentLevel + 1000, maxLevel);
+                    pdc.set(enchantKey, PersistentDataType.INTEGER, newLevel);
                 } else if (displayName.contains("Max Upgrade")) {
-                    pdc.set(enchantKey, PersistentDataType.INTEGER, Integer.MAX_VALUE);
+                    pdc.set(enchantKey, PersistentDataType.INTEGER, maxLevel);
                 } else if (displayName.contains("Refund levels")) {
                     pdc.remove(enchantKey);
                 } else if (displayName.contains("Prestige enchant")) {
-                    // PRESTIGE TODO
+                    if (enchantmentData.isPrestigeable()) {
+                        int currentPrestige = pdc.getOrDefault(prestigeKey, PersistentDataType.INTEGER, 0);
+                        int maxPrestige = enchantmentData.getMaxPrestige();
+                        if (currentPrestige < maxPrestige) {
+                            player.sendMessage(ChatColor.GOLD + "You have prestiged the enchantment " + enchantName + "!");
+                            pdc.set(prestigeKey, PersistentDataType.INTEGER, currentPrestige + 1);
+                            pdc.set(enchantKey, PersistentDataType.INTEGER, 1);
+                        } else {
+                            player.sendMessage(ChatColor.RED + "You have reached the maximum prestige level for this enchantment.");
+                        }
+                    } else {
+                        player.sendMessage(ChatColor.RED + "This enchantment cannot be prestiged.");
+                    }
                 } else if (displayName.contains("Toggle enchant")) {
                     NamespacedKey disabledKey = new NamespacedKey(Astra.getPlugin(), "disabled_" + enchantName.toLowerCase());
                     if (pdc.has(disabledKey, PersistentDataType.INTEGER)) {
@@ -99,6 +109,4 @@ public class EnchantMenuListener implements Listener {
             player.updateInventory();
         }
     }
-
-
 }

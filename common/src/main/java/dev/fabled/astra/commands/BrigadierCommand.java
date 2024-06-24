@@ -51,7 +51,7 @@ public abstract class BrigadierCommand {
         return context.getSource().getBukkitSender();
     }
 
-    static @NotNull <T> RequiredArgumentBuilder<CommandSourceStack, T> arg(
+    public static @NotNull <T> RequiredArgumentBuilder<CommandSourceStack, T> arg(
             @NotNull final String name,
             @NotNull final ArgumentType<T> argumentType
     ) {

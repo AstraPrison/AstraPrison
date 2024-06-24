@@ -1,12 +1,16 @@
 package dev.fabled.astra;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import commands.ArmorCommand;
 import dev.fabled.astra.commands.*;
 import dev.fabled.astra.lang.LocaleManager;
 import dev.fabled.astra.lang.impl.AstraAdminLang;
 import dev.fabled.astra.lang.impl.ErrorLang;
 import dev.fabled.astra.lang.interfaces.LangKeys;
-import dev.fabled.astra.listener.*;
+import dev.fabled.astra.listener.EnchantMenuListener;
+import dev.fabled.astra.listener.EnchantsTriggerEventListener;
+import dev.fabled.astra.listener.OmniToolListener;
+import dev.fabled.astra.listener.PumpkinLauncher;
 import dev.fabled.astra.listeners.MenuListener;
 import dev.fabled.astra.listeners.MinePanelListener;
 import dev.fabled.astra.listeners.PacketAdapter;
@@ -17,9 +21,8 @@ import dev.fabled.astra.modules.impl.MinesModule;
 import dev.fabled.astra.modules.impl.OmniToolModule;
 import dev.fabled.astra.omnitool.OmniToolItem;
 import dev.fabled.astra.omnitool.menu.OmnitoolMenu;
+import dev.fabled.astra.omnitool.utils.EnchantmentData;
 import dev.fabled.astra.packet.BombsPacketHandler;
-import dev.fabled.astra.utils.MineData;
-import dev.fabled.astra.utils.MineReader;
 import dev.fabled.astra.utils.configuration.YamlConfig;
 import dev.fabled.astra.utils.logger.AstraLog;
 import dev.fabled.astra.utils.logger.AstraLogLevel;
@@ -27,51 +30,49 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class AstraPlugin extends JavaPlugin implements AstraUtilities {
 
     private static AstraPlugin instance;
 
-    private YamlConfig configYml;
-
-    private final Map<Enchantment, Integer> enchantments = new ConcurrentHashMap<>();
+    private static final String REWARDS_FILE_PATH = "plugins/Astra/data/luckyblock_rewards.json";
+    private final Map<String, Boolean> rarities = new HashMap<>();
+    //private final Map<Enchantment, Integer> enchantments = new ConcurrentHashMap<>();
     private final List<Listener> listeners = List.of(
             new MenuListener(),
             new MineWand(),
             new PacketAdapter(),
             new MinePanelListener(),
-            new OmniToolListener(),
+            new EnchantMenuListener(),
             new OmnitoolMenu(),
-            new EnchantsTriggerEventListener(),
-            //new VirtualBlockBreak(),
+            new OmniToolListener(),
             new BombsPacketHandler()
     );
-    NamespacedKey tokenfinder = new NamespacedKey("astra", "tokenfinder");
-    NamespacedKey shockwave = new NamespacedKey("astra", "shockwave");
-    NamespacedKey fortune = new NamespacedKey("astra", "fortune");
+
+    private YamlConfig configYml;
+    Map<String, EnchantmentData> loadedEnchantments = EnchantmentData.loadEnchantmentsFromFiles("pluins/Astra/enchantments");
+
 
     private LocaleManager localeManager;
     private ModuleManager moduleManager;
     private CommandManager commandManager;
     private @NotNull YamlConfiguration rpgConfig;
-    private EnchantsTriggerEventListener enchantsTriggerEventListener;
     private FileConfiguration config;
     private FileConfiguration rpgConfigFile;
-    private final Map<String, Boolean> rarities = new HashMap<>();
-    private EnchantMenuListener enchantMenuListener;
 
     private final List<LangKeys> lang = List.of(
             new AstraAdminLang(),
@@ -107,6 +108,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
     public YamlConfig getConfigYml() {
         return configYml;
     }
+
 
     @Override
     public LocaleManager getLocaleManager() {
@@ -146,21 +148,21 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         commandManager.register(new OmniToolCommand());
         commandManager.register(new ExplosivesCommand());
         commandManager.register(new RpgCommand());
+        commandManager.register(new ArmorCommand());
         moduleManager.onEnable();
-        saveDefaultConfig();
 
+        //CONFIG
+        saveDefaultConfig();
         loadConfig();
         loadRPGConfig();
-
-        // ENCHANTS
-
-
+        checkAndCreateFile(REWARDS_FILE_PATH, "luckyblock_rewards.json");
+        EnchantmentData.loadEnchantmentsFromFiles("plugins/Astra/enchantments");
+        //
+        getServer().getPluginManager().registerEvents(new PumpkinLauncher(this, rarities, getRPGConfig()), this);
 
 
         listeners.forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
 
-
-        getServer().getPluginManager().registerEvents(new PumpkinLauncher(this, rarities, getRPGConfig()), this);
 
         // PacketEvents
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
@@ -170,17 +172,13 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         PacketEvents.getAPI().load();
         PacketEvents.getAPI().init();
 
-        //PacketEvents.getAPI().getEventManager().registerListener(new PacketInteractListener(Astra.getPlugin()));
         PacketEvents.getAPI().getEventManager().registerListener(new PacketEventsListener());
         PacketEvents.getAPI().getEventManager().registerListener(new BombsPacketHandler());
 
-        enchantMenuListener = new EnchantMenuListener();
 
-        // Register events
-        getServer().getPluginManager().registerEvents(enchantMenuListener, this);
-        enchantsTriggerEventListener = new EnchantsTriggerEventListener();
-        enchantsTriggerEventListener.loadEnchantments();
-        getServer().getPluginManager().registerEvents(new VirtualBlockBreak(enchantsTriggerEventListener), this);
+        getServer().getPluginManager().registerEvents(EnchantsTriggerEventListener.getInstance(), this);
+
+
 
         // Namespace
         WAND_NAMESPACED_KEY = new NamespacedKey(this, "astra-mine-wand");
@@ -205,14 +203,6 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         );
         AstraLog.divider();
 
-
-        printLoadedMinesCount();
-    }
-
-    public void printLoadedMinesCount() {
-        Map<String, MineData> mineMap = MineReader.getMineMap();
-        int loadedMinesCount = mineMap.size();
-        getLogger().info("Loaded " + loadedMinesCount + " public mines!");
     }
 
     public void loadConfig() {
@@ -233,7 +223,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
                 rarities.put(key, true);
             }
         } else {
-            getLogger().warning("Der Abschnitt 'thresholds' wurde in der Konfigurationsdatei nicht gefunden.");
+            getLogger().warning("thresholds not found in rpgconfig.yml");
         }
     }
 
@@ -245,7 +235,24 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         }
 
         rpgConfig = YamlConfiguration.loadConfiguration(rpgConfigFile);
-        getLogger().info("RPG-Konfigurationsdatei erfolgreich geladen.");
+        //getLogger().info("RPG-Configuration loaded!");
+    }
+
+    private void checkAndCreateFile(String filePath, String resourceName) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            try (InputStream in = getResource(resourceName)) {
+                if (in != null) {
+                    Files.copy(in, Paths.get(filePath));
+                    getLogger().info(resourceName + " was successfully created.");
+                } else {
+                    getLogger().warning(resourceName + " was not found.");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

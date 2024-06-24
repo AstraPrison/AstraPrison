@@ -45,4 +45,5 @@ public class ConsoleLang {
     public static final String GIVE_COMMAND_FROM_CONSOLE = "Missing arguments for omnitool command.";
     public static final String OMNI_TOOL_GIVEN_TO = "Successfully give omnitool to ";
     public static final String GIVE_COMMAND_MISSING_ARGUMENT = "Missing arguments for omnitool command.";
+    public static final String ARMOR_ADMIN_HELP = "Missing arguments for omnitool command.";
 }

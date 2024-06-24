@@ -22,3 +22,7 @@ console-logging:
   #| Send debug messages to console?
   #|
   debug-mode: false
+
+  #| Save OmniTool Player data?
+  #|
+  save-omnitool: false
