@@ -1,0 +1,10 @@
+[
+  {
+    "type": "DIAMOND",
+    "amount": 5
+  },
+  {
+    "type": "GOLD_INGOT",
+    "amount": 10
+  }
+]

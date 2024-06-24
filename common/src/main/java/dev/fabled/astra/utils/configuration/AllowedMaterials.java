@@ -61,6 +61,7 @@ public class AllowedMaterials {
         defaultMaterials.add("STONE");
         defaultMaterials.add("COBBLESTONE");
         defaultMaterials.add("DIRT");
+        defaultMaterials.add(Material.WHITE_TERRACOTTA.name());
         return defaultMaterials;
     }
 

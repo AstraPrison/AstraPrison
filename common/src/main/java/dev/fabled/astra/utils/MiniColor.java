@@ -41,25 +41,15 @@ public enum MiniColor {
     }
 
     public @NotNull Component deserialize(@NotNull final String string) {
-        if (this == INVENTORY) {
-            return miniMessage.deserialize(string).decoration(TextDecoration.ITALIC, false);
-        }
-
-        return miniMessage.deserialize(string);
+        return miniMessage.deserialize(string).decoration(TextDecoration.ITALIC, false);
     }
 
     public @NotNull List<Component> deserialize(@NotNull final List<String> strings) {
         final List<Component> components = new ArrayList<>();
 
-        if (this == INVENTORY) {
-            strings.forEach(string -> components.add(
-                    miniMessage.deserialize(string).decoration(TextDecoration.ITALIC, false)
-            ));
-        }
-
-        else {
-            strings.forEach(string -> components.add(miniMessage.deserialize(string)));
-        }
+        strings.forEach(string -> components.add(
+                miniMessage.deserialize(string).decoration(TextDecoration.ITALIC, false)
+        ));
 
         return components;
     }

@@ -5,13 +5,16 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="C:/Gradle/gradle-8.7" />
+        <option name="gradleJvm" value="21" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/armor" />
             <option value="$PROJECT_DIR$/common" />
+            <option value="$PROJECT_DIR$/explosives" />
             <option value="$PROJECT_DIR$/mines" />
             <option value="$PROJECT_DIR$/omnitool" />
+            <option value="$PROJECT_DIR$/privatemines" />
           </set>
         </option>
       </GradleProjectSettings>

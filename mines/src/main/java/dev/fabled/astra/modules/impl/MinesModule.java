@@ -3,7 +3,6 @@ package dev.fabled.astra.modules.impl;
 import dev.fabled.astra.Astra;
 import dev.fabled.astra.commands.CommandManager;
 import dev.fabled.astra.commands.MineAdminCommand;
-import dev.fabled.astra.listeners.MineWandListener;
 import dev.fabled.astra.mines.MineManager;
 import dev.fabled.astra.modules.AstraModule;
 import dev.fabled.astra.utils.logger.AstraLog;
@@ -35,7 +34,6 @@ public class MinesModule extends AstraModule {
     private MineManager mineManager;
 
     private final List<Listener> listeners = List.of(
-            new MineWandListener()
     );
 
     public MinesModule() {

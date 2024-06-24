@@ -1,0 +1,67 @@
+# U-Rpg Configuration
+# Packet parts
+use-packets: false
+use-explosion-particles: false
+mine-reset-command: YOUR COMMAND
+mine-metadata: YOUR METADATA
+# Rpg settings
+world: mine
+thresholds:
+  common:
+    displayName: '&aCommon RPG'
+    probability: 0.7
+    customModelData: 268
+    currencies:
+      currency1: tokens
+      currency2: money
+      multiplier: 2
+      radius: 4
+    uses: 25
+  uncommon:
+    displayName: '&6Uncommon RPG'
+    probability: 0.6
+    customModelData: 272
+    currencies:
+      currency1: tokens
+      currency2: money
+      multiplier: 5
+      radius: 6
+    uses: 35
+  rare:
+    displayName: '&dRare RPG'
+    probability: 0.25
+    customModelData: 283
+    currencies:
+      currency1: tokens
+      currency2: money
+      multiplier: 8
+      radius: 8
+    uses: 45
+  epic:
+    displayName: '&cEpic RPG'
+    probability: 0.2
+    customModelData: 276
+    currencies:
+      currency1: tokens
+      currency2: money
+      multiplier: 10
+      radius: 10
+    uses: 55
+
+ammunition:
+  material: PUMPKIN
+  velocity-multiplier: 2.0
+  affect-autosell: false
+lore:
+  - '&f'
+  - '&fThis RPG allows you to run'
+  - '&faround your Mine and'
+  - '&fobliterate the blocks within it'
+  - '&f'
+  - '&6Remaining Ammunition: &f{uses}'
+  - '&f'
+  - '&7(( Right-Click to fire ))'
+#Messages
+outofammo: '&cYou have run out of ammo!'
+givemessage: '&aYou have been given an'
+invalidworld: '&cU-Rpg is only available in the '

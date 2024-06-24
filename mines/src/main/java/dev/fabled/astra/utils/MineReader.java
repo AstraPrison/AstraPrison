@@ -8,8 +8,15 @@ import org.bukkit.Material;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MineReader {
+
+    private static final Map<String, MineData> mineMap = new HashMap<>();
+
     public static MineData readMineData(String filePath, String mineName) {
         File file = new File(filePath);
         if (!file.exists()) return null;
@@ -32,10 +39,20 @@ public class MineReader {
                         int endY = pos2.get("endY").getAsInt();
                         int endZ = pos2.get("endZ").getAsInt();
 
-                        String materialString = mine.get("material").getAsString();
+                        String materialString = mine.get("material1").getAsString();
+                        String materialString2 = mine.get("material2").getAsString();
+                        String materialString3 = mine.get("material3").getAsString();
                         Material material = parseMaterial(materialString);
-                        if (material != null) {
-                            return new MineData(startX, startY, startZ, endX, endY, endZ, material);
+                        Material material2 = parseMaterial(materialString2);
+                        Material material3 = parseMaterial(materialString3);
+                        String resetType = mine.get("resetType").getAsString();
+                        Long resetTime = mine.get("resetTime").getAsLong();
+                        Boolean airgap = mine.get("airgap").getAsBoolean();
+                        Boolean luckyblocks = mine.get("luckyblocks").getAsBoolean();
+                        Material luckyblockMaterial = Material.valueOf(mine.get("luckyblockMaterial").getAsString());
+                        if (material != null && material2 != null && material3 != null) {
+                            mineMap.put(mineName, new MineData(startX, startY, startZ, endX, endY, endZ, material, material2, material3, resetType, resetTime, airgap, luckyblocks, luckyblockMaterial));
+                            return new MineData(startX, startY, startZ, endX, endY, endZ, material, material2, material3, resetType, resetTime, airgap, luckyblocks, luckyblockMaterial);
                         } else {
                             System.err.println("Invalid material name: " + materialString);
                             return null;
@@ -50,6 +67,29 @@ public class MineReader {
         return null;
     }
 
+    public static List<String> getMineNames(String filePath) {
+        List<String> mineNames = new ArrayList<>();
+        File file = new File(filePath);
+        if (!file.exists()) return mineNames;
+
+        try (FileReader reader = new FileReader(file)) {
+            JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+            if (jsonObject.has("mines")) {
+                JsonArray minesArray = jsonObject.getAsJsonArray("mines");
+                for (int i = 0; i < minesArray.size(); i++) {
+                    JsonObject mine = minesArray.get(i).getAsJsonObject();
+                    if (mine.has("name")) {
+                        mineNames.add(mine.get("name").getAsString());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return mineNames;
+    }
+
     private static Material parseMaterial(String materialString) {
         try {
             return Material.valueOf(materialString);
@@ -58,4 +98,9 @@ public class MineReader {
             return null;
         }
 }
+
+
+    public static Map<String, MineData> getMineMap() {
+        return mineMap;
+    }
 }

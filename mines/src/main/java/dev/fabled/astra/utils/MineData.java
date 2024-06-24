@@ -11,7 +11,18 @@ public class MineData {
     private final int endZ;
     private final Material material;
 
-    public MineData(int startX, int startY, int startZ, int endX, int endY, int endZ, Material material) {
+    private final Material material2;
+    private final Material material3;
+
+    private final String resetType;
+    public long resetTime;
+
+    private final Boolean airgap;
+
+    public static Material luckyblockMaterial;
+    private final Boolean luckyblocks;
+
+    public MineData(int startX, int startY, int startZ, int endX, int endY, int endZ, Material material, Material material2, Material material3, String resetType, long resetTime, Boolean airgap, Boolean luckyblocks, Material luckyblockMaterial) {
         this.startX = startX;
         this.startY = startY;
         this.startZ = startZ;
@@ -19,6 +30,13 @@ public class MineData {
         this.endY = endY;
         this.endZ = endZ;
         this.material = material;
+        this.material2 = material2;
+        this.material3 = material3;
+        this.resetType = resetType;
+        this.resetTime = resetTime;
+        this.airgap = airgap;
+        this.luckyblocks = luckyblocks;
+        MineData.luckyblockMaterial = luckyblockMaterial;
     }
 
     public int getStartX() {
@@ -47,5 +65,33 @@ public class MineData {
 
     public Material getMaterial() {
         return material;
+    }
+
+    public Material getMaterial2() {
+        return material2;
+    }
+
+    public Material getMaterial3() {
+        return material3;
+    }
+
+    public String getresetType() {
+        return resetType;
+    }
+
+    public long getresetTime() {
+        return resetTime;
+    }
+
+    public Boolean airgap() {
+        return airgap;
+    }
+
+    public static Material luckyblockMaterial() {
+        return luckyblockMaterial;
+    }
+
+    public Boolean luckyblocks() {
+        return luckyblocks;
     }
 }

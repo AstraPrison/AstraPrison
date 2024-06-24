@@ -7,15 +7,9 @@ import com.google.gson.JsonParser;
 import dev.fabled.astra.Astra;
 import dev.fabled.astra.utils.MiniColor;
 import dev.fabled.astra.utils.configuration.AllowedMaterials;
-import dev.fabled.astra.utils.mines.MineChanger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -28,171 +22,25 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class MinePanel implements InventoryHolder, Listener {
+public class MinePanel implements InventoryHolder {
 
-    private final Player player;
-    private Inventory previousInventory;
-    private int currentPage = 0;
+    private final Inventory inventory;
 
-    public MinePanel(Player player) {
-        this.player = player;
+    public MinePanel() {
+        this.inventory = createMinePanel();
     }
 
-    @Override
-    public @NotNull Inventory getInventory() {
-        final String title = "Astra | Mines Panel";
-        Inventory inventory = Bukkit.createInventory(this, 27, MiniColor.INVENTORY.deserialize(title));
-
-        ItemStack item = new ItemStack(Material.IRON_PICKAXE);
-        ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName(ChatColor.GREEN + "Open Mines Menu");
-        item.setItemMeta(meta);
-        inventory.setItem(13, item);
-
-        return inventory;
-    }
-
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof MinePanel) {
-            event.setCancelled(true);
-            Player player = (Player) event.getWhoClicked();
-            ItemStack clickedItem = event.getCurrentItem();
-            if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
-
-            if (clickedItem.getType() == Material.IRON_PICKAXE && clickedItem.hasItemMeta()) {
-                previousInventory = event.getInventory();
-                player.openInventory(createMineMenu());
-            } else if (clickedItem.getType() == Material.STONE && clickedItem.hasItemMeta()) {
-                String mineName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
-                previousInventory = event.getInventory();
-                player.openInventory(createMineConfigurationMenu(mineName));
-            } else if (clickedItem.getType() == Material.PAPER && clickedItem.hasItemMeta()) {
-                String mineName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName().replace("Change name of ", ""));
-                player.sendMessage(ChatColor.YELLOW + "Please enter the new name for the mine \"" + mineName + "\":");
-                MineChanger.renameMineMap.put(player, mineName);
-                player.closeInventory();
-            } else if (clickedItem.getType() == Material.IRON_ORE && clickedItem.hasItemMeta()) {
-                String mineName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName().replace("Change material of ", ""));
-                previousInventory = event.getInventory();
-                player.openInventory(createMaterialConfigurationMenu(mineName, 0));
-            } else if (isExcludedMaterial(clickedItem.getType())) {
-                String mineName = ChatColor.stripColor(event.getView().getTitle().split(" ")[0]);
-                if (MineChanger.updateMineMaterialInJson(mineName, clickedItem.getType())) {
-                    player.sendMessage(ChatColor.GREEN + "Material of mine \"" + mineName + "\" has been updated to " + clickedItem.getType().name() + ".");
-                    player.openInventory(previousInventory);
-                } else {
-                    player.sendMessage(ChatColor.RED + "Failed to update the material. Please try again.");
-                }
-            } else if (clickedItem.getType() == Material.BARRIER) {
-                player.openInventory(previousInventory);
-            } else if (clickedItem.getType() == Material.ARROW) {
-                String title = event.getView().getTitle();
-                String[] parts = title.split(" ");
-                String mineName = parts[0];
-                if (ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName()).equals("Previous Page")) {
-                    currentPage--;
-                    player.openInventory(createMaterialConfigurationMenu(mineName, currentPage));
-                } else if (ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName()).equals("Next Page")) {
-                    currentPage++;
-                    player.openInventory(createMaterialConfigurationMenu(mineName, currentPage));
-                }
-            }
-        }
-    }
-
-
-
-
-
-    private Inventory createMineMenu() {
-        final String title = "Astra | Mines";
-        Inventory inventory = Bukkit.createInventory(this, 54, MiniColor.INVENTORY.deserialize(title));
-
-        fillInventory(inventory);
-
-        addBackButton(inventory, 53);
-
-        return inventory;
-    }
-
-    private Inventory createMineConfigurationMenu(String mineName) {
-        final String title = mineName + " Configuration";
-        Inventory inventory = Bukkit.createInventory(this, 27, MiniColor.INVENTORY.deserialize(title));
-
-        ItemStack configItem = new ItemStack(Material.PAPER);
-        ItemMeta meta = configItem.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Change name of " + mineName);
-        meta.setLore(List.of(ChatColor.GRAY + "(( Click to change the name of the mine ))"));
-        configItem.setItemMeta(meta);
-        ItemStack materialItem = new ItemStack(Material.IRON_ORE);
-        meta = materialItem.getItemMeta();
-        meta.setDisplayName(ChatColor.YELLOW + "Change material of " + mineName);
-        meta.setLore(List.of(ChatColor.GRAY + "(( Click to change the material of the mine ))"));
-        materialItem.setItemMeta(meta);
-        inventory.setItem(10, configItem);
-        inventory.setItem(12, materialItem);
-
-        addBackButton(inventory, 26);
-
-        return inventory;
-    }
-
-    private Inventory createMaterialConfigurationMenu(String mineName, int page) {
-        final String title = mineName + " Materials (Page " + (page + 1) + ")";
-        Inventory inventory = Bukkit.createInventory(this, 54, MiniColor.INVENTORY.deserialize(title));
-
-        Material[] materials = Material.values();
-        int itemsPerPage = 45;
-        int startIndex = page * itemsPerPage;
-        int endIndex = materials.length;
-
-        int count = 0;
-
-        for (int i = startIndex; i < endIndex && count < itemsPerPage; i++) {
-            Material material = materials[i];
-            if (isExcludedMaterial(material)) {
-                ItemStack itemStack = new ItemStack(material);
-                ItemMeta meta = itemStack.getItemMeta();
-                if (meta != null) {
-                    meta.setDisplayName(ChatColor.GREEN + material.name());
-                    itemStack.setItemMeta(meta);
-                    inventory.addItem(itemStack);
-                    count++;
-                }
-            }
-        }
-
-        int totalPages = (int) Math.ceil((double) countMaterials() / itemsPerPage);
-        addNavigationButtons(inventory, page, totalPages);
-        addBackButton(inventory, 49);
-
-        return inventory;
-    }
-
-    private boolean isExcludedMaterial(Material material) {
+    public static boolean isAllowedMaterial(Material material) {
         AllowedMaterials allowedMaterials = Astra.getAllowedMaterials();
         if (allowedMaterials != null) {
             return allowedMaterials.isAllowed(material);
         } else {
-            player.sendMessage(ChatColor.RED + "Failed to load the allowed materials. Please try again.");
+            System.out.println(ChatColor.RED + "Failed to load the allowed materials. Please try again.");
             return false;
         }
     }
 
-    private int countMaterials() {
-        Material[] materials = Material.values();
-        int count = 0;
-        for (Material material : materials) {
-            if (isExcludedMaterial(material)) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-
-    private void addNavigationButtons(Inventory inventory, int currentPage, int totalPages) {
+    private static void addNavigationButtons(Inventory inventory, int currentPage, int totalPages) {
         if (currentPage > 0) {
             ItemStack prevPage = new ItemStack(Material.ARROW);
             ItemMeta prevMeta = prevPage.getItemMeta();
@@ -210,8 +58,7 @@ public class MinePanel implements InventoryHolder, Listener {
         }
     }
 
-
-    private void addBackButton(Inventory inventory, int slot) {
+    private static void addBackButton(Inventory inventory, int slot) {
         ItemStack backItem = new ItemStack(Material.BARRIER);
         ItemMeta meta = backItem.getItemMeta();
         meta.setDisplayName(ChatColor.RED + "Back");
@@ -219,7 +66,7 @@ public class MinePanel implements InventoryHolder, Listener {
         inventory.setItem(slot, backItem);
     }
 
-    private void fillInventory(Inventory inventory) {
+    private static void fillInventory(Inventory inventory) {
         File file = new File("plugins/Astra/data/mines.json");
         if (!file.exists()) return;
 
@@ -239,7 +86,6 @@ public class MinePanel implements InventoryHolder, Listener {
                             int sizeY = Math.abs(pos1.get("startY").getAsInt() - pos2.get("endY").getAsInt()) + 1;
                             int sizeZ = Math.abs(pos1.get("startZ").getAsInt() - pos2.get("endZ").getAsInt()) + 1;
                             String size = sizeX + "x" + sizeY + "x" + sizeZ;
-
 
                             ItemStack mineItem = new ItemStack(Material.STONE);
                             ItemMeta meta = mineItem.getItemMeta();
@@ -262,8 +108,7 @@ public class MinePanel implements InventoryHolder, Listener {
         }
     }
 
-
-    private String formatPosition(JsonObject position) {
+    private static String formatPosition(JsonObject position) {
         int x = position.has("startX") ? position.get("startX").getAsInt() : position.get("endX").getAsInt();
         int y = position.has("startY") ? position.get("startY").getAsInt() : position.get("endY").getAsInt();
         int z = position.has("startZ") ? position.get("startZ").getAsInt() : position.get("endZ").getAsInt();
@@ -271,21 +116,166 @@ public class MinePanel implements InventoryHolder, Listener {
         return "(" + x + ", " + y + ", " + z + ")";
     }
 
-    @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
-        if (!MineChanger.renameMineMap.containsKey(player)) {
-            return;
+    private Inventory createMinePanel() {
+        final String title = "Astra | Mines Panel";
+        Inventory inv = Bukkit.createInventory(this, 27, MiniColor.INVENTORY.deserialize(title));
+
+        ItemStack item = new ItemStack(Material.IRON_PICKAXE);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(ChatColor.GREEN + "Open Mines Menu");
+        item.setItemMeta(meta);
+        inv.setItem(13, item);
+
+        return inv;
+    }
+
+    @Override
+    public @NotNull Inventory getInventory() {
+        return inventory;
+    }
+
+    public Inventory createMineMenu() {
+        final String title = "Astra | Mines";
+        Inventory inventory = Bukkit.createInventory(this, 54, MiniColor.INVENTORY.deserialize(title));
+
+        fillInventory(inventory);
+
+        addBackButton(inventory, 53);
+
+        return inventory;
+    }
+
+    public Inventory createMineConfigurationMenu(String mineName) {
+        final String title = mineName + " Configuration";
+        File file = new File("plugins/Astra/data/mines.json");
+        Inventory inventory = Bukkit.createInventory(MinePanel.this, 27, MiniColor.INVENTORY.deserialize(title));
+
+
+        ItemStack configItem = new ItemStack(Material.PAPER);
+        ItemMeta meta = configItem.getItemMeta();
+        meta.setDisplayName(ChatColor.GREEN + "Change name of " + mineName);
+        meta.setLore(List.of(ChatColor.GRAY + "(( Click to change the name of the mine ))"));
+        configItem.setItemMeta(meta);
+        try (FileReader reader = new FileReader(file)) {
+            JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+
+            if (jsonObject.has("mines") && jsonObject.get("mines").isJsonArray()) {
+                JsonArray minesArray = jsonObject.getAsJsonArray("mines");
+                String resetType = "Unknown";
+                int resetTime = 0;
+                Boolean airgap = true;
+                Boolean luckyblocks = true;
+
+                for (JsonElement mineElement : minesArray) {
+                    JsonObject mineObject = mineElement.getAsJsonObject();
+                    if (mineObject.has("name") && mineObject.get("name").getAsString().equals(mineName)) {
+                        if (mineObject.has("resetType")) {
+                            resetType = mineObject.get("resetType").getAsString();
+                        }
+                        if (mineObject.has("resetTime")) {
+                            resetTime = mineObject.get("resetTime").getAsInt();
+                        }
+                        if (mineObject.has("airgap")) {
+                            airgap = mineObject.get("airgap").getAsBoolean();
+                        }
+                        if (mineObject.has("luckyblocks")) {
+                            luckyblocks = mineObject.get("luckyblocks").getAsBoolean();
+                        }
+                        break;
+                    }
+                }
+
+                ItemStack resetItem = new ItemStack(Material.ANVIL);
+                ItemMeta resetMeta = resetItem.getItemMeta();
+                resetMeta.setDisplayName(ChatColor.RED + "Change reset type of " + mineName);
+                if (resetType.equals("Timed")) {
+                    resetMeta.setLore(List.of(
+                            ChatColor.GRAY + "Current reset type: " + ChatColor.GREEN + resetType,
+                            ChatColor.GRAY + "Current reset time: " + ChatColor.GREEN + resetTime + " seconds",
+                            ChatColor.GRAY + "",
+                            ChatColor.WHITE + "(( Click to change the reset type of the mine ))"));
+                } else if (resetType.equals("Blocks")) {
+                    resetMeta.setLore(List.of(
+                            ChatColor.GRAY + "Current reset type: " + ChatColor.GREEN + resetType,
+                            ChatColor.GRAY + "",
+                            ChatColor.WHITE + "(( Click to change the reset type of the mine ))"));
+                }
+                resetItem.setItemMeta(resetMeta);
+                inventory.setItem(14, resetItem);
+                ItemStack airgapItem = new ItemStack(Material.TRIPWIRE_HOOK);
+                ItemMeta airgapmeta = airgapItem.getItemMeta();
+                airgapmeta.setDisplayName(ChatColor.GREEN + "Change airgap of " + mineName);
+                airgapmeta.setLore(List.of(
+                        ChatColor.GRAY + "Current status: " + ChatColor.GREEN + airgap,
+                        ChatColor.GRAY + "",
+                        ChatColor.WHITE + "(( Click to change the airgap of the mine ))"));
+                airgapItem.setItemMeta(airgapmeta);
+                inventory.setItem(17, airgapItem);
+                ItemStack luckyblockItem = new ItemStack(Material.SPONGE);
+                ItemMeta luckyblockmeta = luckyblockItem.getItemMeta();
+                luckyblockmeta.setDisplayName(ChatColor.GREEN + "Change luckyblocks of " + mineName);
+                luckyblockmeta.setLore(List.of(
+                        ChatColor.GRAY + "Current status: " + ChatColor.GREEN + luckyblocks,
+                        ChatColor.GRAY + "",
+                        ChatColor.WHITE + "(( Click to change ))"));
+                luckyblockItem.setItemMeta(luckyblockmeta);
+                inventory.setItem(16, luckyblockItem);
+            } else {
+                throw new RuntimeException("Invalid JSON structure.");
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        ItemStack materialItem = new ItemStack(Material.IRON_ORE);
+        meta = materialItem.getItemMeta();
+        meta.setDisplayName(ChatColor.YELLOW + "Change material of " + mineName);
+        meta.setLore(List.of(ChatColor.GRAY + "(( Click to change the material of the mine ))"));
+        materialItem.setItemMeta(meta);
+        ItemStack deleteItem = new ItemStack(Material.REDSTONE_BLOCK);
+        meta = deleteItem.getItemMeta();
+        meta.setDisplayName(ChatColor.RED + "Delete " + mineName);
+        meta.setLore(List.of(ChatColor.GRAY + "(( Click to delete the mine ))"));
+        deleteItem.setItemMeta(meta);
+        inventory.setItem(8, deleteItem);
+        inventory.setItem(10, configItem);
+        inventory.setItem(12, materialItem);
+
+        addBackButton(inventory, 26);
+
+        return inventory;
+    }
+
+    public Inventory createMaterialConfigurationMenu(String mineName, int page) {
+        final String title = mineName + " Materials (Page " + (page + 1) + ")";
+        Inventory inventory = Bukkit.createInventory(this, 54, MiniColor.INVENTORY.deserialize(title));
+
+        List<Material> allowedMaterials = Astra.getAllowedMaterials().getMaterials();
+        int itemsPerPage = 45;
+        int startIndex = page * itemsPerPage;
+        int endIndex = Math.min(startIndex + itemsPerPage, allowedMaterials.size());
+
+        for (int i = startIndex; i < endIndex; i++) {
+            Material material = allowedMaterials.get(i);
+            ItemStack itemStack = new ItemStack(material);
+            ItemMeta meta = itemStack.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(ChatColor.GREEN + material.name());
+                List<String> lore = Arrays.asList(
+                        ChatColor.GREEN + "Left click change Material1",
+                        ChatColor.YELLOW + "Drop key change Material2",
+                        ChatColor.RED + "Right click change Material3"
+                );
+                meta.setLore(lore);
+                itemStack.setItemMeta(meta);
+                inventory.addItem(itemStack);
+            }
         }
 
-        event.setCancelled(true);
-        String oldName = MineChanger.renameMineMap.remove(player);
-        String newName = event.getMessage();
+        int totalPages = (int) Math.ceil((double) allowedMaterials.size() / itemsPerPage);
+        addNavigationButtons(inventory, page, totalPages);
+        addBackButton(inventory, 49);
 
-        if (MineChanger.updateMineNameInJson(oldName, newName)) {
-            player.sendMessage(ChatColor.GREEN + "Mine name has been updated to \"" + newName + "\".");
-        } else {
-            player.sendMessage(ChatColor.RED + "Failed to update the mine name. Please try again.");
-        }
+        return inventory;
     }
 }

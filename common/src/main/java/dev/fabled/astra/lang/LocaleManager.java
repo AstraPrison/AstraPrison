@@ -5,7 +5,6 @@ import dev.fabled.astra.lang.annotations.LangKey;
 import dev.fabled.astra.lang.interfaces.LangKeys;
 import dev.fabled.astra.utils.ListUtils;
 import dev.fabled.astra.utils.MiniColor;
-import dev.fabled.astra.utils.ObjectUtils;
 import dev.fabled.astra.utils.PapiUtils;
 import dev.fabled.astra.utils.configuration.YamlConfig;
 import dev.fabled.astra.utils.logger.AstraLog;
@@ -41,7 +40,7 @@ public final class LocaleManager {
     final Set<String> messageKeys;
     String defLocaleGroup;
 
-    LocaleManager() {
+    public LocaleManager() {
         localeGroups = new HashMap<>();
         localeGroupByIso = new HashMap<>();
         messageKeys = new HashSet<>();
