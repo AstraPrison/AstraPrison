@@ -11,7 +11,6 @@ import dev.fabled.astra.utils.MiniColor;
 import dev.fabled.astra.utils.logger.AstraLog;
 import dev.fabled.astra.utils.logger.AstraLogLevel;
 import net.minecraft.commands.CommandSourceStack;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
