@@ -46,6 +46,7 @@ public class AstraCommand extends BrigadierCommand {
                     return 0;
                 })
                 .then(literal("reload")
+                        .requires(permissionRequirement("astra.admin.reload"))
                         .executes(context -> {
                             if (!(getSender(context) instanceof Player player)) {
                                 final long start = System.currentTimeMillis();
