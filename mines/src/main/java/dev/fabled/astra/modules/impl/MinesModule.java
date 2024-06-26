@@ -3,6 +3,9 @@ package dev.fabled.astra.modules.impl;
 import dev.fabled.astra.Astra;
 import dev.fabled.astra.commands.CommandManager;
 import dev.fabled.astra.commands.MineAdminCommand;
+import dev.fabled.astra.lang.LocaleManager;
+import dev.fabled.astra.lang.impl.MineAdminLang;
+import dev.fabled.astra.lang.interfaces.LangKeys;
 import dev.fabled.astra.mines.MineManager;
 import dev.fabled.astra.modules.AstraModule;
 import dev.fabled.astra.utils.logger.AstraLog;
@@ -31,6 +34,10 @@ public class MinesModule extends AstraModule {
         return (MinesModule) module;
     }
 
+    private final List<LangKeys> lang = List.of(
+            new MineAdminLang()
+    );
+
     private MineManager mineManager;
 
     private final List<Listener> listeners = List.of(
@@ -38,6 +45,11 @@ public class MinesModule extends AstraModule {
 
     public MinesModule() {
         super(ID);
+    }
+
+    @Override
+    public void onLoad() {
+        lang.forEach(LocaleManager.getInstance()::registerLanguageKeys);
     }
 
     @Override
