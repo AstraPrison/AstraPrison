@@ -1,6 +1,5 @@
 #
-#
-#
+#  English Locale File
 #
 
 prefix: '<aqua><b>Astra</b> <dark_gray><b>|<reset>'
@@ -10,11 +9,36 @@ admin:
     - 'Astra Admin Commands:'
     - '<dark_gray>|<white> /astra <gray>- Shows plugin information!'
     - '<dark_gray>|<white> /astra help <gray>- Shows this information!'
+    - '<dark_gray>|<white> /astra reload <gray>- Reloads the plugin configuration!'
+
+  reloaded: '{PREFIX}<green> Reloaded in <white>{MS}ms<green>!'
+
+mine-admin:
+  help:
+    - 'Admin Mine Commands:'
+    - '<dark_gray>|<white> /mineadmin wand <gray>- Give yourself the mine wand!'
+    - '<dark_gray>|<white> /mineadmin create <gray>- Create a mine!'
+    - '<dark_gray>|<white> /mineadmin generate <gray>- Generate a mine!'
+    - '<dark_gray>|<white> /mineadmin panel <gray>- Open the admin mine panel!'
+
+  wand:
+    given: '{PREFIX}<green> You were given the mine wand!'
+
+  create:
+    select-corner-one: '{PREFIX}<red> Please select corner one!'
+    select-corner-two: '{PREFIX}<red> Please select corner two!'
+    no-name-provided: '{PREFIX}<red> No name was provided for the mine! Defaulting to ''<white>{DEFAULT}<red>'' instead!'
+    mine-name-taken: '{PREFIX}<red> ''<white>{NAME}<red>'' was taken! Defaulting to ''<white>{DEFAULT}<red>'' instead!'
+    success: '{PREFIX}<green> Successfully created the ''<white>{NAME}<green>'' mine!'
+
+  generate:
+    mine-not-found: '{PREFIX}<red> No mine with the name ''<white>{NAME}<red>'' exists!'
+    success: '{PREFIX}<green> Successfully generated the ''<white>{NAME}<green>'' mine!'
 
 omni-tool:
   admin:
     help:
-      - 'Omni-Tool Admin Commands:'
+      - 'Admin Omni-Tool Commands:'
       - '<dark_gray>|<white> /omnitool give <gray>- Give an omni-tool to a player!'
     give: '{PREFIX}<green> You gave<white> {PLAYER}<green> a new omni-tool!'
 
