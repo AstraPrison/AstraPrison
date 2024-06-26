@@ -26,8 +26,8 @@ public class AstraCommand extends BrigadierCommand {
     @Override
     public @NotNull CommandNode<CommandSourceStack> buildCommandNode() {
         return literal(name)
-                .executes(c -> {
-                    if (!(getSender(c) instanceof Player player)) {
+                .executes(context -> {
+                    if (!(getSender(context) instanceof Player player)) {
                         AstraLog.log(
                                 "AstraPrison v" + Astra.getPlugin().getPluginMeta().getVersion(),
                                 "Developed by Mantice and DrDivx2k",
@@ -36,7 +36,7 @@ public class AstraCommand extends BrigadierCommand {
                         return -1;
                     }
 
-                    player.sendMessage(MiniColor.parse("AstraPrison v" + Astra.getPlugin().getPluginMeta().getVersion()));
+                    player.sendMessage(MiniColor.parse("<aqua>AstraPrison v" + Astra.getPlugin().getPluginMeta().getVersion()));
                     player.sendMessage(MiniColor.parse("Developed by Mantice and DrDivx2k"));
                     player.sendMessage(MiniColor.parse("<gray>Type <white>/astra help<gray> for more commands!"));
                     return 0;
