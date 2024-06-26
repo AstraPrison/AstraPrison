@@ -30,8 +30,7 @@ public class OmniToolCommand extends BrigadierCommand {
     }
 
     @Override
-    @NotNull
-    public CommandNode<CommandSourceStack> buildCommandNode() {
+    public @NotNull CommandNode<CommandSourceStack> buildCommandNode() {
         return literal(name).executes(this::help)
                 .then(LiteralArgumentBuilder.<CommandSourceStack>literal("giveOmniTool")
                         .then(arg("player", StringArgumentType.word())
