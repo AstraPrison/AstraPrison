@@ -5,8 +5,8 @@ import dev.fabled.astra.lang.annotations.LangKey;
 import dev.fabled.astra.lang.interfaces.LangKeys;
 import dev.fabled.astra.utils.ListUtils;
 import dev.fabled.astra.utils.MiniColor;
-import dev.fabled.astra.utils.PapiUtils;
 import dev.fabled.astra.utils.configuration.YamlConfig;
+import dev.fabled.astra.utils.dependencies.PapiUtils;
 import dev.fabled.astra.utils.logger.AstraLog;
 import dev.fabled.astra.utils.logger.AstraLogLevel;
 import org.bukkit.entity.Player;
@@ -40,7 +40,7 @@ public final class LocaleManager {
     final Set<String> messageKeys;
     String defLocaleGroup;
 
-    public LocaleManager() {
+    LocaleManager() {
         localeGroups = new HashMap<>();
         localeGroupByIso = new HashMap<>();
         messageKeys = new HashSet<>();
@@ -78,7 +78,7 @@ public final class LocaleManager {
         final File folder = new File(Astra.getPlugin().getDataFolder(), "lang");
         final File[] files = folder.listFiles();
 
-        if (files == null) {
+        if (files == null || files.length < 2) {
             localeGroups.put("english", new LocaleGroup(new YamlConfig("lang/lang-english")));
             defLocaleGroup = "english";
             return;
