@@ -148,7 +148,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         LocaleManager.getInstance().onEnable();
 
         commandManager = new CommandManager();
-        commandManager.register(new AstraCommand(this));
+        commandManager.register(new AstraCommand());
         commandManager.register(new OmniToolCommand());
         commandManager.register(new ExplosivesCommand());
         commandManager.register(new RpgCommand());
