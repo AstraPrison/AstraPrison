@@ -13,9 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AstraCommand extends BrigadierCommand {
 
-    private final AstraPlugin plugin;
-
-    public AstraCommand(AstraPlugin plugin) {
+    public AstraCommand() {
         super(
                 "astra",
                 new String[]{"astraprison"},
@@ -23,7 +21,6 @@ public class AstraCommand extends BrigadierCommand {
                 "The main AstraPrison admin command!",
                 "/astra"
         );
-        this.plugin = plugin;
     }
 
     @Override
@@ -47,20 +44,28 @@ public class AstraCommand extends BrigadierCommand {
                 })
                 .then(literal("reload")
                         .executes(context -> {
-                            CommandSender sender = getSender(context);
-                            if (sender instanceof Player player) {
-                                if (player.hasPermission("astra.reload")) {
-                                    plugin.onReload();
-                                    player.sendMessage("Astra plugin reloaded!");
-                                } else {
-                                    player.sendMessage("You don't have permission to use this command!");
-                                }
-                            } else {
-                                plugin.onReload();
-                                sender.sendMessage("Astra plugin reloaded!");
+                            if (!(getSender(context) instanceof Player player)) {
+                                final long start = System.currentTimeMillis();
+                                AstraPlugin.getInstance().onReload();
+                                final long end = System.currentTimeMillis() - start;
+
+                                AstraLog.log(AstraLogLevel.SUCCESS, "Reloaded in " + end + "ms!");
+                                return 0;
                             }
-                            return 1;
-                        }))
+
+                            if (!player.hasPermission("astra.admin.reload")) {
+                                LocaleManager.send(player, ErrorLang.NO_PERMISSION, "{PERMISSION}", "astra.admin.reload");
+                                return 0;
+                            }
+
+                            final long start = System.currentTimeMillis();
+                            AstraPlugin.getInstance().onReload();
+                            final long end = System.currentTimeMillis() - start;
+
+                            LocaleManager.send(player, AstraAdminLang.RELOADED, "{MS}", String.valueOf(end));
+                            return 0;
+                        })
+                )
                 .build();
     }
 }
