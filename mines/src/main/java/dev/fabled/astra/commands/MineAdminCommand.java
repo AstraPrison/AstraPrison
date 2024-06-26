@@ -53,8 +53,7 @@ public class MineAdminCommand extends BrigadierCommand {
     }
 
     @Override
-    @NotNull
-    public CommandNode<CommandSourceStack> buildCommandNode() {
+    public @NotNull CommandNode<CommandSourceStack> buildCommandNode() {
         return LiteralArgumentBuilder.<CommandSourceStack>literal(name)
                 .executes(context -> {
                     if (!(getSender(context) instanceof Player player)) {
