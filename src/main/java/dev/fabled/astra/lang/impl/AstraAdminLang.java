@@ -7,6 +7,8 @@ public class AstraAdminLang implements LangKeys {
 
     @LangKey
     public static final String
-            ADMIN_HELP = "admin.help";
+
+            HELP = "admin.help",
+            RELOADED = "admin.reloaded";
     
 }
