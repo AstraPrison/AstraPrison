@@ -1,6 +1,8 @@
 package dev.fabled.astra.utils.configuration;
 
 import com.google.gson.*;
+import dev.fabled.astra.utils.logger.AstraLog;
+import dev.fabled.astra.utils.logger.AstraLogLevel;
 import org.bukkit.Material;
 
 import java.io.File;
@@ -30,10 +32,10 @@ public class AllowedMaterials {
             for (JsonElement element : jsonArray) {
                 String materialName = element.getAsString();
                 Material material = Material.getMaterial(materialName);
-                if (material != null) {
+                if (material != null && material.isBlock() && !material.isAir()) {
                     materials.add(material);
                 } else {
-                    System.err.println("Unknown material: " + materialName);
+                    AstraLog.log(AstraLogLevel.ERROR, "Material '" + materialName + "' is not a valid block!");
                 }
             }
         } catch (IOException e) {
