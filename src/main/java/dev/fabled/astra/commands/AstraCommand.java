@@ -24,8 +24,7 @@ public class AstraCommand extends BrigadierCommand {
     }
 
     @Override
-    @NotNull
-    public CommandNode<CommandSourceStack> buildCommandNode() {
+    public @NotNull CommandNode<CommandSourceStack> buildCommandNode() {
         return literal(name)
                 .executes(c -> {
                     if (!(getSender(c) instanceof Player player)) {
