@@ -28,6 +28,8 @@ public class ConsoleLang {
                     "| 'astra reload' - Reloads plugin configuration"
             );
 
+    public static final String ADMIN_RELOADED = "Reloaded in {MS}ms!";
+
 
     public static final String
             OMNI_TOOL_GIVE = "You gave a new omni-tool to ";
