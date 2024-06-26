@@ -1,4 +1,4 @@
 dependencies {
-    implementation project(path: ':mines')
     compileOnly project(':common')
+    compileOnly project(':mines')
 }
