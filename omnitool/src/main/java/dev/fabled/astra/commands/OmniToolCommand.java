@@ -34,7 +34,7 @@ public class OmniToolCommand extends BrigadierCommand {
         return literal(name).executes(this::help)
                 .then(LiteralArgumentBuilder.<CommandSourceStack>literal("giveOmniTool")
                         .then(arg("player", StringArgumentType.word())
-                                .suggests(this::suggestPlayers)
+                                .suggests(this::suggestOnlinePlayers)
                                 .executes(this::giveOmniTool)))
                 .build();
     }
