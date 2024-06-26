@@ -5,6 +5,7 @@ import com.mojang.brigadier.tree.CommandNode;
 import dev.fabled.astra.Astra;
 import dev.fabled.astra.AstraPlugin;
 import dev.fabled.astra.lang.LocaleManager;
+import dev.fabled.astra.lang.console.ConsoleLang;
 import dev.fabled.astra.lang.impl.AstraAdminLang;
 import dev.fabled.astra.lang.impl.ErrorLang;
 import dev.fabled.astra.utils.MiniColor;
@@ -49,12 +50,7 @@ public class AstraCommand extends BrigadierCommand {
                         .requires(permissionRequirement("astra.admin.help"))
                         .executes(context -> {
                             if (!(getSender(context) instanceof Player player)) {
-                                AstraLog.log(
-                                        "Admin Commands:",
-                                        "| 'astra' - Shows plugin information!",
-                                        "| 'astra help' - Shows this information!",
-                                        "| 'astra reload' - Reloads the plugin configuration!"
-                                );
+                                AstraLog.log(ConsoleLang.ADMIN_HELP);
                                 return 0;
                             }
 
@@ -76,7 +72,7 @@ public class AstraCommand extends BrigadierCommand {
                                 AstraPlugin.getInstance().onReload();
                                 final long end = System.currentTimeMillis() - start;
 
-                                AstraLog.log(AstraLogLevel.SUCCESS, "Reloaded in " + end + "ms!");
+                                AstraLog.log(AstraLogLevel.SUCCESS, ConsoleLang.ADMIN_RELOADED.replace("{MS}", String.valueOf(end)));
                                 return 0;
                             }
 
