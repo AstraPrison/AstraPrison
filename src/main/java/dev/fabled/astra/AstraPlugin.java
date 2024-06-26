@@ -96,6 +96,8 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         configYml.reload();
         AstraLog.onReload();
         moduleManager.onReload();
+
+        LocaleManager.getInstance().onReload();
     }
 
     @Override
@@ -143,6 +145,8 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
 
     @Override
     public void onEnable() {
+        LocaleManager.getInstance().onEnable();
+
         commandManager = new CommandManager();
         commandManager.register(new AstraCommand(this));
         commandManager.register(new OmniToolCommand());
