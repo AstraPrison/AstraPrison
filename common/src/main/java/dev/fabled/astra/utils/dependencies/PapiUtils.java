@@ -1,4 +1,4 @@
-package dev.fabled.astra.utils;
+package dev.fabled.astra.utils.dependencies;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
