@@ -81,10 +81,22 @@ public class MineWand implements Listener {
     }
 
     public static String generateMineName() {
-        String baseName = "Mine";
-        char letter = 'A';
-        while (isMineNameTaken(baseName + letter)) letter++;
-        return baseName + letter;
+        char letter = 65;
+        int suffix = 0;
+        String suffixString = "";
+
+        while (isMineNameTaken("Mine" + letter + suffixString)) {
+            if (letter == 90) {
+                letter = 65;
+                suffix++;
+                suffixString = String.valueOf(suffix);
+                continue;
+            }
+
+            letter++;
+        }
+
+        return "Mine" + letter + suffixString;
     }
 
     public static boolean isMineNameTaken(String mineName) {
