@@ -45,6 +45,30 @@ public class AstraCommand extends BrigadierCommand {
                     player.sendMessage(MiniColor.parse("<gray>Type <white>/astra help<gray> for more commands!"));
                     return 0;
                 })
+
+                .then(literal("help")
+                        .requires(permissionRequirement("astra.admin.help"))
+                        .executes(context -> {
+                            if (!(getSender(context) instanceof Player player)) {
+                                AstraLog.log(
+                                        "Admin Commands:",
+                                        "| 'astra' - Shows plugin information!",
+                                        "| 'astra help' - Shows this information!",
+                                        "| 'astra reload' - Reloads the plugin configuration!"
+                                );
+                                return 0;
+                            }
+
+                            if (!player.hasPermission("astra.admin.help")) {
+                                LocaleManager.send(player, ErrorLang.NO_PERMISSION, "{PERMISSION}", "astra.admin.help");
+                                return 0;
+                            }
+
+                            LocaleManager.send(player, AstraAdminLang.HELP);
+                            return 0;
+                        })
+                )
+
                 .then(literal("reload")
                         .requires(permissionRequirement("astra.admin.reload"))
                         .executes(context -> {
