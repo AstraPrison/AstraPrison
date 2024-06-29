@@ -9,8 +9,12 @@ public class OmniToolLang implements LangKeys {
 
     @LangKey
     public static final String
+
             ADMIN_HELP = "omni-tool.admin.help",
             ADMIN_GIVE = "omni-tool.admin.give",
+
+            ADMIN_ENCHANTMENT_INVALID = "",
+
             RECEIVED_OMNITOOL = "omni-tool.received";
 
     public static final String ADMIN_ENCHANT = "Enchanted {PLAYER}'s tool with {ENCHANTMENT} level {LEVEL}.";
