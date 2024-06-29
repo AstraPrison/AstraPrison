@@ -12,4 +12,5 @@ dependencies:
       load: BEFORE
       required: false
     packetevents:
+      load: BEFORE
       required: true
