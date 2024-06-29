@@ -48,3 +48,17 @@ errors:
   no-permission: '{PREFIX}<red> No permission!'
   select-player: '{PREFIX}<red> Select a player!'
   invalid-player: '{PREFIX}<red> Invalid player: ''<white>{PLAYER}<red>'''
+
+explosives:
+  help:
+    - 'Admin Explosive Commands:'
+    - '<dark_gray>|<white> /rpg give <gray>- Give an rpg to a player!'
+    - '<dark_gray>|<white> /rpg give <gray>- Give an rpg to a player!'
+
+  give:
+    select-item: '{PREFIX}<red> Select an item to give!'
+    given: '{PREFIX}<green> You gave <white>{PLAYER}<green> the <white>{ITEM}<green> item!'
+    received: '{PREFIX}<green> You received an <white>{EXPLOSIVE}<green> explosive!'
+
+  out-of-ammo: '{PREFIX}<red> You have no ammo for this!'
+  invalid-world: '{PREFIX}<red> You may only use this in the ''<white>{WORLD}<red>'' world!'
