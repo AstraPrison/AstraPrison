@@ -1,7 +1,6 @@
 package dev.fabled.astra;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import commands.ArmorCommand;
 import dev.fabled.astra.commands.*;
 import dev.fabled.astra.lang.LocaleManager;
 import dev.fabled.astra.lang.impl.AstraAdminLang;
@@ -150,10 +149,6 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
 
         commandManager = new CommandManager();
         commandManager.register(new AstraCommand());
-        commandManager.register(new OmniToolCommand());
-        commandManager.register(new ExplosivesCommand());
-        commandManager.register(new RpgCommand());
-        commandManager.register(new ArmorCommand());
         moduleManager.onEnable();
 
         //CONFIG
