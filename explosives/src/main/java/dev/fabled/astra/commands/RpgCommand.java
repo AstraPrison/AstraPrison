@@ -1,48 +1,39 @@
 package dev.fabled.astra.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import dev.fabled.astra.Astra;
+import dev.fabled.astra.lang.LocaleManager;
+import dev.fabled.astra.lang.impl.ErrorLang;
+import dev.fabled.astra.lang.impl.ExplosivesLang;
+import dev.fabled.astra.modules.impl.ExplosivesModule;
+import dev.fabled.astra.utils.ListUtils;
+import dev.fabled.astra.utils.MiniColor;
+import dev.fabled.astra.utils.configuration.YamlConfig;
+import dev.fabled.astra.utils.logger.AstraLog;
+import net.kyori.adventure.text.Component;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RpgCommand extends BrigadierCommand {
 
-    private static final File configFile = new File("plugins/Astra/explosives/rpgconfig.yml");
-    private static final FileConfiguration config;
-
-    static {
-        config = YamlConfiguration.loadConfiguration(configFile);
-        config.options().copyDefaults(true);
-
-        try {
-            config.save(configFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    private final YamlConfig config;
 
     public RpgCommand() {
         super(
@@ -50,45 +41,92 @@ public class RpgCommand extends BrigadierCommand {
                 new String[]{"explosive", "bombs", "drills"},
                 "astra.admin.rpg",
                 "The admin command for bomb and drill management!",
-                "/mineadmin help"
+                "/rpg"
         );
+
+        config = ExplosivesModule.getInstance().getRPGYml();
     }
 
     @Override
-    public CommandNode<CommandSourceStack> buildCommandNode() {
-        return LiteralArgumentBuilder.<CommandSourceStack>literal(name)
-                .then(Commands.argument("player", EntityArgument.player())
-                        .then(Commands.argument("item", StringArgumentType.word())
-                                .suggests((context, builder) -> {
-                                    for (String rarity : getRarityList()) {
-                                        builder.suggest(rarity);
-                                    }
-                                    return builder.buildFuture();
-                                })
-                                .executes(context -> givePumpkinLauncher(context)
-                                )))
+    public @NotNull CommandNode<CommandSourceStack> buildCommandNode() {
+        return literal(name)
+                .executes(context -> {
+                    if (!(getSender(context) instanceof Player player)) {
+                        AstraLog.log(
+                                "Admin Explosive Commands:",
+                                "| 'rpg' - Shows this information!",
+                                "| 'rpg give' - Give an rpg to a player!"
+                        );
+                        return 0;
+                    }
+
+                    LocaleManager.send(player, ExplosivesLang.SELECT_ITEM);
+                    return 0;
+                })
+                .then(literal("give")
+                        .requires(permissionRequirement("astra.admin.rpg.give"))
+                        .executes(context -> {
+                            if (!(getSender(context) instanceof Player player)) {
+                                AstraLog.log("Please select a player!");
+                                return 0;
+                            }
+
+                            LocaleManager.send(player, ErrorLang.SELECT_PLAYER);
+                            return 0;
+                        })
+                                .then(arg("player", EntityArgument.player())
+                                        .suggests(this::suggestOnlinePlayers)
+                                        .executes(context -> {
+                                            if (!(getSender(context) instanceof Player player)) {
+                                                AstraLog.log("Please select an item to give!");
+                                                return 0;
+                                            }
+
+                                            LocaleManager.send(player, ExplosivesLang.SELECT_ITEM);
+                                            return 0;
+                                        })
+
+                                        .then(arg("item", StringArgumentType.word())
+                                                .suggests((context, builder) -> {
+                                                    for (final String rarity : getRarityList()) {
+                                                        builder.suggest(rarity);
+                                                    }
+
+                                                    return builder.buildFuture();
+                                                })
+                                                .executes(this::givePumpkinLauncher)
+                                        )
+                                )
+                )
                 .build();
     }
 
+    @SuppressWarnings("SameReturnValue")
     private int givePumpkinLauncher(CommandContext<CommandSourceStack> context) {
-        ServerPlayer serverPlayer = null;
-        try {
-            serverPlayer = EntityArgument.getPlayer(context, "player");
-        } catch (CommandSyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        Player targetPlayer = Bukkit.getPlayer(serverPlayer.getUUID());
+        final ServerPlayer serverPlayer;
 
-        String rarity = StringArgumentType.getString(context, "item").toLowerCase();
-        if (config.contains("thresholds." + rarity)) {
-            ItemStack pumpkinLauncher = createPumpkinLauncher(rarity);
-            targetPlayer.getInventory().addItem(pumpkinLauncher);
-            targetPlayer.sendMessage(ChatColor.translateAlternateColorCodes('&', config.getString("givemessage") + pumpkinLauncher.getItemMeta().getDisplayName()));
-        } else {
-            targetPlayer.sendMessage("Invalid rarity. Please choose from: " + String.join(", ", getRarityList()));
+        try { serverPlayer = EntityArgument.getPlayer(context, "player"); }
+        catch (CommandSyntaxException e) {
+            AstraLog.log(e);
+            return 0;
         }
 
-        return 1;
+        final Player target = Bukkit.getPlayer(serverPlayer.getUUID());
+        if (target == null) {
+            return 0;
+        }
+
+        final String rarity = StringArgumentType.getString(context, "item").toLowerCase();
+
+        if (!config.options().contains("tiers." + rarity)) {
+            target.sendMessage("Invalid rarity. Please choose from: " + String.join(", ", getRarityList()));
+            return 0;
+        }
+
+        final ItemStack pumpkinLauncher = createPumpkinLauncher(rarity);
+        target.getInventory().addItem(pumpkinLauncher);
+        LocaleManager.send(target, ExplosivesLang.RECEIVED, "{ITEM}", pumpkinLauncher.getItemMeta().getDisplayName());
+        return 0;
     }
 
     private ItemStack createPumpkinLauncher(String rarity) {
@@ -97,23 +135,17 @@ public class RpgCommand extends BrigadierCommand {
 
         int uses;
 
-        ConfigurationSection raritySection = config.getConfigurationSection("thresholds." + rarity);
+        ConfigurationSection raritySection = config.options().getConfigurationSection("thresholds." + rarity);
         if (raritySection != null) {
-            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', raritySection.getString("displayName")));
-            uses = config.getInt("thresholds." + rarity + ".uses");
+            meta.displayName(MiniColor.INVENTORY.deserialize(raritySection.getString("displayName", "")));
+            uses = config.options().getInt("thresholds." + rarity + ".uses");
             int customModelData = raritySection.getInt("customModelData");
             meta.getPersistentDataContainer().set(new NamespacedKey(Astra.getPlugin(), "customModelData"), PersistentDataType.INTEGER, customModelData);
 
-            List<String> lore = new ArrayList<>();
-            List<String> configLore = config.getStringList("lore");
-            for (String line : configLore) {
-                line = line.replace("{uses}", String.valueOf(uses));
-                lore.add(ChatColor.translateAlternateColorCodes('&', line));
-            }
+            List<Component> configLore = MiniColor.INVENTORY.deserialize(ListUtils.fromConfig(config, "lore"));
+            meta.lore(configLore);
 
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
-            meta.setLore(lore);
-
             pumpkinLauncher.setItemMeta(meta);
 
             return pumpkinLauncher;
@@ -123,7 +155,7 @@ public class RpgCommand extends BrigadierCommand {
     }
 
     private List<String> getRarityList() {
-        ConfigurationSection raritySection = config.getConfigurationSection("thresholds");
+        ConfigurationSection raritySection = config.options().getConfigurationSection("thresholds");
         if (raritySection != null) {
             return new ArrayList<>(raritySection.getKeys(false));
         }
