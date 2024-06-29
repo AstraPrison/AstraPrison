@@ -1,7 +1,6 @@
 package dev.fabled.astra.modules.impl;
 
 import dev.fabled.astra.Astra;
-import dev.fabled.astra.commands.BrigadierCommand;
 import dev.fabled.astra.commands.CommandManager;
 import dev.fabled.astra.commands.OmniToolCommand;
 import dev.fabled.astra.lang.LocaleManager;
@@ -35,10 +34,6 @@ public class OmniToolModule extends AstraModule {
             new OmniToolLang()
     );
 
-    private final List<BrigadierCommand> commands = List.of(
-            new OmniToolCommand()
-    );
-
     public OmniToolModule() {
         super(ID);
     }
@@ -53,7 +48,7 @@ public class OmniToolModule extends AstraModule {
         omniToolKey = new NamespacedKey(Astra.getPlugin(), "astra_omnitool");
 
         final CommandManager commandManager = Astra.getUtilities().getCommandManager();
-        commands.forEach(commandManager::register);
+        commandManager.register(new OmniToolCommand());
     }
 
     public NamespacedKey getOmniToolKey() {
