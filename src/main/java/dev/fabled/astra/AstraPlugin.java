@@ -51,6 +51,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
 
     private static final String REWARDS_FILE_PATH = "plugins/Astra/data/luckyblock_rewards.json";
     private final Map<String, Boolean> rarities = new HashMap<>();
+
     //private final Map<Enchantment, Integer> enchantments = new ConcurrentHashMap<>();
     private final List<Listener> listeners = List.of(
             new MenuListener(),
@@ -66,7 +67,6 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
     private YamlConfig configYml;
     Map<String, EnchantmentData> loadedEnchantments = EnchantmentData.loadEnchantmentsFromFiles("pluins/Astra/enchantments");
 
-
     private LocaleManager localeManager;
     private ModuleManager moduleManager;
     private CommandManager commandManager;
@@ -78,10 +78,9 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
             new AstraAdminLang(),
             new ErrorLang()
     );
+
     private NamespacedKey WAND_NAMESPACED_KEY;
-
     private NamespacedKey OMNITOOL_NAMESPACED_KEY;
-
 
     public static NamespacedKey getWandNamespacedKey() {
         return instance.WAND_NAMESPACED_KEY;
@@ -164,9 +163,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         //
         getServer().getPluginManager().registerEvents(new PumpkinLauncher(this, rarities, getRPGConfig()), this);
 
-
         listeners.forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
-
 
         // PacketEvents
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
