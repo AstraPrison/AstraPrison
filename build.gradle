@@ -48,12 +48,11 @@ subprojects {
 }
 
 dependencies {
-    implementation project(path: ':armor')
     implementation project(':common')
     implementation project(':mines')
     implementation project(':omnitool')
-    implementation project(':privatemines')
     implementation project(':explosives')
+    implementation project(':armor')
 }
 
 java {
