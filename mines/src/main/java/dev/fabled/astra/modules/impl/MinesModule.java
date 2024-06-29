@@ -19,19 +19,18 @@ import java.util.List;
 
 public class MinesModule extends AstraModule {
 
-    public static @NotNull final String ID;
+    public static final String ID = "mines";
+    private static MinesModule instance;
 
-    static {
-        ID = "mines";
-    }
-
-    public static @Nullable MinesModule getInstance() {
-        final AstraModule module = Astra.getUtilities().getModuleManager().getModule(ID);
-        if (module == null) {
-            return null;
+    public static @NotNull MinesModule getInstance() {
+        if (instance == null) {
+            final AstraModule module = Astra.getUtilities().getModuleManager().getModule(ID);
+            instance = module == null
+                    ? new MinesModule()
+                    : (MinesModule) module;
         }
 
-        return (MinesModule) module;
+        return instance;
     }
 
     private final List<LangKeys> lang = List.of(

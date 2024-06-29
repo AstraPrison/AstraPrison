@@ -9,25 +9,24 @@ import dev.fabled.astra.lang.impl.OmniToolLang;
 import dev.fabled.astra.lang.interfaces.LangKeys;
 import dev.fabled.astra.modules.AstraModule;
 import org.bukkit.NamespacedKey;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class OmniToolModule extends AstraModule {
 
-    public static final String ID;
+    public static final String ID = "omnitool";
+    private static OmniToolModule instance;
 
-    static {
-        ID = "omnitool";
-    }
-
-    public static @Nullable OmniToolModule getInstance() {
-        final AstraModule module = Astra.getUtilities().getModuleManager().getModule(ID);
-        if (module == null) {
-            return null;
+    public static @NotNull OmniToolModule getInstance() {
+        if (instance == null) {
+            final AstraModule module = Astra.getUtilities().getModuleManager().getModule(ID);
+            instance = module == null
+                    ? new OmniToolModule()
+                    : (OmniToolModule) module;
         }
 
-        return (OmniToolModule) module;
+        return instance;
     }
 
     private NamespacedKey omniToolKey;
