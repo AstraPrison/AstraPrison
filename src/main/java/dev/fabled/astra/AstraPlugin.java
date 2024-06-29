@@ -17,6 +17,7 @@ import dev.fabled.astra.listeners.PacketAdapter;
 import dev.fabled.astra.listeners.PacketEventsListener;
 import dev.fabled.astra.mines.wand.MineWand;
 import dev.fabled.astra.modules.ModuleManager;
+import dev.fabled.astra.modules.impl.ExplosivesModule;
 import dev.fabled.astra.modules.impl.MinesModule;
 import dev.fabled.astra.modules.impl.OmniToolModule;
 import dev.fabled.astra.omnitool.OmniToolItem;
@@ -139,6 +140,7 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         moduleManager = new ModuleManager();
         new MinesModule();
         new OmniToolModule();
+        new ExplosivesModule();
         moduleManager.onLoad();
     }
 
