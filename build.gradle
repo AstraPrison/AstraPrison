@@ -49,10 +49,7 @@ subprojects {
 
 dependencies {
     implementation project(':common')
-    implementation project(':mines')
-    implementation project(':omnitool')
-    implementation project(':explosives')
-    implementation project(':armor')
+    implementation fileTree(dir: 'modules')
 }
 
 java {
