@@ -1,0 +1,7 @@
+plugins {
+    id 'astra.modules-common'
+}
+
+dependencies {
+    compileOnly project(':nms:common')
+}
