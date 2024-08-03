@@ -12,6 +12,8 @@ if (snapshot) {
 }
 
 dependencies {
+    implementation project(':nms:common')
+
     implementation project(':common')
     implementation project(':modules:mines')
     implementation project(':modules:omnitool')

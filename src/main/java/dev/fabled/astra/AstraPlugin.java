@@ -19,6 +19,7 @@ import dev.fabled.astra.modules.ModuleManager;
 import dev.fabled.astra.modules.impl.ExplosivesModule;
 import dev.fabled.astra.modules.impl.MinesModule;
 import dev.fabled.astra.modules.impl.OmniToolModule;
+import dev.fabled.astra.nms.NMSFactory;
 import dev.fabled.astra.omnitool.OmniToolItem;
 import dev.fabled.astra.omnitool.menu.OmnitoolMenu;
 import dev.fabled.astra.omnitool.utils.EnchantmentData;
@@ -145,6 +146,14 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
 
     @Override
     public void onEnable() {
+        if (!NMSFactory.onEnable(this)) {
+            AstraLog.divider(AstraLogLevel.ERROR);
+            AstraLog.log(AstraLogLevel.ERROR, "NMS could not be loaded!", "You are most likely on an unsupported version!", "Disabling Astra...");
+            AstraLog.divider(AstraLogLevel.ERROR);
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         LocaleManager.getInstance().onEnable();
 
         commandManager = new CommandManager();
