@@ -1,6 +1,7 @@
 rootProject.name = 'AstraPrison'
 
 include ':nms:common'
+include 'nms:versions:v1_20_R4'
 
 include 'common'
 include ':modules:mines'
