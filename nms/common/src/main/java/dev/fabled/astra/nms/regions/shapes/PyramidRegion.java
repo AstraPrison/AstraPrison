@@ -39,19 +39,19 @@ public record PyramidRegion(
         );
     }
 
-    int minX() {
+    public int minX() {
         return Math.min(startX, endX);
     }
 
-    int minZ() {
+    public int minZ() {
         return Math.min(startZ, endZ);
     }
 
-    int maxX() {
+    public int maxX() {
         return Math.max(startX, endX);
     }
 
-    int maxZ() {
+    public int maxZ() {
         return Math.max(startZ, endZ);
     }
 

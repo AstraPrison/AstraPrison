@@ -43,27 +43,27 @@ public record CuboidRegion(
         );
     }
 
-    int minX() {
+    public int minX() {
         return Math.min(startX, endX);
     }
 
-    int minY() {
+    public int minY() {
         return Math.min(startY, endY);
     }
 
-    int minZ() {
+    public int minZ() {
         return Math.min(startZ, endZ);
     }
 
-    int maxX() {
+    public int maxX() {
         return Math.max(startX, endX);
     }
 
-    int maxY() {
+    public int maxY() {
         return Math.max(startY, endY);
     }
 
-    int maxZ() {
+    public int maxZ() {
         return Math.max(startZ, endZ);
     }
 
