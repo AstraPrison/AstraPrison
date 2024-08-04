@@ -7,4 +7,6 @@ public interface AbstractNMSHandler {
 
     void sendPacket(final @NotNull Player player, final @NotNull Object packet);
 
+    @NotNull AbstractFakeBlockHandler getFakeBlockHandler();
+
 }

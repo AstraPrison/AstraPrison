@@ -4,5 +4,6 @@ plugins {
 
 dependencies {
     compileOnly project(':nms:common')
+    compileOnly project(':nms:abstraction')
     paperweight.paperDevBundle("1.20.5-R0.1-SNAPSHOT")
 }
