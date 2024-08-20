@@ -1,6 +1,5 @@
 package dev.fabled.astra;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import dev.fabled.astra.commands.*;
 import dev.fabled.astra.lang.LocaleManager;
 import dev.fabled.astra.lang.impl.AstraAdminLang;
@@ -13,7 +12,6 @@ import dev.fabled.astra.listener.PumpkinLauncher;
 import dev.fabled.astra.listeners.MenuListener;
 import dev.fabled.astra.listeners.MinePanelListener;
 import dev.fabled.astra.listeners.PacketAdapter;
-import dev.fabled.astra.listeners.PacketEventsListener;
 import dev.fabled.astra.mines.wand.MineWand;
 import dev.fabled.astra.modules.ModuleManager;
 import dev.fabled.astra.modules.impl.ExplosivesModule;
