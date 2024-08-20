@@ -1,40 +1,32 @@
 package dev.fabled.astra.listeners;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketListenerAbstract;
-import com.github.retrooper.packetevents.event.PacketListenerPriority;
-import com.github.retrooper.packetevents.event.PacketReceiveEvent;
-import com.github.retrooper.packetevents.event.PacketSendEvent;
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import com.github.retrooper.packetevents.protocol.player.DiggingAction;
-import com.github.retrooper.packetevents.protocol.player.User;
-import com.github.retrooper.packetevents.util.Vector3i;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerBlockPlacement;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerBlockChange;
-import dev.fabled.astra.Astra;
-import dev.fabled.astra.listener.EnchantsTriggerEventListener;
+//import com.github.retrooper.packetevents.PacketEvents;
+//import com.github.retrooper.packetevents.event.PacketListenerAbstract;
+//import com.github.retrooper.packetevents.event.PacketListenerPriority;
+//import com.github.retrooper.packetevents.event.PacketReceiveEvent;
+//import com.github.retrooper.packetevents.event.PacketSendEvent;
+//import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+//import com.github.retrooper.packetevents.protocol.player.DiggingAction;
+//import com.github.retrooper.packetevents.protocol.player.User;
+//import com.github.retrooper.packetevents.util.Vector3i;
+//import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerBlockPlacement;
+//import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPlayerDigging;
+//import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerBlockChange;
 import dev.fabled.astra.mines.generator.MineGenerator;
 import dev.fabled.astra.omnitool.OmniToolItem;
 import dev.fabled.astra.utils.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 import java.util.concurrent.*;
 
-public class PacketEventsListener extends PacketListenerAbstract {
+public class PacketEventsListener {
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(1);
 
@@ -48,9 +40,9 @@ public class PacketEventsListener extends PacketListenerAbstract {
     private static final Map<String, ScheduledFuture<?>> timedResetTasks = new ConcurrentHashMap<>();
     private static long RESET_DELAY = 40;
 
-    public PacketEventsListener() {
-        super(PacketListenerPriority.NORMAL);
-    }
+//    public PacketEventsListener() {
+//        super(PacketListenerPriority.NORMAL);
+//    }
 
     public static void updateBlockCount(UUID playerUUID, String mineName, Player player) {
         playerBlockCounts.putIfAbsent(playerUUID, new HashMap<>());
@@ -99,118 +91,119 @@ public class PacketEventsListener extends PacketListenerAbstract {
         return blocksMined >= threshold;
     }
 
-    @Override
-    public void onPacketReceive(PacketReceiveEvent event) {
-        if (event.getPacketType() == PacketType.Play.Client.PLAYER_DIGGING) {
-            PacketReceiveEvent copy = event.clone();
-            EXECUTOR.execute(() -> {
-                WrapperPlayClientPlayerDigging diggingWrapper = new WrapperPlayClientPlayerDigging(copy);
-                int blockX = diggingWrapper.getBlockPosition().getX();
-                int blockY = diggingWrapper.getBlockPosition().getY();
-                int blockZ = diggingWrapper.getBlockPosition().getZ();
-                User user = event.getUser();
-                if (user == null || user.getUUID() == null) {
-                    return;
-                }
-                UUID userUUID = user.getUUID();
-                Player player = Bukkit.getPlayer(userUUID);
-                if (player == null) {
-                    return;
-                }
-                Vector3i blockPosition = new Vector3i(blockX, blockY, blockZ);
-                World world = Bukkit.getWorld("world");
-                Block block = world.getBlockAt(diggingWrapper.getBlockPosition().x, diggingWrapper.getBlockPosition().y, diggingWrapper.getBlockPosition().z);
-                JavaPlugin plugin = Astra.getPlugin();
-                ItemStack itemInHand = player.getInventory().getItemInMainHand();
-                if (!block.hasMetadata("mineName") || block.getMetadata("mineName").isEmpty()) {
-                    return;
-                }
-                String mineName = block.getMetadata("mineName").get(0).asString();
-                List<UUID> playerUUIDsForBlock = MineGenerator.getPlayerUUIDsForBlock(block, userUUID);
-                boolean belongsToPlayer = playerUUIDsForBlock.contains(userUUID);
-                if (!belongsToPlayer) {
-                    return;
-                }
-                if (itemInHand.getType() == Material.DIAMOND_PICKAXE && !DiggingAction.CANCELLED_DIGGING.equals(diggingWrapper.getAction())) {
-                    if (!OmniToolItem.isOwner(player, itemInHand)) {
-                        player.sendMessage(MiniColor.parse("<red>You can only use your own Omnitool!"));
-                        return;
-                    }
-                    WrapperPlayServerBlockChange blockChangePacket = new WrapperPlayServerBlockChange(blockPosition, 0);
-                    PacketEvents.getAPI().getPlayerManager().sendPacket(player, blockChangePacket);
-                    if (block.hasMetadata("material")) {
-                        String material = block.getState().getMetadata("material").get(0).asString();
-                        if (material.equals(MineData.luckyblockMaterial().name()) && !DiggingAction.CANCELLED_DIGGING.equals(diggingWrapper.getAction())) {
-                            LuckyBlockReward.giveRandomLuckyBlockReward(player);
-                            luckyblockfound = true;
-                        }
-                        Material blockMaterial = Material.valueOf(material);
-                        player.spawnParticle(Particle.BLOCK, block.getLocation().add(0.5, 0.5, 0.5), 25, 0.1, 0.1, 0.1, blockMaterial.createBlockData());
-                        MineGenerator.removeBlockFromMap(block.getState(), userUUID);
-                        rightClickPickaxeDetected = false;
-                        luckyblockfound = false;
-                        updateBlockCount(userUUID, mineName, player);
-                        updatePickaxeLevel(player, userUUID.toString(), 1);
-                        EnchantsTriggerEventListener.getInstance().onBlockBreak(new BlockBreakEvent(block, player));
-                        if (MineReader.readMineData("plugins/Astra/data/mines.json", mineName).getresetType().equals("Blocks")) {
-                            if (shouldResetMine(userUUID, mineName)) {
-                                resetMine(player, mineName);
-                            }
-                        }
-                        if (MineReader.readMineData("plugins/Astra/data/mines.json", mineName).getresetType().equals("Timed")) {
-                            RESET_DELAY = MineReader.readMineData("plugins/Astra/data/mines.json", mineName).resetTime;
-                            scheduleTimedReset(player, mineName, RESET_DELAY, TimeUnit.SECONDS);
-                        }
-                        //scheduleTimedReset(player, mineName, RESET_DELAY, TimeUnit.MINUTES);
-                    }
-                }
-                copy.cleanUp();
-            });
-        }
+//    @Override
+//    public void onPacketReceive(PacketReceiveEvent event) {
+//        if (event.getPacketType() == PacketType.Play.Client.PLAYER_DIGGING) {
+//            PacketReceiveEvent copy = event.clone();
+//            EXECUTOR.execute(() -> {
+//                WrapperPlayClientPlayerDigging diggingWrapper = new WrapperPlayClientPlayerDigging(copy);
+//                int blockX = diggingWrapper.getBlockPosition().getX();
+//                int blockY = diggingWrapper.getBlockPosition().getY();
+//                int blockZ = diggingWrapper.getBlockPosition().getZ();
+//                User user = event.getUser();
+//                if (user == null || user.getUUID() == null) {
+//                    return;
+//                }
+//                UUID userUUID = user.getUUID();
+//                Player player = Bukkit.getPlayer(userUUID);
+//                if (player == null) {
+//                    return;
+//                }
+//                Vector3i blockPosition = new Vector3i(blockX, blockY, blockZ);
+//                World world = Bukkit.getWorld("world");
+//                Block block = world.getBlockAt(diggingWrapper.getBlockPosition().x, diggingWrapper.getBlockPosition().y, diggingWrapper.getBlockPosition().z);
+//                JavaPlugin plugin = Astra.getPlugin();
+//                ItemStack itemInHand = player.getInventory().getItemInMainHand();
+//                if (!block.hasMetadata("mineName") || block.getMetadata("mineName").isEmpty()) {
+//                    return;
+//                }
+//                String mineName = block.getMetadata("mineName").get(0).asString();
+//                List<UUID> playerUUIDsForBlock = MineGenerator.getPlayerUUIDsForBlock(block, userUUID);
+//                boolean belongsToPlayer = playerUUIDsForBlock.contains(userUUID);
+//                if (!belongsToPlayer) {
+//                    return;
+//                }
+//                if (itemInHand.getType() == Material.DIAMOND_PICKAXE && !DiggingAction.CANCELLED_DIGGING.equals(diggingWrapper.getAction())) {
+//                    if (!OmniToolItem.isOwner(player, itemInHand)) {
+//                        player.sendMessage(MiniColor.parse("<red>You can only use your own Omnitool!"));
+//                        return;
+//                    }
+//                    WrapperPlayServerBlockChange blockChangePacket = new WrapperPlayServerBlockChange(blockPosition, 0);
+//                    PacketEvents.getAPI().getPlayerManager().sendPacket(player, blockChangePacket);
+//                    if (block.hasMetadata("material")) {
+//                        String material = block.getState().getMetadata("material").get(0).asString();
+//                        if (material.equals(MineData.luckyblockMaterial().name()) && !DiggingAction.CANCELLED_DIGGING.equals(diggingWrapper.getAction())) {
+//                            LuckyBlockReward.giveRandomLuckyBlockReward(player);
+//                            luckyblockfound = true;
+//                        }
+//                        Material blockMaterial = Material.valueOf(material);
+//                        player.spawnParticle(Particle.BLOCK, block.getLocation().add(0.5, 0.5, 0.5), 25, 0.1, 0.1, 0.1, blockMaterial.createBlockData());
+//                        MineGenerator.removeBlockFromMap(block.getState(), userUUID);
+//                        rightClickPickaxeDetected = false;
+//                        luckyblockfound = false;
+//                        updateBlockCount(userUUID, mineName, player);
+//                        updatePickaxeLevel(player, userUUID.toString(), 1);
+//                        EnchantsTriggerEventListener.getInstance().onBlockBreak(new BlockBreakEvent(block, player));
+//                        if (MineReader.readMineData("plugins/Astra/data/mines.json", mineName).getresetType().equals("Blocks")) {
+//                            if (shouldResetMine(userUUID, mineName)) {
+//                                resetMine(player, mineName);
+//                            }
+//                        }
+//                        if (MineReader.readMineData("plugins/Astra/data/mines.json", mineName).getresetType().equals("Timed")) {
+//                            RESET_DELAY = MineReader.readMineData("plugins/Astra/data/mines.json", mineName).resetTime;
+//                            scheduleTimedReset(player, mineName, RESET_DELAY, TimeUnit.SECONDS);
+//                        }
+//                        //scheduleTimedReset(player, mineName, RESET_DELAY, TimeUnit.MINUTES);
+//                    }
+//                }
+//                copy.cleanUp();
+//            });
+//        }
+//
+//        if (event.getPacketType() == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT) {
+//            PacketReceiveEvent copy = event.clone();
+//            EXECUTOR.execute(() -> {
+//                WrapperPlayClientPlayerBlockPlacement blockPlacement = new WrapperPlayClientPlayerBlockPlacement(copy);
+//                User user = copy.getUser();
+//                if (user == null || user.getUUID() == null) {
+//                    return;
+//                }
+//
+//                Player player = Bukkit.getPlayer(user.getUUID());
+//                if (player != null) {
+//                    rightClickPickaxeDetected = true;
+//                }
+//                copy.cleanUp();
+//            });
+//        }
+//    }
 
-        if (event.getPacketType() == PacketType.Play.Client.PLAYER_BLOCK_PLACEMENT) {
-            PacketReceiveEvent copy = event.clone();
-            EXECUTOR.execute(() -> {
-                WrapperPlayClientPlayerBlockPlacement blockPlacement = new WrapperPlayClientPlayerBlockPlacement(copy);
-                User user = copy.getUser();
-                if (user == null || user.getUUID() == null) {
-                    return;
-                }
-
-                Player player = Bukkit.getPlayer(user.getUUID());
-                if (player != null) {
-                    rightClickPickaxeDetected = true;
-                }
-                copy.cleanUp();
-            });
-        }
-    }
-
-    @Override
-    public void onPacketSend(PacketSendEvent event) {
-
-        User user = event.getUser();
-        if (user == null || user.getUUID() == null) {
-            return;
-        }
-
-        Player player = Bukkit.getPlayer(user.getUUID());
-        if (player == null) {
-            return;
-        }
-
-        if (event.getPacketType() == PacketType.Play.Server.BLOCK_CHANGE) {
-            if (rightClickPickaxeDetected) {
-                event.setCancelled(true);
-            } else if (player.hasMetadata("drilling")) {
-                rightClickPickaxeDetected = false;
-            } else if (player.hasMetadata("bomb")) {
-                rightClickPickaxeDetected = false;
-            } else if (player.getInventory().getItemInMainHand().getType() == Material.DIAMOND_HOE) {
-                rightClickPickaxeDetected = false;
-            }
-        }
-    }
+//    @Override
+//    public void onPacketSend(PacketSendEvent event) {
+//
+//        User user = event.getUser();
+//        if (user == null || user.getUUID() == null) {
+//            return;
+//        }
+//
+//        Player player = Bukkit.getPlayer(user.getUUID());
+//        if (player == null) {
+//            return;
+//        }
+//
+//        if (event.getPacketType() == PacketType.Play.Server.BLOCK_CHANGE) {
+//            if (rightClickPickaxeDetected) {
+////                event.setCancelled(true);
+//                player.sendMessage("Cancelled Packet!");
+//            } else if (player.hasMetadata("drilling")) {
+//                rightClickPickaxeDetected = false;
+//            } else if (player.hasMetadata("bomb")) {
+//                rightClickPickaxeDetected = false;
+//            } else if (player.getInventory().getItemInMainHand().getType() == Material.DIAMOND_HOE) {
+//                rightClickPickaxeDetected = false;
+//            }
+//        }
+//    }
 
     private void updatePickaxeLevel(Player player, String playerUUID, int newBlocksBroken) {
         ItemStack pickaxe = player.getInventory().getItemInMainHand();

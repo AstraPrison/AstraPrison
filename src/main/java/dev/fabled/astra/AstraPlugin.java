@@ -27,7 +27,6 @@ import dev.fabled.astra.packet.BombsPacketHandler;
 import dev.fabled.astra.utils.configuration.YamlConfig;
 import dev.fabled.astra.utils.logger.AstraLog;
 import dev.fabled.astra.utils.logger.AstraLogLevel;
-import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -137,15 +136,15 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
         listeners.forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
 
         // PacketEvents
-        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
-        PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
-                .checkForUpdates(true)
-                .bStats(true);
-        PacketEvents.getAPI().load();
-        PacketEvents.getAPI().init();
-
-        PacketEvents.getAPI().getEventManager().registerListener(new PacketEventsListener());
-        PacketEvents.getAPI().getEventManager().registerListener(new BombsPacketHandler());
+//        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+//        PacketEvents.getAPI().getSettings().reEncodeByDefault(false)
+//                .checkForUpdates(true)
+//                .bStats(true);
+//        PacketEvents.getAPI().load();
+//        PacketEvents.getAPI().init();
+//
+//        PacketEvents.getAPI().getEventManager().registerListener(new PacketEventsListener());
+//        PacketEvents.getAPI().getEventManager().registerListener(new BombsPacketHandler());
 
 
         getServer().getPluginManager().registerEvents(EnchantsTriggerEventListener.getInstance(), this);
