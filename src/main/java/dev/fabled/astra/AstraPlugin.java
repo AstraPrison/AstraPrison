@@ -34,6 +34,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,9 +69,9 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
     private YamlConfig configYml;
     Map<String, EnchantmentData> loadedEnchantments = EnchantmentData.loadEnchantmentsFromFiles("pluins/Astra/enchantments");
 
-    private LocaleManager localeManager;
-    private ModuleManager moduleManager;
     private CommandManager commandManager;
+    private ModuleManager moduleManager;
+
     private @NotNull YamlConfiguration rpgConfig;
     private FileConfiguration config;
     private FileConfiguration rpgConfigFile;
@@ -89,42 +90,6 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
 
     public static AstraPlugin getInstance() {
         return instance;
-    }
-
-    public void onReload() {
-        configYml.save();
-        configYml.reload();
-        AstraLog.onReload();
-        moduleManager.onReload();
-
-        LocaleManager.getInstance().onReload();
-    }
-
-    @Override
-    public void onDisable() {
-        moduleManager.onDisable();
-        AstraLog.log(AstraLogLevel.SUCCESS, "AstraPrison disabled!");
-    }
-
-    @Override
-    public YamlConfig getConfigYml() {
-        return configYml;
-    }
-
-
-    @Override
-    public LocaleManager getLocaleManager() {
-        return localeManager;
-    }
-
-    @Override
-    public CommandManager getCommandManager() {
-        return commandManager;
-    }
-
-    @Override
-    public ModuleManager getModuleManager() {
-        return moduleManager;
     }
 
     @Override
@@ -212,6 +177,36 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
 
     }
 
+    public void onReload() {
+        configYml.save();
+        configYml.reload();
+        AstraLog.onReload();
+        moduleManager.onReload();
+
+        LocaleManager.getInstance().onReload();
+    }
+
+    @Override
+    public void onDisable() {
+        moduleManager.onDisable();
+        AstraLog.log(AstraLogLevel.SUCCESS, "AstraPrison disabled!");
+    }
+
+    @Override
+    public YamlConfig getConfigYml() {
+        return configYml;
+    }
+
+    @Override
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    @Override
+    public ModuleManager getModuleManager() {
+        return moduleManager;
+    }
+
     public void loadConfig() {
         File configFile = new File(getDataFolder(), "explosives/rpgconfig.yml");
         if (!configFile.exists()) {
@@ -266,4 +261,5 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
     public FileConfiguration getRPGConfig() {
         return rpgConfig;
     }
+
 }
