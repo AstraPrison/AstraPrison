@@ -16,6 +16,7 @@ dependencies {
     implementation project(':nms:abstraction')
     implementation project(':nms:versions:v1_20_R4')
 
+    implementation project(':api')
     implementation project(':common')
     implementation project(':modules:mines')
     implementation project(':modules:omnitool')
