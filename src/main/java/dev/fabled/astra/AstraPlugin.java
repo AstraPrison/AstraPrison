@@ -1,5 +1,7 @@
 package dev.fabled.astra;
 
+import dev.fabled.astra.api.actions.ActionManager;
+import dev.fabled.astra.api.actions.ActionManagerImpl;
 import dev.fabled.astra.commands.*;
 import dev.fabled.astra.lang.LocaleManager;
 import dev.fabled.astra.lang.impl.AstraAdminLang;
@@ -12,6 +14,7 @@ import dev.fabled.astra.listener.PumpkinLauncher;
 import dev.fabled.astra.listeners.MenuListener;
 import dev.fabled.astra.listeners.MinePanelListener;
 import dev.fabled.astra.listeners.PacketAdapter;
+import dev.fabled.astra.menus.MenuManager;
 import dev.fabled.astra.mines.wand.MineWand;
 import dev.fabled.astra.modules.ModuleManager;
 import dev.fabled.astra.modules.impl.ExplosivesModule;
@@ -44,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class AstraPlugin extends JavaPlugin implements AstraUtilities {
+public class AstraPlugin extends JavaPlugin implements AstraUtilities, AstraPrisonAPI {
 
     private static AstraPlugin instance;
 
@@ -66,6 +69,8 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
     private YamlConfig configYml;
     Map<String, EnchantmentData> loadedEnchantments = EnchantmentData.loadEnchantmentsFromFiles("pluins/Astra/enchantments");
 
+    private ActionManagerImpl actionManager;
+    private MenuManager menuManager;
     private CommandManager commandManager;
     private ModuleManager moduleManager;
 
@@ -118,8 +123,14 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
 
         LocaleManager.getInstance().onEnable();
 
+        actionManager = new ActionManagerImpl();
+        actionManager.onEnable();
+
+        menuManager = new MenuManager();
+
         commandManager = new CommandManager();
         commandManager.register(new AstraCommand());
+
         moduleManager.onEnable();
 
         //CONFIG
@@ -195,6 +206,16 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
     }
 
     @Override
+    public @Nullable ActionManager getActionManager() {
+        return actionManager;
+    }
+
+    @Override
+    public MenuManager getMenuManager() {
+        return menuManager;
+    }
+
+    @Override
     public CommandManager getCommandManager() {
         return commandManager;
     }
@@ -205,13 +226,13 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
     }
 
     public void loadConfig() {
-        File configFile = new File(getDataFolder(), "explosives/rpgconfig.yml");
+        File configFile = new File(getDataFolder(), "modules/explosives/rpg.yml");
         if (!configFile.exists()) {
             configFile.getParentFile().mkdirs();
-            saveResource("explosives/rpgconfig.yml", false);
+            saveResource("modules/explosives/rpg.yml", false);
         }
         config = YamlConfiguration.loadConfiguration(configFile);
-        InputStream defConfigStream = getResource("explosives/rpgconfig.yml");
+        InputStream defConfigStream = getResource("modules/explosives/rpg.yml");
         if (defConfigStream != null) {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
             config.setDefaults(defConfig);
@@ -222,15 +243,15 @@ public class AstraPlugin extends JavaPlugin implements AstraUtilities {
                 rarities.put(key, true);
             }
         } else {
-            getLogger().warning("thresholds not found in rpgconfig.yml");
+            getLogger().warning("thresholds not found in rpg.yml");
         }
     }
 
     private void loadRPGConfig() {
-        File rpgConfigFile = new File(getDataFolder(), "explosives/rpgconfig.yml");
+        File rpgConfigFile = new File(getDataFolder(), "modules/explosives/rpg.yml");
         if (!rpgConfigFile.exists()) {
             rpgConfigFile.getParentFile().mkdirs();
-            saveResource("explosives/rpgconfig.yml", false);
+            saveResource("modules/explosives/rpg.yml", false);
         }
 
         rpgConfig = YamlConfiguration.loadConfiguration(rpgConfigFile);

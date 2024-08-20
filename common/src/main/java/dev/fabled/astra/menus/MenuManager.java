@@ -1,18 +1,39 @@
 package dev.fabled.astra.menus;
 
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class MenuManager implements InventoryHolder {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-    private final Inventory inventory;
+public class MenuManager {
 
-    public MenuManager(Inventory inventory) {
-        this.inventory = inventory;
+    private final @NotNull Map<String, AstraMenu> menus;
+
+    public MenuManager() {
+        menus = new HashMap<>();
     }
 
-    @Override
-    public Inventory getInventory() {
-        return inventory;
+    public void register(final @NotNull AstraMenu menu) {
+        menus.put(menu.id, menu);
     }
+
+    public boolean exists(final @NotNull String id) {
+        return menus.containsKey(id);
+    }
+
+    public @Nullable AstraMenu getMenu(final @NotNull String id) {
+        return menus.getOrDefault(id, null);
+    }
+
+    public @NotNull List<String> getMenuIDs() {
+        return new ArrayList<>(menus.keySet());
+    }
+
+    public @NotNull List<AstraMenu> getMenus() {
+        return new ArrayList<>(menus.values());
+    }
+
 }
