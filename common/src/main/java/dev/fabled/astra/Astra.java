@@ -6,19 +6,17 @@ import org.jetbrains.annotations.NotNull;
 public final class Astra {
 
     private static JavaPlugin plugin;
-    private static AstraUtilities utilities;
 
-    static void onLoad(@NotNull final JavaPlugin plugin) {
+    static void onLoad(final @NotNull JavaPlugin plugin) {
         Astra.plugin = plugin;
-        utilities = (AstraUtilities) plugin;
+    }
+
+    public static AstraPlugin get() {
+        return (AstraPlugin) plugin;
     }
 
     public static JavaPlugin getPlugin() {
         return plugin;
-    }
-
-    public static AstraUtilities getUtilities() {
-        return utilities;
     }
 
 }

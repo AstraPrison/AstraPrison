@@ -1,35 +1,35 @@
 package dev.fabled.astra.utils;
 
 import dev.fabled.astra.utils.configuration.YamlConfig;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class ListUtils {
+public final class ListUtils {
 
+    @Contract("_, _, !null -> !null")
     public static @Nullable List<String> fromConfig(
-            @NotNull final YamlConfig config,
-            @NotNull final String path,
-            @Nullable final List<String> def
+            final @NotNull YamlConfig config,
+            final @NotNull String key,
+            final @Nullable List<String> def
     ) {
-        final Object object = config.options().get(path);
-        if (object == null) {
+        final Object o = config.options().get(key);
+        if (o == null) {
             return def;
         }
 
-        if (object instanceof List<?>) {
-            return config.options().getStringList(path);
+        if (o instanceof List<?>) {
+            return config.options().getStringList(key);
         }
 
-        return new ArrayList<>(Collections.singletonList(object.toString()));
+        return new ArrayList<>(List.of(o.toString()));
     }
 
-    public static @NotNull List<String> fromConfig(@NotNull final YamlConfig config, @NotNull final String path) {
-        final List<String> result = fromConfig(config, path, null);
-        return result == null ? new ArrayList<>() : result;
+    public static @Nullable List<String> fromConfig(final YamlConfig config, final @NotNull String key) {
+        return fromConfig(config, key, null);
     }
 
 }

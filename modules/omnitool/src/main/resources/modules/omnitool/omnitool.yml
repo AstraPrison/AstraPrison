@@ -1,0 +1,16 @@
+#
+#
+#
+#
+
+# Keep the OmniTool locked in a player's inventory?
+lock-omni-tool-to-inventory: true
+
+#
+# Both header and footer can be a list!
+# Set either to an empty string '' or an empty list [] to disable!
+#
+lore-format:
+  header: '<b>{LEVEL_COLOR}Enchants:</b>'
+  enchant: '<b>{LEVEL_COLOR}▪</b> {ENCHANT_COLOR}{ENCHANT_NAME}<white> {ENCHANT_LEVEL}'
+  footer: []

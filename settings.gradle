@@ -1,5 +1,5 @@
 rootProject.name = 'AstraPrison'
 include 'common'
-include 'mines'
-include 'omnitool'
+include 'modules:omnitool'
+findProject(':modules:omnitool')?.name = 'omnitool'
 

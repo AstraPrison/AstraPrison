@@ -26,62 +26,55 @@ public enum MiniColor {
             StandardTags.reset()
     );
 
-    private @NotNull final MiniMessage miniMessage;
+    private final @NotNull MiniMessage miniMessage;
 
-    MiniColor(@NotNull final MiniMessage miniMessage) {
+    MiniColor(final @NotNull MiniMessage miniMessage) {
         this.miniMessage = miniMessage;
     }
 
-    MiniColor(@NotNull final TagResolver... tagResolvers) {
+    MiniColor(final @NotNull TagResolver... tagResolvers) {
         miniMessage = MiniMessage.builder().tags(TagResolver.builder().resolvers(tagResolvers).build()).build();
     }
 
-    public static @NotNull Component parse(@NotNull final String string) {
-        return CHAT.miniMessage.deserialize(string);
-    }
-
-    public @NotNull Component deserialize(@NotNull final String string) {
+    public @NotNull Component deserialize(final @NotNull String input) {
         if (this == INVENTORY) {
-            return miniMessage.deserialize(string).decoration(TextDecoration.ITALIC, false);
+            return miniMessage.deserialize(input).decoration(TextDecoration.ITALIC, false);
         }
 
-        return miniMessage.deserialize(string);
+        return miniMessage.deserialize(input);
     }
 
-    public @NotNull List<Component> deserialize(@NotNull final List<String> strings) {
-        final List<Component> components = new ArrayList<>();
-
+    public @NotNull List<Component> deserialize(final @NotNull List<String> input) {
+        final List<Component> list = new ArrayList<>();
         if (this == INVENTORY) {
-            strings.forEach(string -> components.add(
-                    miniMessage.deserialize(string).decoration(TextDecoration.ITALIC, false)
-            ));
+            input.forEach(string -> list.add(miniMessage.deserialize(string).decoration(TextDecoration.ITALIC, false)));
         }
 
         else {
-            strings.forEach(string -> components.add(miniMessage.deserialize(string)));
+            input.forEach(string -> list.add(miniMessage.deserialize(string)));
         }
 
-        return components;
+        return list;
     }
 
-    public @NotNull String serialize(@NotNull final Component component) {
-        return miniMessage.serialize(component);
+    public @NotNull String serialize(final @NotNull Component input) {
+        return miniMessage.serialize(input);
     }
 
-    public @NotNull List<String> serialize(@NotNull final List<Component> components) {
-        final List<String> strings = new ArrayList<>();
-        components.forEach(component -> strings.add(miniMessage.serialize(component)));
-        return strings;
+    public @NotNull List<String> serialize(final @NotNull List<Component> input) {
+        final List<String> list = new ArrayList<>();
+        input.forEach(string -> list.add(serialize(string)));
+        return list;
     }
 
-    public @NotNull String stripTags(@NotNull final String string) {
-        return miniMessage.stripTags(string);
+    public @NotNull String stripTags(final @NotNull String input) {
+        return miniMessage.stripTags(input);
     }
 
-    public @NotNull List<String> stripTags(@NotNull final List<String> strings) {
-        final List<String> parsed = new ArrayList<>();
-        strings.forEach(string -> parsed.add(miniMessage.stripTags(string)));
-        return parsed;
+    public @NotNull List<String> stripTags(final @NotNull List<String> input) {
+        final List<String> list = new ArrayList<>();
+        input.forEach(string -> list.add(stripTags(string)));
+        return list;
     }
 
 }

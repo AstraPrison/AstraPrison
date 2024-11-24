@@ -1,5 +1,6 @@
 package dev.fabled.astra.utils.configuration;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,23 +9,23 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public final class JsonConfiguration {
+public class JsonConfiguration {
 
     private @NotNull Map<String, Object> map;
 
-    JsonConfiguration() {
+    public JsonConfiguration() {
         map = new HashMap<>();
     }
 
-    void setMap(@NotNull final Map<String, Object> map) {
-        this.map = map;
+    void setMap(final @NotNull Map<String, Object> newMap) {
+        map = newMap;
     }
 
     @NotNull Map<String, Object> getMap() {
         return map;
     }
 
-    public void set(@NotNull final String path, @Nullable final Object object) {
+    public void set(final @NotNull String path, final @Nullable Object object) {
         if (object == null) {
             map.remove(path);
             return;
@@ -33,19 +34,30 @@ public final class JsonConfiguration {
         map.put(path, object);
     }
 
-    public Object get(@NotNull final String path, @Nullable final Object def) {
+    @Contract("_, !null, _ -> !null")
+    private <T> T get(final @NotNull String path, final @Nullable T def, final @NotNull Class<T> clazz) {
+        final Object object = map.getOrDefault(path, null);
+        if (!clazz.isInstance(object)) {
+            return def;
+        }
+
+        return clazz.cast(object);
+    }
+
+    @Contract("_, !null -> !null")
+    public @Nullable Object get(final @NotNull String path, final @Nullable Object def) {
         return map.getOrDefault(path, def);
     }
 
-    public Object get(@NotNull final String path) {
+    public @Nullable Object get(final @NotNull String path) {
         return get(path, null);
     }
 
-    public String getString(@NotNull final String path, @Nullable final String def) {
+    public @Nullable String getString(final @NotNull String path, final @Nullable String def) {
         return get(path, def, String.class);
     }
 
-    public String getString(@NotNull final String path) {
+    public @Nullable String getString(final @NotNull String path) {
         return getString(path, null);
     }
 
@@ -97,7 +109,7 @@ public final class JsonConfiguration {
         return getDouble(path, 0d);
     }
 
-    public @NotNull Set<String> getSet(@NotNull final String parent) {
+    public @NotNull Set<String> getSet(final @NotNull String parent) {
         final Set<String> set = new HashSet<>();
 
         map.keySet().forEach(key -> {
@@ -117,15 +129,6 @@ public final class JsonConfiguration {
         });
 
         return set;
-    }
-
-    private <T> T get(@NotNull final String path, T def, Class<T> clazz) {
-        final Object object = map.getOrDefault(path, null);
-        if (!clazz.isInstance(object)) {
-            return def;
-        }
-
-        return clazz.cast(object);
     }
 
 }

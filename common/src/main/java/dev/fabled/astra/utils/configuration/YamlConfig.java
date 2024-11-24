@@ -3,6 +3,7 @@ package dev.fabled.astra.utils.configuration;
 import dev.fabled.astra.Astra;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -10,13 +11,12 @@ import java.io.IOException;
 
 public class YamlConfig implements AstraConfig {
 
-    private @NotNull final String filePath;
+    private final @NotNull String filePath;
     private File file;
     private FileConfiguration fileConfiguration;
 
-    public YamlConfig(@NotNull final String filePath) {
+    public YamlConfig(final @NotNull String filePath) {
         this.filePath = filePath.endsWith(".yml") ? filePath : filePath + ".yml";
-        reload();
         save();
         reload();
     }
@@ -30,18 +30,6 @@ public class YamlConfig implements AstraConfig {
     }
 
     @Override
-    public void saveFile() {
-        if (fileConfiguration == null || file == null) {
-            return;
-        }
-
-        try { fileConfiguration.save(file); }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public void save() {
         if (file == null) {
             file = file();
@@ -51,12 +39,31 @@ public class YamlConfig implements AstraConfig {
             return;
         }
 
-        Astra.getPlugin().saveResource(filePath, false);
+        final JavaPlugin plugin = Astra.getPlugin();
+        if (plugin.getResource(filePath) == null) {
+            return;
+        }
+
+        plugin.saveResource(filePath, false);
     }
 
     @Override
     public void reload() {
         fileConfiguration = YamlConfiguration.loadConfiguration(file());
+    }
+
+    @Override
+    public void saveChanges() {
+        if (fileConfiguration == null || file == null) {
+            return;
+        }
+
+        try {
+            fileConfiguration.save(file);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

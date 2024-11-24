@@ -1,0 +1,108 @@
+#
+# OmniTool Level Configuration
+#
+
+#
+# Default OmniTool Configuration
+#
+level-0:
+  pickaxe:
+    material: WOODEN_PICKAXE
+    custom-model-data: 0
+    display-name: "<b><#895129>Omni-Tool</b> <dark_gray>(<gray>Pickaxe<dark_gray>)"
+    level-color: '<#895129>'
+  axe:
+    material: WOODEN_AXE
+    custom-model-data: 0
+    display-name: "<b><#895129>Omni-Tool</b> <dark_gray>(<gray>Axe<dark_gray>)"
+    level-color: '<#895129>'
+  shovel:
+    material: WOODEN_SHOVEL
+    custom-model-data: 0
+    display-name: "<b><#895129>Omni-Tool</b> <dark_gray>(<gray>Shovel<dark_gray>)"
+    level-color: '<#895129>'
+
+#
+# Add more levels below!
+#
+levels:
+  10:
+    pickaxe:
+      material: STONE_PICKAXE
+      custom-model-data: 0
+      display-name: "<b><gray>Omni-Tool</b> <dark_gray>(<gray>Pickaxe<dark_gray>)"
+      level-color: '<gray>'
+    axe:
+      material: STONE_AXE
+      custom-model-data: 0
+      display-name: "<b><gray>Omni-Tool</b> <dark_gray>(<gray>Axe<dark_gray>)"
+      level-color: '<gray>'
+    shovel:
+      material: STONE_SHOVEL
+      custom-model-data: 0
+      display-name: "<b><gray>Omni-Tool</b> <dark_gray>(<gray>Shovel<dark_gray>)"
+      level-color: '<gray>'
+  20:
+    pickaxe:
+      material: IRON_PICKAXE
+      custom-model-data: 0
+      display-name: "<b><white>Omni-Tool</b> <dark_gray>(<gray>Pickaxe<dark_gray>)"
+      level-color: '<white>'
+    axe:
+      material: IRON_AXE
+      custom-model-data: 0
+      display-name: "<b><white>Omni-Tool</b> <dark_gray>(<gray>Axe<dark_gray>)"
+      level-color: '<white>'
+    shovel:
+      material: IRON_SHOVEL
+      custom-model-data: 0
+      display-name: "<b><white>Omni-Tool</b> <dark_gray>(<gray>Shovel<dark_gray>)"
+      level-color: '<white>'
+  30:
+    pickaxe:
+      material: GOLDEN_PICKAXE
+      custom-model-data: 0
+      display-name: "<b><yellow>Omni-Tool</b> <dark_gray>(<gray>Pickaxe<dark_gray>)"
+      level-color: '<yellow>'
+    axe:
+      material: GOLDEN_AXE
+      custom-model-data: 0
+      display-name: "<b><yellow>Omni-Tool</b> <dark_gray>(<gray>Axe<dark_gray>)"
+      level-color: '<yellow>'
+    shovel:
+      material: GOLDEN_SHOVEL
+      custom-model-data: 0
+      display-name: "<b><yellow>Omni-Tool</b> <dark_gray>(<gray>Shovel<dark_gray>)"
+      level-color: '<yellow>'
+  40:
+    pickaxe:
+      material: DIAMOND_PICKAXE
+      custom-model-data: 0
+      display-name: "<b><aqua>Omni-Tool</b> <dark_gray>(<gray>Pickaxe<dark_gray>)"
+      level-color: '<aqua>'
+    axe:
+      material: DIAMOND_AXE
+      custom-model-data: 0
+      display-name: "<b><aqua>Omni-Tool</b> <dark_gray>(<gray>Axe<dark_gray>)"
+      level-color: '<aqua>'
+    shovel:
+      material: DIAMOND_SHOVEL
+      custom-model-data: 0
+      display-name: "<b><aqua>Omni-Tool</b> <dark_gray>(<gray>Shovel<dark_gray>)"
+      level-color: '<aqua>'
+  50:
+    pickaxe:
+      material: NETHERITE_PICKAXE
+      custom-model-data: 0
+      display-name: "<b><dark_aqua>Omni-Tool</b> <dark_gray>(<gray>Pickaxe<dark_gray>)"
+      level-color: '<dark_aqua>'
+    axe:
+      material: NETHERITE_AXE
+      custom-model-data: 0
+      display-name: "<b><dark_aqua>Omni-Tool</b> <dark_gray>(<gray>Axe<dark_gray>)"
+      level-color: '<dark_aqua>'
+    shovel:
+      material: NETHERITE_SHOVEL
+      custom-model-data: 0
+      display-name: "<b><dark_aqua>Omni-Tool</b> <dark_gray>(<gray>Shovel<dark_gray>)"
+      level-color: '<dark_aqua>'

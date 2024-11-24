@@ -1,41 +1,36 @@
 package dev.fabled.astra.modules;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ModuleManager {
+public final class ModuleManager {
 
-    private final Map<String, AstraModule> modules;
+    private final @NotNull Map<String, AstraModule> modules;
 
     public ModuleManager() {
         modules = new HashMap<>();
     }
 
-    void register(@NotNull final AstraModule module) {
-        modules.put(module.id, module);
-    }
-
-    public @Nullable AstraModule getModule(@NotNull final String id) {
-        return modules.getOrDefault(id, null);
+    public void register(final @NotNull AstraModule module) {
+        modules.putIfAbsent(module.getId(), module);
     }
 
     public void onLoad() {
-        modules.values().forEach(AstraModule::onLoad);
+        modules.forEach((id, module) -> module.onLoad());
     }
 
     public void onEnable() {
-        modules.values().forEach(AstraModule::onEnable);
-    }
-
-    public void onReload() {
-        modules.values().forEach(AstraModule::onReload);
+        modules.forEach((id, module) -> module.onEnable());
     }
 
     public void onDisable() {
-        modules.values().forEach(AstraModule::onDisable);
+        modules.forEach((id, module) -> module.onDisable());
+    }
+
+    public void onReload() {
+        modules.forEach((id, module) -> module.onReload());
     }
 
 }

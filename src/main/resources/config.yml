@@ -9,11 +9,10 @@
 #    Developed by Mantice
 #
 
-
 #
 # Console Log Settings
 #
-console-logging:
+logging:
 
   #| Allow color in console messages?
   #|

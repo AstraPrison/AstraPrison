@@ -1,22 +1,60 @@
 package dev.fabled.astra.menus;
 
 import dev.fabled.astra.utils.MiniColor;
-import dev.fabled.astra.utils.PapiUtils;
+import dev.fabled.astra.utils.configuration.YamlConfig;
+import dev.fabled.astra.utils.dependencies.PapiUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AstraMenu implements InventoryHolder {
 
-    private String title;
-    private int size;
+    private final int size;
+    private final String title;
+    private final List<MenuItem> items;
 
-    public @NotNull Inventory getInventory(@Nullable final Player player) {
-        final String title = PapiUtils.parse(player, this.title);
-        return Bukkit.createInventory(this, size, MiniColor.INVENTORY.deserialize(title));
+    public AstraMenu(final @NotNull YamlConfig config) {
+        int s = config.options().getInt("size", 54);
+        s = Math.max(0, s);
+        s = Math.min(54, s);
+
+        if (s % 9 != 0) {
+            s -= s % 9;
+        }
+
+        size = s;
+        title = config.options().getString("title", "Astra Menu");
+        items = new ArrayList<>();
+
+        final ConfigurationSection section = config.options().getConfigurationSection("contents");
+        if (section == null) {
+            return;
+        }
+
+        section.getKeys(false).forEach(key ->
+                items.add(new MenuItem(config, key + "."))
+        );
+    }
+
+    public @NotNull Inventory getInventory(final @Nullable Player player) {
+        final Inventory inventory = Bukkit.createInventory(this, size,
+                MiniColor.INVENTORY.deserialize(PapiUtils.parse(title, player))
+        );
+
+        items.forEach(menuItem -> {
+            final ItemStack item = menuItem.build(player);
+            menuItem.getSlots().forEach(slot -> inventory.setItem(slot, item));
+        });
+
+        return inventory;
     }
 
     @Override

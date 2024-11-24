@@ -1,24 +1,37 @@
 package dev.fabled.astra.modules;
 
-import dev.fabled.astra.Astra;
 import org.jetbrains.annotations.NotNull;
 
-public class AstraModule {
+public abstract class AstraModule {
 
-    final @NotNull String id;
+    private final @NotNull String id;
 
-    public AstraModule(@NotNull final String id) {
+    public AstraModule(final @NotNull String id) {
         this.id = id;
-        Astra.getUtilities().getModuleManager().register(this);
     }
 
-    public @NotNull String getID() {
+    public final @NotNull String getId() {
         return id;
     }
 
-    public void onLoad() {}
-    public void onEnable() {}
-    public void onReload() {}
-    public void onDisable() {}
+    /**
+     * Called from the main class' onLoad method
+     */
+    public abstract void onLoad();
+
+    /**
+     * Called from the main class' onEnable method
+     */
+    public abstract void onEnable();
+
+    /**
+     * Called from the main class' onDisable method
+     */
+    public abstract void onDisable();
+
+    /**
+     * Called from the main class' onReload method
+     */
+    public abstract void onReload();
 
 }

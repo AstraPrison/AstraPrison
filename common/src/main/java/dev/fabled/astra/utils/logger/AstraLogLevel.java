@@ -8,14 +8,14 @@ public enum AstraLogLevel {
     SUCCESS("<green>"),
     ERROR("<red>");
 
-    @NotNull final String color;
+    final @NotNull String color;
 
-    AstraLogLevel(@NotNull final String color) {
+    AstraLogLevel(final @NotNull String color) {
         this.color = color;
     }
 
     AstraLogLevel() {
-        this.color = "";
+        this("");
     }
 
 }

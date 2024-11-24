@@ -3,10 +3,10 @@ package dev.fabled.astra.utils.configuration;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.fabled.astra.Astra;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,47 +15,29 @@ import java.util.HashMap;
 
 public class JsonConfig implements AstraConfig {
 
-    private static final Gson gson;
+    private static final @NotNull Gson GSON;
 
     static {
-        gson = new GsonBuilder().setPrettyPrinting().create();
+        GSON = new GsonBuilder().setPrettyPrinting().create();
     }
 
-    private @NotNull final String filePath;
+    private final @NotNull String filePath;
+    private final @NotNull JsonConfiguration jsonConfiguration;
     private File file;
-    private final JsonConfiguration jsonConfiguration;
 
-    public JsonConfig(@NotNull final String filePath) {
+    public JsonConfig(final @NotNull String filePath) {
         this.filePath = filePath.endsWith(".json") ? filePath : filePath + ".json";
         jsonConfiguration = new JsonConfiguration();
         save();
         reload();
-        save();
     }
 
     private File file() {
         return new File(Astra.getPlugin().getDataFolder(), filePath);
     }
 
-    public JsonConfiguration options() {
+    public @NotNull JsonConfiguration options() {
         return jsonConfiguration;
-    }
-
-    @Override
-    public void saveFile() {
-        final String json = gson.toJson(jsonConfiguration.getMap());
-        file.delete();
-        try {
-            Files.write(
-                    file.toPath(),
-                    json.getBytes(),
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.WRITE
-            );
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -68,18 +50,42 @@ public class JsonConfig implements AstraConfig {
             return;
         }
 
-        Astra.getPlugin().saveResource(filePath, false);
+        final JavaPlugin plugin = Astra.getPlugin();
+        if (plugin.getResource(filePath) == null) {
+            return;
+        }
+
+        plugin.saveResource(filePath, false);
     }
 
     @Override
     public void reload() {
         try {
             //noinspection unchecked
-            jsonConfiguration.setMap(gson.fromJson(new FileReader(file), HashMap.class));
+            jsonConfiguration.setMap(GSON.fromJson(new FileReader(file), HashMap.class));
         }
-        catch (FileNotFoundException e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    @Override
+    public void saveChanges() {
+        final String json = GSON.toJson(jsonConfiguration.getMap());
+
+        //noinspection ResultOfMethodCallIgnored
+        file.delete();
+
+        try {
+            Files.write(
+                    file.toPath(),
+                    json.getBytes(),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.WRITE
+            );
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
