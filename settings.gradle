@@ -1,5 +1,18 @@
 rootProject.name = 'AstraPrison'
+
+include 'nms:common'
+findProject(':nms:common')?.name = 'nms_common'
+
+include 'nms:abstraction'
+findProject(':nms:abstraction')?.name = 'abstraction'
+
 include 'common'
+
+include 'modules:mines'
+findProject(':modules:mines')?.name = 'mines'
 include 'modules:omnitool'
 findProject(':modules:omnitool')?.name = 'omnitool'
+
+include 'nms:versions:v1_21_R1'
+findProject(':nms:versions:v1_21_R1')?.name = 'v1_21_R1'
 

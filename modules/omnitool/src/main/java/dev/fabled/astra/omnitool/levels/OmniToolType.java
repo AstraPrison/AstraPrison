@@ -16,8 +16,8 @@ public final class OmniToolType {
     public OmniToolType(final @NotNull Tools tool, final int level) {
         final YamlConfig config = OmniToolModule.getInstance().getLevelsYml();
         final String key = level > 0
-                ? "levels." + level + "."
-                : "level-0.";
+                ? "levels." + level + "." + tool.name().toLowerCase() + "."
+                : "level-0." + tool.name().toLowerCase() + ".";
 
         final String material = config.options().getString(key + "material", "");
         try { this.material = Material.valueOf(material); }

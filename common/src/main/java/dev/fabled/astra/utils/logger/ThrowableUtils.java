@@ -15,7 +15,7 @@ public class ThrowableUtils {
         throwable.printStackTrace(printWriter);
         printWriter.flush();
 
-        return printWriter.toString();
+        return writer.toString();
     }
 
 }

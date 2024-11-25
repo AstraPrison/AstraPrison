@@ -7,11 +7,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class OmniToolJoinListener implements AstraListener {
 
-    @Override
-    public void onReload() {
-
-    }
-
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();

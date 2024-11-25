@@ -1,12 +1,15 @@
 package dev.fabled.astra.utils;
 
 import dev.fabled.astra.utils.configuration.YamlConfig;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class ListUtils {
 
@@ -30,6 +33,10 @@ public final class ListUtils {
 
     public static @Nullable List<String> fromConfig(final YamlConfig config, final @NotNull String key) {
         return fromConfig(config, key, null);
+    }
+
+    public static @NotNull List<String> onlinePlayerNames() {
+        return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
     }
 
 }

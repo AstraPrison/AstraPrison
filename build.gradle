@@ -12,8 +12,15 @@ version = "${majorVersion}.${minorVersion}.${patchVersion}"
 //}
 
 dependencies {
+    implementation project(':nms:nms_common')
+    implementation project(':nms:abstraction')
+
     implementation project(':common')
+
+    implementation project(':modules:mines')
     implementation project(':modules:omnitool')
+
+    implementation project(':nms:versions:v1_21_R1')
 }
 
 assemble.dependsOn(shadowJar)

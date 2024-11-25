@@ -9,11 +9,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class OmniToolUpdateListener implements AstraListener {
 
-    @Override
-    public void onReload() {
-
-    }
-
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         final Action action = event.getAction();
@@ -33,4 +28,5 @@ public class OmniToolUpdateListener implements AstraListener {
 
         OmniTool.updateTool(item, block);
     }
+
 }

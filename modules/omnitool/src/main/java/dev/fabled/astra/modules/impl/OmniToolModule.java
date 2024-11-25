@@ -1,6 +1,8 @@
 package dev.fabled.astra.modules.impl;
 
 import dev.fabled.astra.Astra;
+import dev.fabled.astra.commands.CommandManager;
+import dev.fabled.astra.commands.OmniToolCommand;
 import dev.fabled.astra.listeners.AstraListener;
 import dev.fabled.astra.listeners.OmniToolJoinListener;
 import dev.fabled.astra.listeners.OmniToolLockListener;
@@ -60,6 +62,8 @@ public final class OmniToolModule extends AstraModule {
             listener.onReload();
             Bukkit.getPluginManager().registerEvents(listener, Astra.getPlugin());
         });
+
+        CommandManager.getInstance().register(new OmniToolCommand());
     }
 
     @Override

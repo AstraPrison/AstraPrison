@@ -1,0 +1,8 @@
+plugins {
+    id 'astra.nms-common'
+}
+
+dependencies {
+    paperweight.paperDevBundle("1.21-R0.1-SNAPSHOT")
+    compileOnly project(':nms:abstraction')
+}

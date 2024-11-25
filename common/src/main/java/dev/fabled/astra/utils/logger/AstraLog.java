@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class AstraLog {
 
     private static final @NotNull String PREFIX;
@@ -31,7 +33,9 @@ public class AstraLog {
         debugMode = config.options().getBoolean("logging.debug-mode", false);
     }
 
-    private static void send(final @NotNull AstraLogLevel level, final boolean debug, final @NotNull String... input) {
+
+
+    private static void send(final @NotNull AstraLogLevel level, final boolean debug, final @NotNull List<String> input) {
         if (debug && !debugMode) {
             return;
         }
@@ -53,6 +57,20 @@ public class AstraLog {
         }
     }
 
+    private static void send(final @NotNull AstraLogLevel level, final boolean debug, final @NotNull String... input) {
+        send(level, debug, List.of(input));
+    }
+
+
+
+    public static void log(final @NotNull AstraLogLevel level, final @NotNull List<String> input) {
+        send(level, false, input);
+    }
+
+    public static void log(final @NotNull List<String> input) {
+        send(AstraLogLevel.INFO, false, input);
+    }
+
     public static void log(final @NotNull AstraLogLevel level, final @NotNull String... input) {
         send(level, false, input);
     }
@@ -67,6 +85,16 @@ public class AstraLog {
 
     public static void log(final @NotNull Throwable throwable) {
         send(AstraLogLevel.ERROR, false, ThrowableUtils.getStackTrace(throwable));
+    }
+
+
+
+    public static void debug(final @NotNull AstraLogLevel level, final @NotNull List<String> input) {
+        send(level, true, input);
+    }
+
+    public static void debug(final @NotNull List<String> input) {
+        send(AstraLogLevel.INFO, true, input);
     }
 
     public static void debug(final @NotNull AstraLogLevel level, final @NotNull String... input) {
@@ -84,6 +112,8 @@ public class AstraLog {
     public static void debug(final @NotNull Throwable throwable) {
         send(AstraLogLevel.ERROR, true, ThrowableUtils.getStackTrace(throwable));
     }
+
+
 
     public static void divider(final @NotNull AstraLogLevel level, final boolean debug) {
         send(level, debug, DIVIDER);

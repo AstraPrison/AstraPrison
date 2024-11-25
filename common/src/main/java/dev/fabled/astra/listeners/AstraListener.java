@@ -4,6 +4,6 @@ import org.bukkit.event.Listener;
 
 public interface AstraListener extends Listener {
 
-    void onReload();
+    default void onReload() {}
 
 }

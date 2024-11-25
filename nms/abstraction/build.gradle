@@ -1,0 +1,8 @@
+plugins {
+    id 'astra.nms-common'
+}
+
+dependencies {
+    paperweight.paperDevBundle(paperDevBundleVersion)
+    compileOnly project(':nms:nms_common')
+}

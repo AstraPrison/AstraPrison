@@ -6,10 +6,12 @@ import dev.fabled.astra.omnitool.levels.OmniToolLevel;
 import dev.fabled.astra.omnitool.levels.OmniToolLevelManager;
 import dev.fabled.astra.omnitool.levels.OmniToolType;
 import dev.fabled.astra.utils.MiniColor;
+import dev.fabled.astra.utils.logger.AstraLog;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -39,6 +41,13 @@ public final class OmniTool {
         meta.setCustomModelData(pickaxe.getCustomModelData());
         meta.displayName(MiniColor.INVENTORY.deserialize(pickaxe.getDisplayName()));
         meta.getPersistentDataContainer().set(omniToolKey, PersistentDataType.INTEGER, 0);
+
+        meta.setUnbreakable(true);
+        meta.addItemFlags(
+                ItemFlag.HIDE_ADDITIONAL_TOOLTIP,
+                ItemFlag.HIDE_UNBREAKABLE,
+                ItemFlag.HIDE_ATTRIBUTES
+        );
 
         defOmniTool.setItemMeta(meta);
     }
@@ -104,6 +113,7 @@ public final class OmniTool {
         itemStack.setType(toolType.getMaterial());
         meta.setCustomModelData(toolType.getCustomModelData());
         meta.displayName(MiniColor.INVENTORY.deserialize(toolType.getDisplayName()));
+        itemStack.setItemMeta(meta);
     }
 
 }

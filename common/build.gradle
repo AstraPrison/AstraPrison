@@ -1,3 +1,8 @@
 plugins {
     id 'astra.common'
 }
+
+dependencies {
+    compileOnly project(':nms:nms_common')
+    compileOnly project(':nms:abstraction')
+}

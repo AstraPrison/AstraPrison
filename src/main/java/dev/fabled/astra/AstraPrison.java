@@ -1,19 +1,26 @@
 package dev.fabled.astra;
 
+import dev.fabled.astra.commands.AstraCommand;
+import dev.fabled.astra.commands.BrigadierCommand;
+import dev.fabled.astra.commands.CommandManager;
 import dev.fabled.astra.modules.ModuleManager;
 import dev.fabled.astra.modules.impl.OmniToolModule;
+import dev.fabled.astra.nms.NMSFactory;
 import dev.fabled.astra.utils.configuration.YamlConfig;
 import dev.fabled.astra.utils.dependencies.HdbUtils;
 import dev.fabled.astra.utils.dependencies.PapiUtils;
 import dev.fabled.astra.utils.logger.AstraLog;
 import dev.fabled.astra.utils.logger.AstraLogLevel;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.List;
 
 public final class AstraPrison extends JavaPlugin implements AstraPlugin {
 
-    private static AstraPlugin instance;
+    private static AstraPrison instance;
 
-    public static AstraPlugin getInstance() {
+    public static AstraPrison getInstance() {
         return instance;
     }
 
@@ -24,9 +31,10 @@ public final class AstraPrison extends JavaPlugin implements AstraPlugin {
     public void onLoad() {
         instance = this;
         Astra.onLoad(this);
-        AstraLog.onLoad();
         PapiUtils.onLoad();
+        HdbUtils.onLoad();
         configYml = new YamlConfig("config");
+        AstraLog.onLoad();
         moduleManager = new ModuleManager();
         moduleManager.register(OmniToolModule.getInstance());
         moduleManager.onLoad();
@@ -34,7 +42,20 @@ public final class AstraPrison extends JavaPlugin implements AstraPlugin {
 
     @Override
     public void onEnable() {
+        if (!NMSFactory.onEnable()) {
+            AstraLog.log(AstraLogLevel.ERROR, "You are using an unsupported version!");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         moduleManager.onEnable();
+
+        final List<BrigadierCommand> commands = List.of(
+                new AstraCommand()
+        );
+
+        final CommandManager commandManager = CommandManager.getInstance();
+        commands.forEach(commandManager::register);
 
         AstraLog.divider();
         AstraLog.log(AstraLogLevel.SUCCESS, "AstraPrison enabled!");
