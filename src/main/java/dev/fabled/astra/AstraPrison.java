@@ -10,6 +10,7 @@ import dev.fabled.astra.modules.ModuleManager;
 import dev.fabled.astra.modules.impl.MinesModule;
 import dev.fabled.astra.modules.impl.OmniToolModule;
 import dev.fabled.astra.nms.NMSFactory;
+import dev.fabled.astra.permissions.AstraPermission;
 import dev.fabled.astra.utils.configuration.YamlConfig;
 import dev.fabled.astra.utils.dependencies.HdbUtils;
 import dev.fabled.astra.utils.dependencies.PapiUtils;
@@ -41,6 +42,7 @@ public final class AstraPrison extends JavaPlugin implements AstraPlugin {
         configYml = new YamlConfig("config");
         AstraLog.onLoad();
         LocaleManager.getInstance();
+        AstraPermission.onLoad();
         MenuManager.getInstance();
         moduleManager = new ModuleManager();
         moduleManager.register(OmniToolModule.getInstance());
