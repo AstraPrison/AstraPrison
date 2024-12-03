@@ -8,6 +8,7 @@ import dev.fabled.astra.locale.LocaleManager;
 import dev.fabled.astra.locale.impl.ErrorMessageKeys;
 import dev.fabled.astra.locale.impl.OmniToolMessageKeys;
 import dev.fabled.astra.omnitool.OmniTool;
+import dev.fabled.astra.permissions.AstraPermission;
 import dev.fabled.astra.utils.MiniColor;
 import dev.fabled.astra.utils.logger.AstraLog;
 import dev.fabled.astra.utils.logger.AstraLogLevel;
@@ -46,7 +47,7 @@ public class OmniToolCommand extends BrigadierCommand {
 
     private @NotNull LiteralArgumentBuilder<CommandSourceStack> base() {
         return Commands.literal(name)
-                .requires(permissionRequirement("astra.admin"))
+                .requires(permissionRequirement(AstraPermission.OMNI_TOOL))
                 .executes(context -> {
                     final CommandSender sender = context.getSource().getSender();
                     if (!(sender instanceof Player player)) {
@@ -62,6 +63,7 @@ public class OmniToolCommand extends BrigadierCommand {
 
     private @NotNull LiteralArgumentBuilder<CommandSourceStack> give() {
         return Commands.literal("give")
+                .requires(permissionRequirement(AstraPermission.OMNI_TOOL_GIVE))
                 .executes(context -> {
                     final CommandSender sender = context.getSource().getSender();
                     if (!(sender instanceof Player player)) {

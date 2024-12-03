@@ -9,7 +9,6 @@ import dev.fabled.astra.modules.impl.MinesModule;
 import dev.fabled.astra.nms.AbstractFakeBlockHandler;
 import dev.fabled.astra.nms.NMSFactory;
 import dev.fabled.astra.nms.regions.shapes.CuboidRegion;
-import dev.fabled.astra.utils.BlockListUtils;
 import dev.fabled.astra.utils.MiniColor;
 import dev.fabled.astra.utils.WeightedList;
 import dev.fabled.astra.utils.blocks.BlockMaterial;

@@ -5,7 +5,7 @@ import dev.fabled.astra.locale.impl.MineWandMessageKeys;
 import dev.fabled.astra.mines.wand.MineWand;
 import dev.fabled.astra.mines.wand.MineWandSelection;
 import dev.fabled.astra.modules.impl.MinesModule;
-import dev.fabled.astra.utils.MiniColor;
+import dev.fabled.astra.permissions.AstraPermission;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -38,7 +38,7 @@ public class MineWandListener implements AstraListener {
         }
 
         final Player player = event.getPlayer();
-        if (!player.hasPermission("astra.admin")) {
+        if (!AstraPermission.MINE_WAND_USE.hasPermission(player)) {
             return;
         }
 

@@ -8,7 +8,7 @@ import dev.fabled.astra.locale.LocaleManager;
 import dev.fabled.astra.locale.impl.ErrorMessageKeys;
 import dev.fabled.astra.locale.impl.MineWandMessageKeys;
 import dev.fabled.astra.mines.wand.MineWand;
-import dev.fabled.astra.utils.MiniColor;
+import dev.fabled.astra.permissions.AstraPermission;
 import dev.fabled.astra.utils.logger.AstraLog;
 import dev.fabled.astra.utils.logger.AstraLogLevel;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -35,7 +35,7 @@ public final class MineWandCommand extends BrigadierCommand {
 
     private @NotNull LiteralArgumentBuilder<CommandSourceStack> base() {
         return Commands.literal(name)
-                .requires(permissionRequirement("astra.admin"))
+                .requires(permissionRequirement(AstraPermission.MINE_WAND))
                 .executes(context -> {
                     final CommandSender sender = context.getSource().getSender();
                     if (!(sender instanceof Player player)) {
@@ -52,6 +52,7 @@ public final class MineWandCommand extends BrigadierCommand {
 
     private @NotNull RequiredArgumentBuilder<CommandSourceStack, String> player() {
         return Commands.argument("player", StringArgumentType.word())
+                .requires(permissionRequirement(AstraPermission.MINE_WAND_OTHER))
                 .suggests(BrigadierCommand::suggestOnlinePlayers)
                 .executes(context -> {
                     final String targetName = StringArgumentType.getString(context, "player");

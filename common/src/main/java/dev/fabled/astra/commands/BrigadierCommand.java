@@ -4,6 +4,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import dev.fabled.astra.permissions.AstraPermission;
 import dev.fabled.astra.utils.ListUtils;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -54,6 +55,10 @@ public abstract class BrigadierCommand {
 
             return player.hasPermission(permission);
         };
+    }
+
+    protected static @NotNull Predicate<CommandSourceStack> permissionRequirement(final @NotNull AstraPermission permission) {
+        return permissionRequirement(permission.get());
     }
 
 }

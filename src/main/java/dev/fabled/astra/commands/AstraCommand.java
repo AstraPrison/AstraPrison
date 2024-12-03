@@ -11,6 +11,7 @@ import dev.fabled.astra.locale.impl.AdminMessageKeys;
 import dev.fabled.astra.locale.impl.ErrorMessageKeys;
 import dev.fabled.astra.menus.AstraMenu;
 import dev.fabled.astra.menus.MenuManager;
+import dev.fabled.astra.permissions.AstraPermission;
 import dev.fabled.astra.utils.MiniColor;
 import dev.fabled.astra.utils.logger.AstraLog;
 import dev.fabled.astra.utils.logger.AstraLogLevel;
@@ -67,7 +68,7 @@ public class AstraCommand extends BrigadierCommand {
 
     private @NotNull LiteralArgumentBuilder<CommandSourceStack> base() {
         return Commands.literal(name)
-                .requires(permissionRequirement("astra.admin"))
+                .requires(permissionRequirement(AstraPermission.ADMIN))
                 .executes(context -> {
                     final CommandSender sender = context.getSource().getSender();
                     if (!(sender instanceof Player player)) {
@@ -85,6 +86,7 @@ public class AstraCommand extends BrigadierCommand {
 
     private @NotNull LiteralArgumentBuilder<CommandSourceStack> help() {
         return Commands.literal("help")
+                .requires(permissionRequirement(AstraPermission.ADMIN_HELP))
                 .executes(context -> {
                     final CommandSender sender = context.getSource().getSender();
                     if (!(sender instanceof Player player)) {
@@ -99,6 +101,7 @@ public class AstraCommand extends BrigadierCommand {
 
     private @NotNull LiteralArgumentBuilder<CommandSourceStack> reload() {
         return Commands.literal("reload")
+                .requires(permissionRequirement(AstraPermission.ADMIN_RELOAD))
                 .executes(context -> {
                     final long start = System.currentTimeMillis();
                     AstraPrison.getInstance().onReload();
@@ -117,6 +120,7 @@ public class AstraCommand extends BrigadierCommand {
 
     private @NotNull LiteralArgumentBuilder<CommandSourceStack> menu() {
         return Commands.literal("menu")
+                .requires(permissionRequirement(AstraPermission.ADMIN_MENU))
                 .executes(context -> {
                     final CommandSender sender = context.getSource().getSender();
                     if (!(sender instanceof Player player)) {
@@ -165,6 +169,7 @@ public class AstraCommand extends BrigadierCommand {
 
     private @NotNull RequiredArgumentBuilder<CommandSourceStack, String> menuIdPlayer() {
         return Commands.argument("player", StringArgumentType.word())
+                .requires(permissionRequirement(AstraPermission.ADMIN_MENU_OTHER))
                 .suggests(BrigadierCommand::suggestOnlinePlayers)
                 .executes(context -> {
                     openMenuForPlayer(context, false);
