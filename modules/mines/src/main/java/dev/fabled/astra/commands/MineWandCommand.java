@@ -4,6 +4,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import dev.fabled.astra.locale.LocaleManager;
+import dev.fabled.astra.locale.impl.ErrorMessageKeys;
+import dev.fabled.astra.locale.impl.MineWandMessageKeys;
 import dev.fabled.astra.mines.wand.MineWand;
 import dev.fabled.astra.utils.MiniColor;
 import dev.fabled.astra.utils.logger.AstraLog;
@@ -41,7 +44,7 @@ public final class MineWandCommand extends BrigadierCommand {
                     }
 
                     player.getInventory().addItem(MineWand.getInstance().getMineWand());
-                    player.sendMessage(MiniColor.CHAT.deserialize("<green>You got the mine wand!"));
+                    LocaleManager.sendMessage(player, MineWandMessageKeys.GIVE_SELF);
                     return 0;
                 })
                 .then(player());
@@ -74,7 +77,7 @@ public final class MineWandCommand extends BrigadierCommand {
         final Player target = Bukkit.getPlayer(targetName);
         if (target == null) {
             if (isPlayer) {
-                player.sendMessage(MiniColor.CHAT.deserialize("<red>Invalid player: <white>" + targetName));
+                LocaleManager.sendMessage(player, ErrorMessageKeys.INVALID_PLAYER, "{PLAYER}", targetName);
                 return;
             }
 
@@ -84,14 +87,14 @@ public final class MineWandCommand extends BrigadierCommand {
 
         target.getInventory().addItem(MineWand.getInstance().getMineWand());
         if (isPlayer) {
-            player.sendMessage(MiniColor.CHAT.deserialize("<green>You gave <white>" + target.getName() + "<green> a mine wand!"));
+            LocaleManager.sendMessage(player, MineWandMessageKeys.GIVE_OTHER, "{PLAYER}", target.getName());
         }
 
         if (silent) {
             return;
         }
 
-        target.sendMessage(MiniColor.CHAT.deserialize("<green>You were given the mine wand!"));
+        LocaleManager.sendMessage(target, MineWandMessageKeys.GIVE_RECEIVED);
         if (!isPlayer) {
             AstraLog.log(AstraLogLevel.SUCCESS, "You gave " + target.getName() + " a mine wand!");
         }

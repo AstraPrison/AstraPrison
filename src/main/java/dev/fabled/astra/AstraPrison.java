@@ -1,12 +1,10 @@
 package dev.fabled.astra;
 
-import dev.fabled.astra.commands.AstraCommand;
-import dev.fabled.astra.commands.BrigadierCommand;
-import dev.fabled.astra.commands.CommandManager;
 import dev.fabled.astra.commands.*;
 import dev.fabled.astra.listeners.AstraListener;
 import dev.fabled.astra.listeners.AstraMenuListener;
 import dev.fabled.astra.listeners.PacketRegistrationListener;
+import dev.fabled.astra.locale.LocaleManager;
 import dev.fabled.astra.menus.MenuManager;
 import dev.fabled.astra.modules.ModuleManager;
 import dev.fabled.astra.modules.impl.MinesModule;
@@ -42,6 +40,7 @@ public final class AstraPrison extends JavaPlugin implements AstraPlugin {
         HdbUtils.onLoad();
         configYml = new YamlConfig("config");
         AstraLog.onLoad();
+        LocaleManager.getInstance();
         MenuManager.getInstance();
         moduleManager = new ModuleManager();
         moduleManager.register(OmniToolModule.getInstance());
@@ -92,6 +91,7 @@ public final class AstraPrison extends JavaPlugin implements AstraPlugin {
         configYml.save();
         configYml.reload();
         AstraLog.onReload();
+        LocaleManager.getInstance().onReload();
         MenuManager.getInstance().onReload();
         moduleManager.onReload();
     }

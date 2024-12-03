@@ -6,6 +6,9 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import dev.fabled.astra.AstraPrison;
+import dev.fabled.astra.locale.LocaleManager;
+import dev.fabled.astra.locale.impl.AdminMessageKeys;
+import dev.fabled.astra.locale.impl.ErrorMessageKeys;
 import dev.fabled.astra.menus.AstraMenu;
 import dev.fabled.astra.menus.MenuManager;
 import dev.fabled.astra.utils.MiniColor;
@@ -25,7 +28,6 @@ public class AstraCommand extends BrigadierCommand {
 
     private final @NotNull List<String> pluginInfoPlayer;
     private final @NotNull List<String> pluginInfoConsole;
-    private final @NotNull List<String> helpPlayer;
     private final @NotNull List<String> helpConsole;
 
     public AstraCommand() {
@@ -47,13 +49,6 @@ public class AstraCommand extends BrigadierCommand {
                 "AstraPrison v" + version,
                 "Developed by Mantice!",
                 "Type 'astra help' for more commands!"
-        );
-
-        helpPlayer = List.of(
-                "<b><aqua>Astra<dark_aqua>Prison<reset> Commands:",
-                "<dark_gray>| <white>/astra <dark_gray>- <gray>Shows plugin information!",
-                "<dark_gray>| <white>/astra help <dark_gray>- <gray>Shows this information!",
-                "<dark_gray>| <white>/astra reload <dark_gray>- <gray>Reloads plugin configuration!"
         );
 
         helpConsole = List.of(
@@ -97,7 +92,7 @@ public class AstraCommand extends BrigadierCommand {
                         return 0;
                     }
 
-                    player.sendMessage(MiniColor.CHAT.deserialize(String.join("\n", helpPlayer)));
+                    LocaleManager.sendMessage(player, AdminMessageKeys.ADMIN_HELP);
                     return 0;
                 });
     }
@@ -115,7 +110,7 @@ public class AstraCommand extends BrigadierCommand {
                         return 0;
                     }
 
-                    player.sendMessage(MiniColor.CHAT.deserialize("<green>Successfully reloaded in <white>" + end + "ms<green>!"));
+                    LocaleManager.sendMessage(player, AdminMessageKeys.ADMIN_RELOAD, "{MS}", String.valueOf(end));
                     return 0;
                 });
     }
@@ -129,7 +124,7 @@ public class AstraCommand extends BrigadierCommand {
                         return 0;
                     }
 
-                    player.sendMessage(MiniColor.CHAT.deserialize("<red>Select a menu to open!"));
+                    LocaleManager.sendMessage(player, ErrorMessageKeys.SELECT_MENU);
                     return 0;
                 })
                 .then(menuId());
@@ -149,7 +144,7 @@ public class AstraCommand extends BrigadierCommand {
 
                     if (menu == null) {
                         if (isPlayer) {
-                            player.sendMessage(MiniColor.CHAT.deserialize("<red>Invalid menu:<white> " + menuId));
+                            LocaleManager.sendMessage(player, ErrorMessageKeys.INVALID_MENU, "{MENU}", menuId);
                             return 0;
                         }
 
@@ -198,7 +193,7 @@ public class AstraCommand extends BrigadierCommand {
 
         if (menu == null) {
             if (isPlayer) {
-                player.sendMessage(MiniColor.CHAT.deserialize("<red>Invalid menu:<white> " + menuId));
+                LocaleManager.sendMessage(player, ErrorMessageKeys.INVALID_MENU, "{MENU}", menuId);
                 return;
             }
 
@@ -211,7 +206,7 @@ public class AstraCommand extends BrigadierCommand {
 
         if (target == null) {
             if (isPlayer) {
-                player.sendMessage(MiniColor.CHAT.deserialize("<red>Invalid player:<white> " + targetName));
+                LocaleManager.sendMessage(player, ErrorMessageKeys.INVALID_PLAYER, "{PLAYER}", targetName);
                 return;
             }
 
@@ -221,7 +216,7 @@ public class AstraCommand extends BrigadierCommand {
 
         target.openInventory(menu.getInventory(target));
         if (isPlayer) {
-            player.sendMessage(MiniColor.CHAT.deserialize("<green>You opened the<white> " + menuId + "<green> menu for<white> " + target.getName() + "<green>!"));
+            LocaleManager.sendMessage(player, AdminMessageKeys.MENU_OPEN_OTHER, "{MENU}", menuId, "{PLAYER}", target.getName());
             return;
         }
 

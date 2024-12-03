@@ -1,0 +1,11 @@
+#
+# Locale Settings
+#
+
+default-group: english
+
+# To add a new locale, add the file name
+# and add which locales will use it!
+# Ignore the "locale-" prefix and file extension!
+locales:
+  english: en_us

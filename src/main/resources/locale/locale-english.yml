@@ -1,0 +1,41 @@
+#
+# English Locale File
+#
+
+prefix: '<b><aqua>Astra<dark_aqua>Prison</b> <dark_gray><b>|<reset>'
+
+admin:
+  help:
+    - "<b><aqua>Astra<dark_aqua>Prison<reset> Commands:"
+    - "<dark_gray>|<white> /astra <dark_gray>-<gray> Shows plugin information!"
+    - "<dark_gray>|<white> /astra help <dark_gray>-<gray> Shows this information!"
+    - "<dark_gray>|<white> /astra reload <dark_gray>-<gray> Reloads plugin configuration!"
+    - "<dark_gray>|<white> /astra menu <dark_gray>-<gray> Open any menu from its ID!"
+  reload: "{PREFIX}<green> Successfully reloaded in <white>{MS}ms<green>!"
+  menu-open-other: "{PREFIX}<green> You opened the<white> {MENU}<green> for<white> {PLAYER}<green>!"
+
+omni-tool:
+  help:
+    - "<b><aqua>Astra<dark_aqua>Prison<reset> Omni-Tool Commands:"
+    - "<dark_gray>|<white> /omnitool <dark_gray>-<gray> Shows this information!"
+    - "<dark_gray>|<white> /astra give <dark_gray>-<gray> Give a player a new omni-tool!"
+  give:
+    self: "{PREFIX}<green> You got a new omni-tool!"
+    other: "{PREFIX}<green> You gave<white> {PLAYER}<green> a new omni-tool!"
+    received: "{PREFIX}<green> You were given a new omni-tool!"
+
+mine-wand:
+  give:
+    self: "{PREFIX}<green> You got the mine wand!"
+    other: "{PREFIX}<green> You gave<white> {PLAYER}<green> the mine wand!"
+    received: "{PREFIX}<green> You were given the mine wand!"
+  corners:
+    set: "{PREFIX}<green> You set corner {CORNER} to <white>{X}, {Y}, {Z}<green>!"
+    missing: "{PREFIX}<red> You are missing corner {CORNER}!"
+
+errors:
+  no-permission: "{PREFIX}<red> You are missing the<white> {PERMISSION}<red> permission!"
+  select-player: "{PREFIX}<red> Select a player!"
+  invalid-player: "{PREFIX}<red> Invalid player:<white> {PLAYER}"
+  select-menu: "{PREFIX}<red> Select a menu!"
+  invalid-menu: "{PREFIX}<red> Invalid menu:<white> {MENU}"

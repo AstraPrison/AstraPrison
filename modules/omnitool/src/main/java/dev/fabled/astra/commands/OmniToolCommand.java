@@ -4,6 +4,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import dev.fabled.astra.locale.LocaleManager;
+import dev.fabled.astra.locale.impl.ErrorMessageKeys;
+import dev.fabled.astra.locale.impl.OmniToolMessageKeys;
 import dev.fabled.astra.omnitool.OmniTool;
 import dev.fabled.astra.utils.MiniColor;
 import dev.fabled.astra.utils.logger.AstraLog;
@@ -20,7 +23,6 @@ import java.util.List;
 @SuppressWarnings("UnstableApiUsage")
 public class OmniToolCommand extends BrigadierCommand {
 
-    private final @NotNull List<String> helpPlayer;
     private final @NotNull List<String> helpConsole;
 
     public OmniToolCommand() {
@@ -28,12 +30,6 @@ public class OmniToolCommand extends BrigadierCommand {
                 "omnitool",
                 "The omni-tool admin command!",
                 "omnitooladmin"
-        );
-
-        helpPlayer = List.of(
-                "<b><aqua>Astra<dark_aqua>Prison<reset> Omni-Tool Commands:",
-                "<dark_gray>| <white>/omnitool <dark_gray>- <gray>Shows this information!",
-                "<dark_gray>| <white>/astra give <dark_gray>- <gray>Give a player a new omni-tool!"
         );
 
         helpConsole = List.of(
@@ -58,7 +54,7 @@ public class OmniToolCommand extends BrigadierCommand {
                         return 0;
                     }
 
-                    player.sendMessage(MiniColor.CHAT.deserialize(String.join("\n", helpPlayer)));
+                    LocaleManager.sendMessage(player, OmniToolMessageKeys.HELP);
                     return 0;
                 })
                 .then(give());
@@ -74,7 +70,7 @@ public class OmniToolCommand extends BrigadierCommand {
                     }
 
                     player.getInventory().addItem(OmniTool.getDefaultOmniTool());
-                    player.sendMessage(MiniColor.CHAT.deserialize("<green>You got a new Omni-Tool!"));
+                    LocaleManager.sendMessage(player, OmniToolMessageKeys.GIVE_SELF);
                     return 0;
                 })
                 .then(givePlayer());
@@ -109,7 +105,7 @@ public class OmniToolCommand extends BrigadierCommand {
 
         if (target == null) {
             if (isPlayer) {
-                player.sendMessage(MiniColor.CHAT.deserialize("<red>Invalid player: " + targetName));
+                LocaleManager.sendMessage(player, ErrorMessageKeys.INVALID_PLAYER, "{PLAYER}", targetName);
                 return;
             }
 
@@ -119,14 +115,14 @@ public class OmniToolCommand extends BrigadierCommand {
 
         target.getInventory().addItem(OmniTool.getDefaultOmniTool());
         if (isPlayer) {
-            player.sendMessage(MiniColor.CHAT.deserialize("<green>You gave <white> " + target.getName() + "<green> a new omni-tool!"));
+            LocaleManager.sendMessage(player, OmniToolMessageKeys.GIVE_OTHER, "{PLAYER}", target.getName());
         }
 
         if (silent) {
             return;
         }
 
-        target.sendMessage(MiniColor.CHAT.deserialize("<green>You were given a new omni-tool!"));
+        LocaleManager.sendMessage(target, OmniToolMessageKeys.GIVE_RECEIVED);
         if (!isPlayer) {
             AstraLog.log(AstraLogLevel.SUCCESS, "You gave " + target.getName() + " a new omni-tool!");
         }

@@ -1,5 +1,7 @@
 package dev.fabled.astra.listeners;
 
+import dev.fabled.astra.locale.LocaleManager;
+import dev.fabled.astra.locale.impl.MineWandMessageKeys;
 import dev.fabled.astra.mines.wand.MineWand;
 import dev.fabled.astra.mines.wand.MineWandSelection;
 import dev.fabled.astra.modules.impl.MinesModule;
@@ -66,12 +68,13 @@ public class MineWandListener implements AstraListener {
 
     private void sendUpdateMessage(final @NotNull Player player, final @NotNull Location location, final boolean one) {
         final String corner = one ? "one" : "two";
-        player.sendMessage(MiniColor.CHAT.deserialize(
-                "<green>You set position " + corner + " to<white> "
-                        + location.getBlockX() + ", "
-                        + location.getBlockY() + ", "
-                        + location.getBlockZ() + "<green>!"
-        ));
+        LocaleManager.sendMessage(
+                player, MineWandMessageKeys.CORNER_SET,
+                "{CORNER}", corner,
+                "{X}", String.valueOf(location.getBlockX()),
+                "{Y}", String.valueOf(location.getBlockY()),
+                "{Z}", String.valueOf(location.getBlockZ())
+        );
     }
 
     @EventHandler
