@@ -5,6 +5,7 @@ import dev.fabled.astra.listeners.AstraListener;
 import dev.fabled.astra.listeners.AstraMenuListener;
 import dev.fabled.astra.listeners.PacketRegistrationListener;
 import dev.fabled.astra.locale.LocaleManager;
+import dev.fabled.astra.menus.AstraMenu;
 import dev.fabled.astra.menus.MenuManager;
 import dev.fabled.astra.modules.ModuleManager;
 import dev.fabled.astra.modules.impl.MinesModule;
@@ -83,6 +84,7 @@ public final class AstraPrison extends JavaPlugin implements AstraPlugin {
 
     @Override
     public void onDisable() {
+        AstraMenu.closeAll();
         moduleManager.onDisable();
         AstraLog.log(AstraLogLevel.SUCCESS, "AstraPrison v" + getPluginMeta().getVersion() + " disabled!");
     }
