@@ -1,6 +1,7 @@
 package dev.fabled.astra.utils.configuration;
 
 import dev.fabled.astra.Astra;
+import dev.fabled.astra.utils.logger.AstraLog;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 
-public class YamlConfig implements AstraConfig {
+public final class YamlConfig implements AstraConfig {
 
     private final @NotNull String filePath;
     private File file;
@@ -62,7 +63,7 @@ public class YamlConfig implements AstraConfig {
             fileConfiguration.save(file);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            AstraLog.log(e);
         }
     }
 

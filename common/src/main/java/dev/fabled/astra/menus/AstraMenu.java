@@ -18,8 +18,8 @@ import java.util.List;
 public class AstraMenu implements InventoryHolder {
 
     private final int size;
-    private final String title;
-    private final List<MenuItem> items;
+    private final @NotNull String title;
+    private final @NotNull List<MenuItem> items;
 
     public AstraMenu(final @NotNull YamlConfig config) {
         int s = config.options().getInt("size", 54);
@@ -40,7 +40,7 @@ public class AstraMenu implements InventoryHolder {
         }
 
         section.getKeys(false).forEach(key ->
-                items.add(new MenuItem(config, key + "."))
+                items.add(new MenuItem(config, "contents." + key + "."))
         );
     }
 
@@ -51,7 +51,13 @@ public class AstraMenu implements InventoryHolder {
 
         items.forEach(menuItem -> {
             final ItemStack item = menuItem.build(player);
-            menuItem.getSlots().forEach(slot -> inventory.setItem(slot, item));
+            menuItem.getSlots().forEach(slot -> {
+                if (slot > size - 1 || slot < 0) {
+                    return;
+                }
+
+                inventory.setItem(slot, item);
+            });
         });
 
         return inventory;
@@ -60,6 +66,16 @@ public class AstraMenu implements InventoryHolder {
     @Override
     public @NotNull Inventory getInventory() {
         return getInventory(null);
+    }
+
+    public static void closeAll() {
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            if (!(player.getOpenInventory().getTopInventory().getHolder() instanceof AstraMenu)) {
+                return;
+            }
+
+            player.closeInventory();
+        });
     }
 
 }

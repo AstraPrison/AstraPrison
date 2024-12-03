@@ -1,7 +1,6 @@
 package dev.fabled.astra.omnitool.levels;
 
-import dev.fabled.astra.modules.impl.OmniToolModule;
-import dev.fabled.astra.omnitool.Tools;
+import dev.fabled.astra.omnitool.ToolType;
 import dev.fabled.astra.utils.configuration.YamlConfig;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
@@ -13,8 +12,7 @@ public final class OmniToolType {
     private final @NotNull String displayName;
     private final @NotNull String levelColor;
 
-    public OmniToolType(final @NotNull Tools tool, final int level) {
-        final YamlConfig config = OmniToolModule.getInstance().getLevelsYml();
+    public OmniToolType(final @NotNull YamlConfig config, final @NotNull ToolType tool, final int level) {
         final String key = level > 0
                 ? "levels." + level + "." + tool.name().toLowerCase() + "."
                 : "level-0." + tool.name().toLowerCase() + ".";

@@ -3,7 +3,13 @@ package dev.fabled.astra;
 import dev.fabled.astra.commands.AstraCommand;
 import dev.fabled.astra.commands.BrigadierCommand;
 import dev.fabled.astra.commands.CommandManager;
+import dev.fabled.astra.commands.*;
+import dev.fabled.astra.listeners.AstraListener;
+import dev.fabled.astra.listeners.AstraMenuListener;
+import dev.fabled.astra.listeners.PacketRegistrationListener;
+import dev.fabled.astra.menus.MenuManager;
 import dev.fabled.astra.modules.ModuleManager;
+import dev.fabled.astra.modules.impl.MinesModule;
 import dev.fabled.astra.modules.impl.OmniToolModule;
 import dev.fabled.astra.nms.NMSFactory;
 import dev.fabled.astra.utils.configuration.YamlConfig;
@@ -16,6 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
+@SuppressWarnings("UnstableApiUsage")
 public final class AstraPrison extends JavaPlugin implements AstraPlugin {
 
     private static AstraPrison instance;
@@ -35,8 +42,10 @@ public final class AstraPrison extends JavaPlugin implements AstraPlugin {
         HdbUtils.onLoad();
         configYml = new YamlConfig("config");
         AstraLog.onLoad();
+        MenuManager.getInstance();
         moduleManager = new ModuleManager();
         moduleManager.register(OmniToolModule.getInstance());
+        moduleManager.register(MinesModule.getInstance());
         moduleManager.onLoad();
     }
 
@@ -48,14 +57,19 @@ public final class AstraPrison extends JavaPlugin implements AstraPlugin {
             return;
         }
 
-        moduleManager.onEnable();
+        final List<AstraListener> listeners = List.of(
+                new PacketRegistrationListener(),
+                new AstraMenuListener()
+        );
+        listeners.forEach(listener -> Bukkit.getPluginManager().registerEvents(listener, this));
 
         final List<BrigadierCommand> commands = List.of(
                 new AstraCommand()
         );
-
         final CommandManager commandManager = CommandManager.getInstance();
         commands.forEach(commandManager::register);
+
+        moduleManager.onEnable();
 
         AstraLog.divider();
         AstraLog.log(AstraLogLevel.SUCCESS, "AstraPrison enabled!");
@@ -78,6 +92,7 @@ public final class AstraPrison extends JavaPlugin implements AstraPlugin {
         configYml.save();
         configYml.reload();
         AstraLog.onReload();
+        MenuManager.getInstance().onReload();
         moduleManager.onReload();
     }
 

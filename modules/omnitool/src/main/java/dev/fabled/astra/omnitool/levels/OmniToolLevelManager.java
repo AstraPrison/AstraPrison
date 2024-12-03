@@ -20,7 +20,7 @@ public class OmniToolLevelManager {
         levels.clear();
         final YamlConfig config = OmniToolModule.instance.getLevelsYml();
 
-        levels.put(0, new OmniToolLevel(0));
+        levels.put(0, new OmniToolLevel(config, 0));
         final ConfigurationSection section = config.options().getConfigurationSection("levels");
 
         if (section == null) {
@@ -34,7 +34,7 @@ public class OmniToolLevelManager {
                 return;
             }
 
-            levels.putIfAbsent(level, new OmniToolLevel(level));
+            levels.putIfAbsent(level, new OmniToolLevel(config, level));
         });
     }
 

@@ -1,5 +1,6 @@
 rootProject.name = 'AstraPrison'
 
+// COMMONS
 include 'nms:common'
 findProject(':nms:common')?.name = 'nms_common'
 
@@ -8,11 +9,19 @@ findProject(':nms:abstraction')?.name = 'abstraction'
 
 include 'common'
 
+
+// MODULES
 include 'modules:mines'
 findProject(':modules:mines')?.name = 'mines'
+
 include 'modules:omnitool'
 findProject(':modules:omnitool')?.name = 'omnitool'
 
+include 'modules:backpacks'
+findProject(':modules:backpacks')?.name = 'backpacks'
+
+// NMS
 include 'nms:versions:v1_21_R1'
 findProject(':nms:versions:v1_21_R1')?.name = 'v1_21_R1'
+
 

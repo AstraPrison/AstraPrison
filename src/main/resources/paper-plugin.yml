@@ -11,3 +11,6 @@ dependencies:
     PlaceholderAPI:
       load: BEFORE
       required: false
+    HeadDatabase:
+      load: BEFORE
+      required: false

@@ -1,0 +1,40 @@
+#
+# Backpack Settings
+#
+
+lore:
+  header:
+    - '{AMOUNT}/{CAPACITY}'
+    - '{PROGRESS_BAR}'
+  footer:
+    - ''
+    - '<white>Right click<green> to sell all!'
+
+progress-bar:
+  character: '|'
+  fill-color: '<green>'
+  empty-color: '<gray>'
+
+backpacks:
+  common:
+    0:
+      material: CHEST
+      custom-model-data: 0
+      display-name: 'Common Backpack<dark_gray> (<gray>I<dark_gray>)'
+      max-capacity: 288
+    1:
+      material: CHEST
+      custom-model-data: 0
+      display-name: 'Common Backpack<dark_gray> (<gray>II<dark_gray>)'
+      max-capacity: 576
+  rare:
+    0:
+      material: ENDER_CHEST
+      custom-model-data: 0
+      display-name: '<blue>Rare Backpack<dark_gray> (<gray>I<dark_gray>)'
+      max-capacity: 576
+    1:
+      material: ENDER_CHEST
+      custom-model-data: 0
+      display-name: '<blue>Rare Backpack<dark_gray> (<gray>II<dark_gray>)'
+      max-capacity: 1152

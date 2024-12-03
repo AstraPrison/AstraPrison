@@ -19,6 +19,7 @@ dependencies {
 
     implementation project(':modules:mines')
     implementation project(':modules:omnitool')
+    implementation project(':modules:backpacks')
 
     implementation project(':nms:versions:v1_21_R1')
 }

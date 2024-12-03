@@ -1,0 +1,20 @@
+#
+# Example Menu
+# Prefix any menu file with _ to disable!
+#
+
+title: Example Menu
+size: 45
+
+contents:
+  filler:
+    material: GRAY_STAINED_GLASS_PANE
+    display-name: '<reset>'
+    slots: 0-44
+  example-item:
+    material: STONE
+    display-name: '<b><rainbow>Example<reset> <b><rainbow>Item!'
+    lore:
+      - '<gray>Example lore line 1'
+      - '<gray>Example lore line 2'
+    slots: 22

@@ -23,6 +23,7 @@
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/modules" />
+            <option value="$PROJECT_DIR$/modules/backpacks" />
             <option value="$PROJECT_DIR$/modules/mines" />
             <option value="$PROJECT_DIR$/modules/omnitool" />
             <option value="$PROJECT_DIR$/nms" />

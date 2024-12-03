@@ -6,7 +6,6 @@ import dev.fabled.astra.omnitool.levels.OmniToolLevel;
 import dev.fabled.astra.omnitool.levels.OmniToolLevelManager;
 import dev.fabled.astra.omnitool.levels.OmniToolType;
 import dev.fabled.astra.utils.MiniColor;
-import dev.fabled.astra.utils.logger.AstraLog;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -82,38 +81,6 @@ public final class OmniTool {
         }
 
         return false;
-    }
-
-    /**
-     * Switches between the OmniTool's type, pickaxe, axe, or shovel!
-     * @see OmniTool#isOmniTool(ItemStack)
-     * @param itemStack {@link ItemStack} the player's OmniTool
-     */
-    public static void updateTool(final @NotNull ItemStack itemStack, final @NotNull Block block) {
-        if (itemStack.getType().isAir()) {
-            return;
-        }
-
-        final ItemMeta meta = itemStack.getItemMeta();
-        final PersistentDataContainer container = meta.getPersistentDataContainer();
-        final int level = container.getOrDefault(omniToolKey, PersistentDataType.INTEGER, 0);
-
-        final Material preferredTool = Tools.getPreferredTool(block);
-
-        final OmniToolLevelManager manager = OmniToolModule.instance.getLevelManager();
-        final OmniToolLevel omniToolLevel = manager.getLevel(level);
-
-        final OmniToolType toolType;
-        switch (preferredTool) {
-            case NETHERITE_SHOVEL -> toolType = omniToolLevel.getShovel();
-            case NETHERITE_AXE -> toolType = omniToolLevel.getAxe();
-            default -> toolType = omniToolLevel.getPickaxe();
-        }
-
-        itemStack.setType(toolType.getMaterial());
-        meta.setCustomModelData(toolType.getCustomModelData());
-        meta.displayName(MiniColor.INVENTORY.deserialize(toolType.getDisplayName()));
-        itemStack.setItemMeta(meta);
     }
 
 }

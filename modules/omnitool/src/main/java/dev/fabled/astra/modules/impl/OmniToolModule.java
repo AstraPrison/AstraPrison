@@ -6,7 +6,6 @@ import dev.fabled.astra.commands.OmniToolCommand;
 import dev.fabled.astra.listeners.AstraListener;
 import dev.fabled.astra.listeners.OmniToolJoinListener;
 import dev.fabled.astra.listeners.OmniToolLockListener;
-import dev.fabled.astra.listeners.OmniToolUpdateListener;
 import dev.fabled.astra.modules.AstraModule;
 import dev.fabled.astra.omnitool.OmniTool;
 import dev.fabled.astra.omnitool.levels.OmniToolLevelManager;
@@ -40,8 +39,7 @@ public final class OmniToolModule extends AstraModule {
 
     private final @NotNull List<AstraListener> listeners = List.of(
             new OmniToolJoinListener(),
-            new OmniToolLockListener(),
-            new OmniToolUpdateListener()
+            new OmniToolLockListener()
     );
 
     private OmniToolModule() {

@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class JsonConfiguration {
+public final class JsonConfiguration {
 
     private @NotNull Map<String, Object> map;
 
@@ -42,6 +42,10 @@ public class JsonConfiguration {
         }
 
         return clazz.cast(object);
+    }
+
+    public boolean has(final @NotNull String key) {
+        return map.containsKey(key);
     }
 
     @Contract("_, !null -> !null")

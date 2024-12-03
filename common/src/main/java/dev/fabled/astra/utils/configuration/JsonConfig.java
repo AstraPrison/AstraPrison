@@ -2,7 +2,9 @@ package dev.fabled.astra.utils.configuration;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import dev.fabled.astra.Astra;
+import dev.fabled.astra.utils.logger.AstraLog;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,8 +14,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
+import java.util.Map;
 
-public class JsonConfig implements AstraConfig {
+public final class JsonConfig implements AstraConfig {
 
     private static final @NotNull Gson GSON;
 
@@ -65,13 +68,15 @@ public class JsonConfig implements AstraConfig {
             jsonConfiguration.setMap(GSON.fromJson(new FileReader(file), HashMap.class));
         }
         catch (IOException e) {
-            e.printStackTrace();
+            AstraLog.log(e);
         }
     }
 
     @Override
     public void saveChanges() {
-        final String json = GSON.toJson(jsonConfiguration.getMap());
+        final String json = GSON.toJson(
+                convertToJsonObject(jsonConfiguration.getMap())
+        );
 
         //noinspection ResultOfMethodCallIgnored
         file.delete();
@@ -85,7 +90,35 @@ public class JsonConfig implements AstraConfig {
             );
         }
         catch (IOException e) {
-            e.printStackTrace();
+            AstraLog.log(e);
         }
     }
+
+    /**
+     * Convert the map into a JsonObject
+     * @param data The {@link Map} of our data
+     * @return {@link JsonObject}
+     * @author <a href='https://github.com/Loudbooks'>Loudbooks</a>
+     */
+    private @NotNull JsonObject convertToJsonObject(final @NotNull Map<String, Object> data) {
+        final JsonObject jsonObject = new JsonObject();
+
+        data.forEach((key, value) -> {
+            JsonObject current = jsonObject;
+            final String[] path = key.split("\\.");
+
+            for (final String s : path) {
+                if (!current.has(s)) {
+                    current.add(s, new JsonObject());
+                }
+
+                current = current.getAsJsonObject(s);
+            }
+
+            current.addProperty(path[path.length - 1], value.toString());
+        });
+
+        return jsonObject;
+    }
+
 }

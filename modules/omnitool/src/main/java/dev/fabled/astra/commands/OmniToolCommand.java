@@ -48,7 +48,7 @@ public class OmniToolCommand extends BrigadierCommand {
         return base().build();
     }
 
-    private LiteralArgumentBuilder<CommandSourceStack> base() {
+    private @NotNull LiteralArgumentBuilder<CommandSourceStack> base() {
         return Commands.literal(name)
                 .requires(permissionRequirement("astra.admin"))
                 .executes(context -> {
@@ -64,7 +64,7 @@ public class OmniToolCommand extends BrigadierCommand {
                 .then(give());
     }
 
-    private LiteralArgumentBuilder<CommandSourceStack> give() {
+    private @NotNull LiteralArgumentBuilder<CommandSourceStack> give() {
         return Commands.literal("give")
                 .executes(context -> {
                     final CommandSender sender = context.getSource().getSender();
@@ -80,7 +80,7 @@ public class OmniToolCommand extends BrigadierCommand {
                 .then(givePlayer());
     }
 
-    private RequiredArgumentBuilder<CommandSourceStack, String> givePlayer() {
+    private @NotNull RequiredArgumentBuilder<CommandSourceStack, String> givePlayer() {
         return Commands.argument("player", StringArgumentType.word())
                 .suggests(BrigadierCommand::suggestOnlinePlayers)
                 .executes(context -> {
@@ -92,7 +92,7 @@ public class OmniToolCommand extends BrigadierCommand {
                 .then(givePlayerSilent());
     }
 
-    private LiteralArgumentBuilder<CommandSourceStack> givePlayerSilent() {
+    private @NotNull LiteralArgumentBuilder<CommandSourceStack> givePlayerSilent() {
         return Commands.literal("-s")
                 .executes(context -> {
                     final CommandSender sender = context.getSource().getSender();

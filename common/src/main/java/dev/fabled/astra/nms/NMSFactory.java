@@ -1,5 +1,6 @@
 package dev.fabled.astra.nms;
 
+import dev.fabled.astra.Astra;
 import dev.fabled.astra.utils.Version;
 import dev.fabled.astra.utils.logger.AstraLog;
 import dev.fabled.astra.utils.logger.AstraLogLevel;
@@ -25,8 +26,8 @@ public final class NMSFactory {
             nmsHandler = (AbstractNMSHandler) Class.forName(
                     "dev.fabled.astra.nms.versions." + version.getNMSVersion() + ".NMSHandler"
             )
-                    .getConstructor()
-                    .newInstance();
+                    .getConstructor(JavaPlugin.class)
+                    .newInstance(Astra.getPlugin());
         }
         catch (Exception e) {
             AstraLog.log(e);
