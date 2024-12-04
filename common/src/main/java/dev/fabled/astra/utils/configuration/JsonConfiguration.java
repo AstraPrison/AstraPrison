@@ -135,4 +135,8 @@ public final class JsonConfiguration {
         return set;
     }
 
+    public void clear() {
+        map.clear();
+    }
+
 }
