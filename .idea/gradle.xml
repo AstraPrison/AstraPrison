@@ -26,6 +26,7 @@
             <option value="$PROJECT_DIR$/modules/backpacks" />
             <option value="$PROJECT_DIR$/modules/mines" />
             <option value="$PROJECT_DIR$/modules/omnitool" />
+            <option value="$PROJECT_DIR$/modules/sell" />
             <option value="$PROJECT_DIR$/nms" />
             <option value="$PROJECT_DIR$/nms/abstraction" />
             <option value="$PROJECT_DIR$/nms/common" />

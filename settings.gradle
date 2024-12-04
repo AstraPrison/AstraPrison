@@ -17,11 +17,13 @@ findProject(':modules:mines')?.name = 'mines'
 include 'modules:omnitool'
 findProject(':modules:omnitool')?.name = 'omnitool'
 
+include 'modules:sell'
+findProject(':modules:sell')?.name = 'sell'
+
 include 'modules:backpacks'
 findProject(':modules:backpacks')?.name = 'backpacks'
 
 // NMS
 include 'nms:versions:v1_21_R1'
 findProject(':nms:versions:v1_21_R1')?.name = 'v1_21_R1'
-
 
