@@ -33,6 +33,16 @@ mine-wand:
     set: "{PREFIX}<green> You set corner {CORNER} to <white>{X}, {Y}, {Z}<green>!"
     missing: "{PREFIX}<red> You are missing corner {CORNER}!"
 
+sell-price:
+  help:
+    - '<b><aqua>Sell</b> <b>Price<reset> Commands:'
+    - '<dark_gray>|<white> sellprice set <dark_gray>-<gray> Set the sell price of a block!'
+    - '<dark_gray>|<white> sellprice check <dark_gray>-<gray> Check the sell price of a block!'
+  input-price: "{PREFIX}<red> Please input a price!"
+  input-block: "{PREFIX}<red> Please hold or type a block!"
+  set: "{PREFIX}<green> You set the price of<white> {BLOCK}<green> to<white> ${PRICE}<green>!"
+  price: "{PREFIX}<green> The price of<white> {BLOCK}<green> is<white> ${PRICE}<green>!"
+
 errors:
   no-permission: "{PREFIX}<red> You are missing the<white> {PERMISSION}<red> permission!"
   select-player: "{PREFIX}<red> Select a player!"
