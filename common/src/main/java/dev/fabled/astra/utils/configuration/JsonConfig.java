@@ -72,8 +72,7 @@ public final class JsonConfig implements AstraConfig {
         }
     }
 
-    @Override
-    public void saveChanges() {
+    public void saveChanges(final boolean truncate) {
         final String json = GSON.toJson(
                 convertToJsonObject(jsonConfiguration.getMap())
         );
@@ -82,6 +81,11 @@ public final class JsonConfig implements AstraConfig {
         file.delete();
 
         try {
+            if (truncate) {
+                Files.write(file.toPath(), json.getBytes());
+                return;
+            }
+
             Files.write(
                     file.toPath(),
                     json.getBytes(),
@@ -92,6 +96,11 @@ public final class JsonConfig implements AstraConfig {
         catch (IOException e) {
             AstraLog.log(e);
         }
+    }
+
+    @Override
+    public void saveChanges() {
+        saveChanges(false);
     }
 
     /**
