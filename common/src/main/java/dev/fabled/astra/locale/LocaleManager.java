@@ -2,8 +2,7 @@ package dev.fabled.astra.locale;
 
 import dev.fabled.astra.Astra;
 import dev.fabled.astra.locale.annotations.AstraMessageKey;
-import dev.fabled.astra.locale.impl.AdminMessageKeys;
-import dev.fabled.astra.locale.impl.ErrorMessageKeys;
+import dev.fabled.astra.locale.impl.*;
 import dev.fabled.astra.utils.ListUtils;
 import dev.fabled.astra.utils.MiniColor;
 import dev.fabled.astra.utils.configuration.YamlConfig;
@@ -51,10 +50,12 @@ public final class LocaleManager {
         localeGroups = new HashMap<>();
         langYml = new YamlConfig("locale/lang.yml");
         defaultLocaleGroup = "english";
-        onReload();
-
         registerKeys(AdminMessageKeys.class);
+        registerKeys(MineWandMessageKeys.class);
+        registerKeys(OmniToolMessageKeys.class);
+        registerKeys(SellPriceMessageKeys.class);
         registerKeys(ErrorMessageKeys.class);
+        onReload();
     }
 
     public void registerKeys(final @NotNull Class<?> clazz) {
