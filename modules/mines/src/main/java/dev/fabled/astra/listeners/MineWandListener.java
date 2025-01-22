@@ -85,6 +85,12 @@ public class MineWandListener implements AstraListener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
+
+        if (selection.removeFromFileIfNoPermission(player)) {
+            selection.clearSelection(player);
+            return;
+        }
+
         selection.savePlayer(player);
         selection.clearSelection(player);
     }
