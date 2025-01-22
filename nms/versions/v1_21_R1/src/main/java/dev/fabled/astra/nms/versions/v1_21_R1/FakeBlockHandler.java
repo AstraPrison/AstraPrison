@@ -100,7 +100,7 @@ public final class FakeBlockHandler implements AbstractFakeBlockHandler {
     }
 
     @Override
-    public @NotNull Map<Vector3i, Material> getFakeBlocks(@NotNull UUID uuid) {
+    public @NotNull Map<Vector3i, Material> getFakeBlocks(final @NotNull UUID uuid) {
         if (!materials.containsKey(uuid)) {
             return new HashMap<>();
         }
@@ -109,12 +109,12 @@ public final class FakeBlockHandler implements AbstractFakeBlockHandler {
     }
 
     @Override
-    public @Nullable Material getFakeBlock(@NotNull UUID uuid, int x, int y, int z) {
+    public @Nullable Material getFakeBlock(final @NotNull UUID uuid, final int x, final int y, final int z) {
         return materials.getOrDefault(uuid, new HashMap<>()).getOrDefault(new Vector3i(x, y, z), null);
     }
 
     @Override
-    public void clear(@NotNull UUID uuid) {
+    public void clear(final @NotNull UUID uuid) {
         materials.remove(uuid);
     }
 
@@ -156,7 +156,7 @@ public final class FakeBlockHandler implements AbstractFakeBlockHandler {
         removeFakeBlock(player.getUniqueId(), location);
     }
 
-    private void addFakeBlocks(final @NotNull UUID uuid, @NotNull Map<BlockPosition, BlockData> blockDataMap) {
+    private void addFakeBlocks(final @NotNull UUID uuid, final @NotNull Map<BlockPosition, BlockData> blockDataMap) {
         final Map<Vector3i, Material> materials = blockDataMap.entrySet().stream().collect(Collectors.toMap(
                 e -> e.getKey().toVector().toVector3i(),
                 e -> e.getValue().getMaterial()
