@@ -1,6 +1,7 @@
 package dev.fabled.astra.mines.wand;
 
 import dev.fabled.astra.modules.impl.MinesModule;
+import dev.fabled.astra.permissions.AstraPermission;
 import dev.fabled.astra.utils.LocationUtils;
 import dev.fabled.astra.utils.configuration.JsonConfig;
 import org.bukkit.Location;
@@ -218,6 +219,7 @@ public final class MineWandSelection {
 
     private boolean removeFromFileIfNoPermission(final @NotNull Player player) {
         if (player.hasPermission("astra.admin")) {
+        if (AstraPermission.MINE_WAND_USE.hasPermission(player)) {
             return false;
         }
 
