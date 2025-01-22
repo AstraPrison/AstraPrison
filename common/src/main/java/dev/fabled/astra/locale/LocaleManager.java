@@ -24,6 +24,7 @@ public final class LocaleManager {
     public static @NotNull LocaleManager getInstance() {
         if (instance == null) {
             instance = new LocaleManager();
+            instance.onReload();
         }
 
         return instance;
@@ -55,7 +56,6 @@ public final class LocaleManager {
         registerKeys(OmniToolMessageKeys.class);
         registerKeys(SellPriceMessageKeys.class);
         registerKeys(ErrorMessageKeys.class);
-        onReload();
     }
 
     public void registerKeys(final @NotNull Class<?> clazz) {
