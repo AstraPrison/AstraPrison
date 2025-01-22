@@ -26,4 +26,6 @@ findProject(':modules:backpacks')?.name = 'backpacks'
 // NMS
 include 'nms:versions:v1_21_R1'
 findProject(':nms:versions:v1_21_R1')?.name = 'v1_21_R1'
+include 'nms:versions:v1_21_R2'
+findProject(':nms:versions:v1_21_R2')?.name = 'v1_21_R2'
 

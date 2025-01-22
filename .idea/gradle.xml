@@ -32,6 +32,7 @@
             <option value="$PROJECT_DIR$/nms/common" />
             <option value="$PROJECT_DIR$/nms/versions" />
             <option value="$PROJECT_DIR$/nms/versions/v1_21_R1" />
+            <option value="$PROJECT_DIR$/nms/versions/v1_21_R2" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -23,6 +23,7 @@ dependencies {
     implementation project(':modules:backpacks')
 
     implementation project(':nms:versions:v1_21_R1')
+    implementation project(':nms:versions:v1_21_R2')
 }
 
 assemble.dependsOn(shadowJar)
