@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class PacketListener implements AbstractPacketListener {
+public final class PacketListener implements AbstractPacketListener {
 
     private final @NotNull PacketManager packetManager;
 
