@@ -67,7 +67,7 @@ public final class MinesModule extends AstraModule {
 
     @Override
     public void onDisable() {
-
+        mineWandSelection.saveAll();
     }
 
     @Override
