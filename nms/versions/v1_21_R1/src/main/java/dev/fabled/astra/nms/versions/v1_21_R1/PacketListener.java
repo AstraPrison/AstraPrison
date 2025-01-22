@@ -18,7 +18,7 @@ public final class PacketListener implements AbstractPacketListener {
     }
 
     @Override
-    public void injectPlayer(@NotNull Player player) {
+    public void injectPlayer(final @NotNull Player player) {
         final ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
             // From player to server
             @Override
@@ -62,7 +62,7 @@ public final class PacketListener implements AbstractPacketListener {
     }
 
     @Override
-    public void removePlayer(@NotNull Player player) {
+    public void removePlayer(final @NotNull Player player) {
         final Channel channel = ((CraftPlayer) player).getHandle().connection.connection.channel;
         channel.eventLoop().submit(() -> {
             channel.pipeline().remove(player.getName());
