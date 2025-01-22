@@ -213,10 +213,6 @@ public final class MineWandSelection {
     }
 
     public void savePlayer(final @NotNull Player player) {
-        if (removeFromFileIfNoPermission(player)) {
-            return;
-        }
-
         savePlayer(player.getUniqueId());
     }
 
