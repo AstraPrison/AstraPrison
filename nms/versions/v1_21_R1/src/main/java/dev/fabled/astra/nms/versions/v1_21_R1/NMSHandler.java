@@ -19,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class NMSHandler implements AbstractNMSHandler {
+public final class NMSHandler implements AbstractNMSHandler {
 
     private final @NotNull PacketManager packetManager;
     private final @NotNull PacketListener packetListener;
