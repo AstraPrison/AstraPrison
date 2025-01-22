@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public final class FakeBlockInteractPacket implements AbstractPacket {
 
     @Override
-    public boolean run(@NotNull Player player, @NotNull Object packet) {
+    public boolean run(final @NotNull Player player, final @NotNull Object packet) {
         if (!(packet instanceof ClientboundBlockUpdatePacket blockUpdatePacket)) {
             return true;
         }
