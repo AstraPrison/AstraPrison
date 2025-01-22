@@ -4,6 +4,7 @@ import dev.fabled.astra.modules.impl.MinesModule;
 import dev.fabled.astra.permissions.AstraPermission;
 import dev.fabled.astra.utils.LocationUtils;
 import dev.fabled.astra.utils.configuration.JsonConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -243,6 +244,16 @@ public final class MineWandSelection {
         config.saveChanges();
         config.reload();
         return true;
+    }
+
+    public void saveAll() {
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            if (removeFromFileIfNoPermission(player)) {
+                return;
+            }
+
+            savePlayer(player);
+        });
     }
 
 }
