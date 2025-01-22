@@ -182,7 +182,7 @@ public final class MineWandSelection {
         final String cornerTwoSerialized = config.options().getString(path + "corner-two", null);
         final Location cornerTwo = LocationUtils.deserialize(cornerTwoSerialized);
         if (cornerTwo != null) {
-            setCornerTwo(uuid, cornerTwo);;
+            setCornerTwo(uuid, cornerTwo);
         }
     }
 
