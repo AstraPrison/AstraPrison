@@ -37,6 +37,7 @@ public final class JsonConfiguration {
     @Contract("_, !null, _ -> !null")
     private <T> T get(final @NotNull String path, final @Nullable T def, final @NotNull Class<T> clazz) {
         final Object object = map.getOrDefault(path, null);
+
         if (!clazz.isInstance(object)) {
             return def;
         }

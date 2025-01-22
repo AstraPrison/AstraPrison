@@ -1,28 +1,18 @@
 package dev.fabled.astra.utils.configuration;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import dev.fabled.astra.Astra;
+import dev.fabled.astra.utils.JsonUtils;
 import dev.fabled.astra.utils.logger.AstraLog;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class JsonConfig implements AstraConfig {
-
-    private static final @NotNull Gson GSON;
-
-    static {
-        GSON = new GsonBuilder().setPrettyPrinting().create();
-    }
 
     private final @NotNull String filePath;
     private final @NotNull JsonConfiguration jsonConfiguration;
@@ -64,8 +54,9 @@ public final class JsonConfig implements AstraConfig {
     @Override
     public void reload() {
         try {
-            //noinspection unchecked
-            jsonConfiguration.setMap(GSON.fromJson(new FileReader(file), HashMap.class));
+            jsonConfiguration.setMap(JsonUtils.toMap(
+                    Files.readString(file().toPath(), StandardCharsets.UTF_8))
+            );
         }
         catch (IOException e) {
             AstraLog.log(e);
@@ -73,22 +64,20 @@ public final class JsonConfig implements AstraConfig {
     }
 
     public void saveChanges(final boolean truncate) {
-        final String json = GSON.toJson(
-                convertToJsonObject(jsonConfiguration.getMap())
-        );
+        final String jsonString = JsonUtils.toJsonString(jsonConfiguration.getMap());
 
         //noinspection ResultOfMethodCallIgnored
         file.delete();
 
         try {
             if (truncate) {
-                Files.write(file.toPath(), json.getBytes());
+                Files.write(file.toPath(), jsonString.getBytes());
                 return;
             }
 
             Files.write(
                     file.toPath(),
-                    json.getBytes(),
+                    jsonString.getBytes(),
                     StandardOpenOption.CREATE,
                     StandardOpenOption.WRITE
             );
@@ -101,33 +90,6 @@ public final class JsonConfig implements AstraConfig {
     @Override
     public void saveChanges() {
         saveChanges(false);
-    }
-
-    /**
-     * Convert the map into a JsonObject
-     * @param data The {@link Map} of our data
-     * @return {@link JsonObject}
-     * @author <a href='https://github.com/Loudbooks'>Loudbooks</a>
-     */
-    private @NotNull JsonObject convertToJsonObject(final @NotNull Map<String, Object> data) {
-        final JsonObject jsonObject = new JsonObject();
-
-        data.forEach((key, value) -> {
-            JsonObject current = jsonObject;
-            final String[] path = key.split("\\.");
-
-            for (final String s : path) {
-                if (!current.has(s)) {
-                    current.add(s, new JsonObject());
-                }
-
-                current = current.getAsJsonObject(s);
-            }
-
-            current.addProperty(path[path.length - 1], value.toString());
-        });
-
-        return jsonObject;
     }
 
 }
