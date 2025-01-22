@@ -217,8 +217,7 @@ public final class MineWandSelection {
         savePlayer(player.getUniqueId());
     }
 
-    private boolean removeFromFileIfNoPermission(final @NotNull Player player) {
-        if (player.hasPermission("astra.admin")) {
+    public boolean removeFromFileIfNoPermission(final @NotNull Player player) {
         if (AstraPermission.MINE_WAND_USE.hasPermission(player)) {
             return false;
         }
