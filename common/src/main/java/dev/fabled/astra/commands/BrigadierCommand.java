@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 public abstract class BrigadierCommand {
 
     protected final @NotNull String name;
-    protected final @Nullable String description;
+    private final @Nullable String description;
     private final @NotNull List<String> aliases;
 
     public BrigadierCommand(final @NotNull String name, final @Nullable String description, final @NotNull String... aliases) {
