@@ -24,7 +24,11 @@ public abstract class BrigadierCommand {
     private final @Nullable String description;
     private final @NotNull List<String> aliases;
 
-    public BrigadierCommand(final @NotNull String name, final @Nullable String description, final @NotNull String... aliases) {
+    public BrigadierCommand(
+            final @NotNull String name,
+            final @Nullable String description,
+            final @NotNull String... aliases
+    ) {
         this.name = name;
         this.description = description;
         this.aliases = List.of(aliases);
