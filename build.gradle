@@ -7,9 +7,9 @@ plugins {
 
 group = 'dev.fabled'
 version = "${majorVersion}.${minorVersion}.${patchVersion}"
-//if (snapshot) {
-//    version += "-SNAPSHOT-${buildNumber}"
-//}
+if (snapshot == "true") {
+    version += "-SNAPSHOT-${buildNumber}"
+}
 
 dependencies {
     implementation project(':nms:nms_common')
