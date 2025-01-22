@@ -89,6 +89,7 @@ public final class FakeBlockMinePacket implements AbstractPacket {
             fakeBlockHandler.removeFakeBlock(player, x, y, z);
             player.sendBlockChange(block.getLocation(), blockState.getBlockData());
         }, 1L);
+
         return true;
     }
 
