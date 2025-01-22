@@ -95,6 +95,8 @@ public final class LocaleManager {
 
         final File[] files = folder.listFiles();
         if (files == null) {
+            createDefaultLocaleGroup();
+            reloadLocaleGroups();
             return;
         }
 
@@ -109,6 +111,10 @@ public final class LocaleManager {
                     new YamlConfig("locales/" + name),
                     locale
             ));
+        }
+
+        if (!locales.containsKey(defaultLocaleGroup)) {
+            createDefaultLocaleGroup();
         }
 
         reloadLocaleGroups();
