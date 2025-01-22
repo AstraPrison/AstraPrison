@@ -24,6 +24,7 @@ dependencies {
 
     implementation project(':nms:versions:v1_21_R1')
     implementation project(':nms:versions:v1_21_R2')
+    implementation project(':nms:versions:v1_21_R3')
 }
 
 assemble.dependsOn(shadowJar)
