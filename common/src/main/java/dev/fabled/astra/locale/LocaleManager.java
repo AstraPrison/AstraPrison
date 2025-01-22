@@ -108,7 +108,7 @@ public final class LocaleManager {
 
             final String locale = name.substring(7, name.length() - 4).toLowerCase();
             locales.put(locale, new AstraLocale(
-                    new YamlConfig("locales/" + name),
+                    new YamlConfig("locale/" + name),
                     locale
             ));
         }
@@ -152,7 +152,7 @@ public final class LocaleManager {
 
     private void createDefaultLocaleGroup() {
         locales.put("english", new AstraLocale(
-                new YamlConfig("locales/locale-english.yml"),
+                new YamlConfig("locale/locale-english.yml"),
                 "english"
         ));
     }
