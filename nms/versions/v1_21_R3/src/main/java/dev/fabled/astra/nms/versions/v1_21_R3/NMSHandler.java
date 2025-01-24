@@ -21,10 +21,17 @@ import org.jetbrains.annotations.Nullable;
 
 public final class NMSHandler implements AbstractNMSHandler {
 
+    private static NMSHandler instance;
+
+    public static NMSHandler getInstance() {
+        return instance;
+    }
+
     private final @NotNull PacketManager packetManager;
     private final @NotNull PacketListener packetListener;
 
     public NMSHandler(final @NotNull JavaPlugin plugin) {
+        instance = this;
         FakeBlockHandler.getInstance();
         packetManager = new PacketManager(plugin);
         packetListener = new PacketListener(packetManager);
