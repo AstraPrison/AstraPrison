@@ -3,27 +3,26 @@ package dev.fabled.astra.utils.logger;
 import dev.fabled.astra.Astra;
 import dev.fabled.astra.utils.MiniColor;
 import dev.fabled.astra.utils.configuration.YamlConfig;
-import org.bukkit.Bukkit;
-import org.bukkit.command.ConsoleCommandSender;
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class AstraLog {
 
-    private static final @NotNull String PREFIX;
     private static final @NotNull String DEBUG_PREFIX;
     private static final @NotNull String DIVIDER;
+    private static ComponentLogger componentLogger;
     private static boolean allowFormatting;
     private static boolean debugMode;
 
     static {
-        PREFIX = "[Astra] ";
         DEBUG_PREFIX = "[<yellow>i<reset>] ";
         DIVIDER = "-----------------------------------";
     }
 
     public static void onLoad() {
+        componentLogger = Astra.getPlugin().getComponentLogger();
         onReload();
     }
 
@@ -40,18 +39,16 @@ public class AstraLog {
             return;
         }
 
-        final ConsoleCommandSender sender = Bukkit.getConsoleSender();
-
         for (String s : input) {
             s = debugMode
-                    ? PREFIX + DEBUG_PREFIX + level.color + s
-                    : PREFIX + level.color + s;
+                    ? DEBUG_PREFIX + level.color + s
+                    : level.color + s;
 
             if (!allowFormatting) {
                 s = MiniColor.CONSOLE.stripTags(s);
             }
 
-            sender.sendMessage(
+            componentLogger.info(
                     MiniColor.CONSOLE.deserialize(s)
             );
         }
