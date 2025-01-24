@@ -4,6 +4,7 @@ import dev.fabled.astra.nms.AbstractPacket;
 import dev.fabled.astra.nms.versions.v1_21_R3.FakeBlockHandler;
 import dev.fabled.astra.nms.versions.v1_21_R3.OmniToolUpdater;
 import dev.fabled.astra.omnitool.OmniTool;
+import dev.fabled.astra.utils.logger.AstraLog;
 import dev.fabled.astra.utils.tools.ToolSpeed;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
@@ -18,8 +19,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Set;
 
 public final class FakeBlockMinePacket implements AbstractPacket {
+
+    private static final @NotNull Set<Material> THREE_TICK_BLOCKS;
+
+    static {
+        THREE_TICK_BLOCKS = Set.of(
+                Material.OBSIDIAN
+        );
+    }
 
     private final @NotNull JavaPlugin plugin;
 
@@ -76,14 +86,26 @@ public final class FakeBlockMinePacket implements AbstractPacket {
             return true;
         }
 
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-            final Collection<ItemStack> drops = blockState.getDrops(itemStack);
-            drops.forEach(inventory::addItem);
+        final Collection<ItemStack> drops = blockState.getDrops(itemStack);
+        drops.forEach(inventory::addItem);
 
-            blockState.setType(block.getType());
-            fakeBlockHandler.removeFakeBlock(player, x, y, z);
-            player.sendBlockChange(block.getLocation(), blockState.getBlockData());
-        }, 1L);
+        blockState.setType(block.getType());
+        fakeBlockHandler.removeFakeBlock(player, x, y, z);
+
+        if (action == ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK) {
+            Bukkit.getScheduler().runTaskAsynchronously(
+                    plugin,
+                    () -> player.sendBlockChange(block.getLocation(), blockState.getBlockData())
+            );
+            return true;
+        }
+
+        final long delay = THREE_TICK_BLOCKS.contains(mat) ? 3L : 1L;
+        Bukkit.getScheduler().runTaskLaterAsynchronously(
+                plugin,
+                () -> player.sendBlockChange(block.getLocation(), blockState.getBlockData()),
+                delay
+        );
 
         return true;
     }

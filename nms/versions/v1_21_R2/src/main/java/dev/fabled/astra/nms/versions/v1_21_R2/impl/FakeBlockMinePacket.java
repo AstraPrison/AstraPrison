@@ -18,8 +18,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Set;
 
 public final class FakeBlockMinePacket implements AbstractPacket {
+
+    private static final @NotNull Set<Material> THREE_TICK_BLOCKS;
+
+    static {
+        THREE_TICK_BLOCKS = Set.of(
+                Material.OBSIDIAN
+        );
+    }
 
     private final @NotNull JavaPlugin plugin;
 
@@ -76,14 +85,26 @@ public final class FakeBlockMinePacket implements AbstractPacket {
             return true;
         }
 
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-            final Collection<ItemStack> drops = blockState.getDrops(itemStack);
-            drops.forEach(inventory::addItem);
+        final Collection<ItemStack> drops = blockState.getDrops(itemStack);
+        drops.forEach(inventory::addItem);
 
-            blockState.setType(block.getType());
-            fakeBlockHandler.removeFakeBlock(player, x, y, z);
-            player.sendBlockChange(block.getLocation(), blockState.getBlockData());
-        }, 1L);
+        blockState.setType(block.getType());
+        fakeBlockHandler.removeFakeBlock(player, x, y, z);
+
+        if (action == ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK) {
+            Bukkit.getScheduler().runTaskAsynchronously(
+                    plugin,
+                    () -> player.sendBlockChange(block.getLocation(), blockState.getBlockData())
+            );
+            return true;
+        }
+
+        final long delay = THREE_TICK_BLOCKS.contains(mat) ? 3L : 1L;
+        Bukkit.getScheduler().runTaskLaterAsynchronously(
+                plugin,
+                () -> player.sendBlockChange(block.getLocation(), blockState.getBlockData()),
+                delay
+        );
 
         return true;
     }
