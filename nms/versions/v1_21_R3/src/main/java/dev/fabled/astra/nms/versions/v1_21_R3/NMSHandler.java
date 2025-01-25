@@ -72,16 +72,11 @@ public final class NMSHandler implements AbstractNMSHandler {
         }
 
         final Location location = block.getLocation();
-        final Material material;
 
         final FakeBlockHandler fakeBlockHandler = FakeBlockHandler.getInstance();
-        if (fakeBlockHandler.isFakeBlock(player, location)) {
-            material = fakeBlockHandler.getFakeBlock(player, location);
-        }
-
-        else {
-            material = block.getType();
-        }
+        final Material material = fakeBlockHandler.isFakeBlock(player, location)
+                ? fakeBlockHandler.getFakeBlock(player, location)
+                : block.getType();
 
         final BlockState blockState = CraftMagicNumbers.getBlock(material).defaultBlockState();
         final Item item = CraftMagicNumbers.getItem(itemStack.getType());

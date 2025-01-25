@@ -119,17 +119,8 @@ public final class FakeBlockHandler implements AbstractFakeBlockHandler {
     }
 
     private @NotNull Map<Vector3i, Material> getOrCreate(final @NotNull UUID uuid) {
-        final Map<Vector3i, Material> map;
-        if (materials.containsKey(uuid)) {
-            map = materials.get(uuid);
-        }
-
-        else {
-            map = new HashMap<>();
-            materials.put(uuid, map);
-        }
-
-        return map;
+        materials.putIfAbsent(uuid, new HashMap<>());
+        return materials.get(uuid);
     }
 
     private void addFakeBlock(

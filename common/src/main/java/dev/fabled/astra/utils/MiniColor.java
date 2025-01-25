@@ -48,12 +48,10 @@ public enum MiniColor {
         final List<Component> list = new ArrayList<>();
         if (this == INVENTORY) {
             input.forEach(string -> list.add(miniMessage.deserialize(string).decoration(TextDecoration.ITALIC, false)));
+            return list;
         }
 
-        else {
-            input.forEach(string -> list.add(miniMessage.deserialize(string)));
-        }
-
+        input.forEach(string -> list.add(miniMessage.deserialize(string)));
         return list;
     }
 
