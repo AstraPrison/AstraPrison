@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'io.papermc.paperweight.userdev'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    paperweight.paperDevBundle(paperDevBundleVersion)
+}
+
+test {
+    useJUnitPlatform()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
