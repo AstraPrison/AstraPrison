@@ -133,7 +133,7 @@ public final class LocaleManager {
         }
 
         section.getKeys(false).forEach(key -> {
-            final List<String> locales = ListUtils.fromConfig(langYml, "locales." + key);
+            final List<String> locales = ListUtils.fromConfig(langYml, "locales." + key, ",");
             if (locales == null) {
                 return;
             }
