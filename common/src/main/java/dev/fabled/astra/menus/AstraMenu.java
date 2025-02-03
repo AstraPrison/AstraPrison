@@ -18,6 +18,7 @@ import java.util.List;
 public class AstraMenu implements InventoryHolder {
 
     private final int size;
+    final int size;
     private final @NotNull String title;
     private final @NotNull List<MenuItem> items;
 
