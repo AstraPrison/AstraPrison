@@ -1,5 +1,7 @@
 package dev.fabled.astra.menus;
 
+import dev.fabled.astra.menus.actions.ItemClickActions;
+import dev.fabled.astra.menus.requirements.ItemClickRequirements;
 import dev.fabled.astra.utils.MiniColor;
 import dev.fabled.astra.utils.configuration.YamlConfig;
 import dev.fabled.astra.utils.dependencies.PapiUtils;
@@ -71,6 +73,42 @@ public class AstraMenu implements InventoryHolder {
     @Override
     public @NotNull Inventory getInventory() {
         return getInventory(null);
+    }
+
+    public void runClickActions(
+            final @NotNull Player player,
+            final @NotNull String itemId,
+            final @NotNull MenuClickType clickType
+    ) {
+        final MenuItem item = items.getOrDefault(itemId, null);
+        if (item == null) {
+            return;
+        }
+
+        final ItemClickActions actions = item.getItemClickActions(clickType);
+        if (actions == null) {
+            return;
+        }
+
+        actions.run(player);
+    }
+
+    public boolean checkRequirements(
+            final @NotNull Player player,
+            final @NotNull String itemId,
+            final @NotNull MenuClickType clickType
+    ) {
+        final MenuItem item = items.getOrDefault(itemId, null);
+        if (item == null) {
+            return true;
+        }
+
+        final ItemClickRequirements clickRequirements = item.getItemClickRequirements(clickType);
+        if (clickRequirements == null) {
+            return true;
+        }
+
+        return clickRequirements.check(player);
     }
 
     public static void closeAll() {
