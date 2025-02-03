@@ -17,10 +17,14 @@ import java.util.List;
 
 public class AstraMenu implements InventoryHolder {
 
-    private final int size;
+    /*
+            TODO
+            Pagination
+     */
+
     final int size;
     private final @NotNull String title;
-    private final @NotNull List<MenuItem> items;
+    private final @NotNull Map<String, MenuItem> items;
 
     public AstraMenu(final @NotNull YamlConfig config) {
         int s = config.options().getInt("size", 54);
@@ -33,7 +37,7 @@ public class AstraMenu implements InventoryHolder {
 
         size = s;
         title = config.options().getString("title", "Astra Menu");
-        items = new ArrayList<>();
+        items = new HashMap<>();
 
         final ConfigurationSection section = config.options().getConfigurationSection("contents");
         if (section == null) {
@@ -41,7 +45,7 @@ public class AstraMenu implements InventoryHolder {
         }
 
         section.getKeys(false).forEach(key ->
-                items.add(new MenuItem(config, "contents." + key + "."))
+                items.put(key, new MenuItem(config, "contents." + key + ".", key))
         );
     }
 
@@ -50,7 +54,7 @@ public class AstraMenu implements InventoryHolder {
                 MiniColor.INVENTORY.deserialize(PapiUtils.parse(title, player))
         );
 
-        items.forEach(menuItem -> {
+        items.forEach((key, menuItem) -> {
             final ItemStack item = menuItem.build(player);
             menuItem.getSlots().forEach(slot -> {
                 if (slot > size - 1 || slot < 0) {
