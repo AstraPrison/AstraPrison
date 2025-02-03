@@ -51,6 +51,13 @@ public abstract class BrigadierCommand {
         return SharedSuggestionProvider.suggest(ListUtils.onlinePlayerNames(), builder);
     }
 
+    protected static @NotNull CompletableFuture<Suggestions> suggest(
+            final @NotNull SuggestionsBuilder builder,
+            final @NotNull List<String> suggestions
+    ) {
+        return SharedSuggestionProvider.suggest(suggestions, builder);
+    }
+
     protected static @NotNull Predicate<CommandSourceStack> permissionRequirement(final @NotNull String permission) {
         return commandSourceStack -> {
             if (!(commandSourceStack.getSender() instanceof Player player)) {
