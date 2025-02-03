@@ -1,11 +1,18 @@
 #
-# Locale Settings
+# Locale Group Settings
 #
 
+# Default locale group
+#|
 default-group: english
 
-# To add a new locale, add the file name
-# and add which locales will use it!
-# Ignore the "locale-" prefix and file extension!
+# Locale Groups
+#| To add a new locale, add the file name
+#| and add which locales will use it!
+#| Ignore the "locale-" prefix and file extension!
+#|
+#| Use locale codes (in-game) from
+#| https://minecraft.wiki/w/Language
+#|
 locales:
   english: en_us
