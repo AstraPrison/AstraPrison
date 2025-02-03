@@ -13,6 +13,12 @@ import java.util.Map;
 
 public final class MenuManager {
 
+    private static final @NotNull String CUSTOM_MENUS_FOLDER;
+
+    static {
+        CUSTOM_MENUS_FOLDER = "menus/custom";
+    }
+
     private static MenuManager instance;
 
     public static @NotNull MenuManager getInstance() {
@@ -34,9 +40,9 @@ public final class MenuManager {
         AstraMenu.closeAll();
         menus.clear();
 
-        final File folder = new File(Astra.getPlugin().getDataFolder(), "menus");
+        final File folder = new File(Astra.getPlugin().getDataFolder(), CUSTOM_MENUS_FOLDER);
         if (!folder.exists()) {
-            menus.put("example", new AstraMenu(new YamlConfig("menus/example.yml")));
+            menus.put("example", new AstraMenu(new YamlConfig(CUSTOM_MENUS_FOLDER + "/example.yml")));
             return;
         }
 
@@ -52,7 +58,7 @@ public final class MenuManager {
             }
 
             final String menuId = fileName.substring(0, fileName.length() - 4).toLowerCase();
-            menus.put(menuId, new AstraMenu(new YamlConfig("menus/" + fileName)));
+            menus.put(menuId, new AstraMenu(new YamlConfig(CUSTOM_MENUS_FOLDER + "/" + fileName)));
         }
     }
 
