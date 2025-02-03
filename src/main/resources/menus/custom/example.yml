@@ -1,0 +1,48 @@
+#
+# Example Menu
+# Prefix any menu file with _ to disable!
+#
+
+title: Example Menu
+size: 45
+
+contents:
+  filler:
+    material: GRAY_STAINED_GLASS_PANE
+    display-name: '<reset>'
+    slots: 0-44
+  example-item:
+    material: STONE
+    display-name: '<b><rainbow>Example<reset> <b><rainbow>Item!'
+    lore:
+      - '<gray>Example lore line 1'
+      - '<gray>Example lore line 2'
+    slots: 22
+
+    click-actions:
+      left:
+        - ""
+
+    # You must meet 'one' OR 'two'
+    click-requirements:
+      left:
+        # You must meet 'has-permission' AND 'is-online'
+        'one':
+          'has-permission':
+            type: has permission
+            permission: example.permission
+            actions: "[message] You do not have the example.permission permission!"
+          'is-online':
+            type: is online
+            player: Mantice
+            actions: "[message] Mantice must be online for you to redeem this!"
+        # You must meet 'has-permission' AND 'is-online'
+        'two':
+          'has-permission':
+            type: has permission
+            permission: example.permission
+            actions: "[message] You do not have the example.permission permission!"
+          'is-online':
+            type: is online
+            player: Mantice
+            actions: "[message] Mantice must be online for you to redeem this!"
