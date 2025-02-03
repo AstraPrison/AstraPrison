@@ -1,5 +1,9 @@
 package dev.fabled.astra;
 
+import dev.fabled.astra.api.actions.ClickActionManager;
+import dev.fabled.astra.api.actions.ClickActionManagerImpl;
+import dev.fabled.astra.api.requirements.ClickRequirementManager;
+import dev.fabled.astra.api.requirements.ClickRequirementManagerImpl;
 import dev.fabled.astra.commands.*;
 import dev.fabled.astra.listeners.AstraListener;
 import dev.fabled.astra.listeners.AstraMenuListener;
@@ -23,7 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
-public final class AstraPrison extends JavaPlugin implements AstraPlugin {
+public final class AstraPrison extends JavaPlugin implements AstraPlugin, AstraAPI {
 
     private static AstraPrison instance;
 
@@ -44,6 +48,8 @@ public final class AstraPrison extends JavaPlugin implements AstraPlugin {
         AstraLog.onLoad();
         LocaleManager.getInstance();
         AstraPermission.onLoad();
+        ClickActionManagerImpl.getInstance();
+        ClickRequirementManagerImpl.getInstance();
         MenuManager.getInstance();
         moduleManager = new ModuleManager();
         moduleManager.register(OmniToolModule.getInstance());
@@ -108,6 +114,16 @@ public final class AstraPrison extends JavaPlugin implements AstraPlugin {
     @Override
     public ModuleManager getModuleManager() {
         return moduleManager;
+    }
+
+    @Override
+    public ClickActionManager getClickActionManager() {
+        return ClickActionManagerImpl.getInstance();
+    }
+
+    @Override
+    public ClickRequirementManager getClickRequirementManager() {
+        return ClickRequirementManagerImpl.getInstance();
     }
 
 }
