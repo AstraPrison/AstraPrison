@@ -3,6 +3,7 @@ plugins {
 }
 
 dependencies {
+    compileOnly project(':api')
     compileOnly project(':nms:nms_common')
     compileOnly project(':nms:abstraction')
 }

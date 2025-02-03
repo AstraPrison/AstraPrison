@@ -12,6 +12,7 @@ if (snapshot == "true") {
 }
 
 dependencies {
+    implementation project(':api')
     implementation project(':nms:nms_common')
     implementation project(':nms:abstraction')
 

@@ -1,5 +1,8 @@
 rootProject.name = 'AstraPrison'
 
+// API
+include 'api'
+
 // COMMONS
 include 'nms:common'
 findProject(':nms:common')?.name = 'nms_common'
@@ -30,4 +33,3 @@ include 'nms:versions:v1_21_R2'
 findProject(':nms:versions:v1_21_R2')?.name = 'v1_21_R2'
 include 'nms:versions:v1_21_R3'
 findProject(':nms:versions:v1_21_R3')?.name = 'v1_21_R3'
-
