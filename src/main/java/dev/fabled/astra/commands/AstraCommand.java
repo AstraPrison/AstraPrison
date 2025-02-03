@@ -134,9 +134,9 @@ public class AstraCommand extends BrigadierCommand {
                 .then(menuId());
     }
 
-    // TODO add menu ID suggestion
     private @NotNull RequiredArgumentBuilder<CommandSourceStack, String> menuId() {
         return Commands.argument("id", StringArgumentType.word())
+                .suggests((context, builder) -> suggest(builder, MenuManager.getInstance().getMenuIDs()))
                 .executes(context -> {
                     final CommandSender sender = context.getSource().getSender();
                     final Player player = sender instanceof Player p ? p : null;
