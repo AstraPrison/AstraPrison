@@ -95,4 +95,10 @@ public final class ListUtils {
         return replace(list, List.of(replacements));
     }
 
+    public static @NotNull <T> List<String> convertToStringList(final @NotNull List<T> input) {
+        final List<String> parsed = new ArrayList<>();
+        input.forEach(i -> parsed.add(i.toString()));
+        return parsed;
+    }
+
 }
