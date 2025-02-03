@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class MenuItem extends ItemBuilder {
+public final class MenuItem extends ItemBuilder {
 
     private final @NotNull String id;
     private @Nullable Set<Integer> slots;
