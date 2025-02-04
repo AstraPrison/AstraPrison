@@ -4,9 +4,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.NavigableMap;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.function.BiConsumer;
 
 public final class WeightedList<E> {
 
@@ -80,6 +79,22 @@ public final class WeightedList<E> {
     public void clear() {
         map.clear();
         totalWeight = 0;
+    }
+
+    public void forEach(final BiConsumer<Double, E> action) {
+        Objects.requireNonNull(action);
+        for (final Map.Entry<Double, E> entry : map.entrySet()) {
+            double key;
+            E value;
+            try {
+                key = entry.getKey();
+                value = entry.getValue();
+            }
+            catch (IllegalStateException e) {
+                throw new ConcurrentModificationException(e);
+            }
+            action.accept(key, value);
+        }
     }
 
 }
