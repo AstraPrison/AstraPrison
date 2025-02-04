@@ -14,7 +14,7 @@ public final class ErrorMessageKeys {
             INVALID_MENU;
 
     static {
-        final String error = "error.";
+        final String error = "errors.";
         NO_PERMISSION = error + "no-permission";
         SELECT_PLAYER = error + "select-player";
         INVALID_PLAYER = error + "invalid-player";
