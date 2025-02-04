@@ -10,6 +10,15 @@ import java.util.TreeMap;
 
 public final class WeightedList<E> {
 
+    public static <E> @NotNull WeightedList<E> of(final @NotNull List<E> elements) {
+        return new WeightedList<E>().add(elements);
+    }
+
+    @SafeVarargs
+    public static <E> @NotNull WeightedList<E> of(final @NotNull E... elements) {
+        return new WeightedList<E>().add(elements);
+    }
+
     private final @NotNull NavigableMap<Double, E> map;
     private final @NotNull Random random;
     private double totalWeight;
@@ -38,6 +47,20 @@ public final class WeightedList<E> {
         totalWeight += weight;
         map.put(totalWeight, element);
         return this;
+    }
+
+    public @NotNull WeightedList<E> add(final @NotNull List<E> elements) {
+        for (final E element : elements) {
+            totalWeight += 100.0d;
+            map.put(totalWeight, element);
+        }
+
+        return this;
+    }
+
+    @SafeVarargs
+    public final @NotNull WeightedList<E> add(final @NotNull E... elements) {
+        return add(List.of(elements));
     }
 
     public @Nullable E next() {
