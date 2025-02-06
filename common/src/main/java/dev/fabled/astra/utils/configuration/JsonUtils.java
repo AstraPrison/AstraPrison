@@ -1,12 +1,11 @@
-package dev.fabled.astra.utils;
+package dev.fabled.astra.utils.configuration;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class JsonUtils {
@@ -59,7 +58,10 @@ public final class JsonUtils {
             final @NotNull String prefix
     ) {
         if (jsonElement.isJsonArray()) {
-            map.put(prefix, jsonElement.getAsJsonArray());
+            final JsonArray jsonArray = jsonElement.getAsJsonArray();
+            final List<Object> list = new ArrayList<>();
+            jsonArray.forEach(element -> list.add(element.getAsString()));
+            map.put(prefix, list);
             return;
         }
 
