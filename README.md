@@ -2,6 +2,9 @@
 Astra Prison is the ultimate modern Minecraft prison core!<br>
 [![Discord](https://discordapp.com/api/guilds/1208754055132749864/widget.png?style=shield)](https://astra.fabled.dev)
 
+Interested in supporting the development of this project?
+<br>Tip me on [Ko-Fi](https://ko-fi.com/deopping), or check out the development livestreams on [YouTube](https://www.youtube.com/@deopping?sub_confirmation=1)!
+
 ## Dependencies
 Astra Prison is built on the latest [Paper](https://papermc.io).
 
