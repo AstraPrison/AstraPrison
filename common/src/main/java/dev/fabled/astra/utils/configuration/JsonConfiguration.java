@@ -115,6 +115,7 @@ public final class JsonConfiguration {
     }
 
     public @NotNull Set<String> getSet(final @NotNull String parent) {
+    public @NotNull Set<String> getConfigurationSection(final @NotNull String parent) {
         final Set<String> set = new HashSet<>();
         final String parentKey = parent.endsWith(".") ? parent : parent + ".";
 
