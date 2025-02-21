@@ -4,10 +4,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public final class JsonConfiguration {
 
@@ -114,7 +111,26 @@ public final class JsonConfiguration {
         return getDouble(path, 0d);
     }
 
-    public @NotNull Set<String> getSet(final @NotNull String parent) {
+    @Contract("_, !null -> !null")
+    public @Nullable List<String> getStringList(final @NotNull String path, final @Nullable List<String> def) {
+        final Object object = map.getOrDefault(path, null);
+        if (object == null) {
+            return def;
+        }
+
+        if (object instanceof List<?> list) {
+            final List<String> stringList = new ArrayList<>();
+            list.forEach(v -> stringList.add(v.toString()));
+            return stringList;
+        }
+
+        return Collections.singletonList(object.toString());
+    }
+
+    public @Nullable List<String> getStringList(final @NotNull String path) {
+        return getStringList(path, null);
+    }
+
     public @NotNull Set<String> getConfigurationSection(final @NotNull String parent) {
         final Set<String> set = new HashSet<>();
         final String parentKey = parent.endsWith(".") ? parent : parent + ".";
