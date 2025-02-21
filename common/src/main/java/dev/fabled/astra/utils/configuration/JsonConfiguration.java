@@ -116,13 +116,14 @@ public final class JsonConfiguration {
 
     public @NotNull Set<String> getSet(final @NotNull String parent) {
         final Set<String> set = new HashSet<>();
+        final String parentKey = parent.endsWith(".") ? parent : parent + ".";
 
         map.keySet().forEach(key -> {
-            if (!key.startsWith(parent)) {
+            if (!key.startsWith(parentKey)) {
                 return;
             }
 
-            final String sub = key.substring(parent.length());
+            final String sub = key.substring(parentKey.length());
             final String[] split = sub.split("\\.");
 
             if (split.length > 0) {
